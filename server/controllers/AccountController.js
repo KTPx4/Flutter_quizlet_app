@@ -1,25 +1,31 @@
 const bcrypt = require('bcrypt')
 const AccountModel = require('../models/AccountModel')
 const fs = require('fs');
+const jwt = require('jsonwebtoken')
+const SECRET_LOGIN = process.env.KEY_SECRET_LOGIN || 'key-login'
 
 module.exports.Register = async (req, res) =>{
-    let {email, user, password} = req.body
-    let {root} = req.vars
+    let {email,  password} = req.body
+    let {root, userName} = req.vars
 
     email = email.toLowerCase()
+    var account = null
     try{
         bcrypt.hash(password, 10)
         .then(async(hashed) =>{
             const Account = await AccountModel.create({
-                fullName: user,
+                fullName: userName,
                 email: email,
-                user: user,
+                user: userName,
                 passWord: hashed
             })
+            account = Account
 
-            if(!createFolder(root, Account._id, Account.nameAvt))
-                console.log(`Can't create folder for Account: '${Account._id}' - '${Account.user}'`);
+            createFolder(root, Account._id, Account.nameAvt) ? null : console.log(`Can't create folder for Account: '${Account._id}' - '${Account.user}'`);
+            
         })
+
+    
     }
     catch(err)
     {
@@ -32,15 +38,53 @@ module.exports.Register = async (req, res) =>{
 
     return res.status(200).json({
         message: 'Register Success',
-        data: {}
+        data: {
+            account: account
+        }
     })
 }
 
-module.exports.Login = (req, res) =>{
-    return res.status(200).json({
-        message: 'Login Success',
-        data: {}
-    })
+module.exports.Login = async(req, res) =>{
+    try{
+        const {root, User} = req.vars
+        var Account = User
+    
+        let data  = {
+            id: Account._id,
+            user: Account.user,
+            fullName: Account.fullName,
+            phone: Account.phone,
+            email: Account.email,
+            avt: Account.nameAvt,
+        }
+        
+        createFolder(root, Account._id, Account.nameAvt) ? null : console.log(`Can't create folder for Account: '${Account._id}' - '${Account.user}'`);
+        await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30d"}, (err, tokenLogin)=>{
+            if(err) throw err
+            return res.status(200).json({
+                status: "Login success",
+                message: "Đăng nhập thành công",
+                data: {
+                    token: tokenLogin,
+                }
+            })
+        })
+    }
+    catch(err)
+    {
+        console.log("Error at AccountController - Login: ", err);
+        return res.status(500).json({
+            status: "Error Server When Login",
+            message: "Vui lòng đăng nhập lại",
+            data: {
+                email,
+                user,
+                password
+            }
+        })
+    }  
+
+    
 }
 
 module.exports.ChangeProfile = (req, res) => {
@@ -70,6 +114,7 @@ module.exports.ResetPassword = (req, res) =>{
         data: {}
     })
 }
+
 
 const createFolder = (root, idUser, nameAvt)=>
 {
