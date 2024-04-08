@@ -23,6 +23,12 @@ module.exports.Register = async (req, res) =>{
 
             createFolder(root, Account._id, Account.nameAvt) ? null : console.log(`Can't create folder for Account: '${Account._id}' - '${Account.user}'`);
             
+            return res.status(200).json({
+                message: 'Register Success',
+                data: {
+                    account: account
+                }
+            })
         })
 
     
@@ -36,12 +42,7 @@ module.exports.Register = async (req, res) =>{
         })
     }
 
-    return res.status(200).json({
-        message: 'Register Success',
-        data: {
-            account: account
-        }
-    })
+
 }
 
 module.exports.Login = async(req, res) =>{
@@ -52,7 +53,7 @@ module.exports.Login = async(req, res) =>{
         let data  = {
             id: Account._id,
             user: Account.user,
-            fullName: Account.fullName,
+            fullName: Account.fullName,            
             phone: Account.phone,
             email: Account.email,
             avt: Account.nameAvt,
@@ -94,11 +95,27 @@ module.exports.ChangeProfile = (req, res) => {
     })
 }
 
-module.exports.ChangePassword = (req, res) =>{
-    return res.status(200).json({
-        message: 'Change Password Success',
-        data: {}
-    })
+module.exports.ChangePassword = async (req, res) =>{
+    let {newPass} = req.body
+    let account = req.vars.User
+    try{
+        var passHashed = await bcrypt.hash(newPass, 10);
+
+        newAccount = await AccountModel.findOneAndUpdate(
+            {email: account.email},
+            {passWord: passHashed}
+        )
+        req.vars.User = newAccount
+        return res.status(200).json({
+            status: 'Change password success',
+            message: 'Đổi mật khẩu thành công'
+        })
+    }
+    catch(err)
+    {
+
+    }
+    
 }
 
 module.exports.GetCodeReset = (req, res) =>{

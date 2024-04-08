@@ -143,10 +143,38 @@ module.exports.ChangeProfile = (req, res, next) =>{
     return next()
 }
 
-module.exports.ChangePassword = (req, res, next) =>{
-    
-    
-    return next()
+module.exports.ChangePassword = async (req, res, next) =>{
+    let {oldPass, newPass} = req.body
+    let Account = req.vars.User
+    if(!oldPass || !newPass)
+        return res.status(400).json({
+            status: 'Null request data',
+            message: 'Vui lòng cung cấp mật khẩu mới và mật khẩu cũ'
+        })
+
+    if(!Account)
+         return res.status(400).json({
+            status: 'Account has been null',
+            message: 'Không thể tìm thấy tài khoản'
+        })
+
+    await bcrypt.compare(oldPass, Account.passWord)
+    .then(passMatch => {
+        if(!passMatch)
+            throw new Error('Mật khẩu cũ không đúng')
+
+        if(oldPass == newPass)
+            throw new Error('Mật khẩu mới không được trùng với mật khẩu cũ')
+
+        return next()
+    })
+    .catch(err =>{
+        return res.status(400).json({
+            status: 'Change Password Failed',
+            message: err.message
+        })
+    })
+   
 }
 
 module.exports.GetCodeReset = (req, res, next) =>{
