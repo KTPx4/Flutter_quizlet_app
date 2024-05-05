@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'apiservices/accountAPI.dart';
+import 'pages/landing_page.dart';
 // import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: unused_import
 // import './middleware/MobilePlatform.dart' 
@@ -55,11 +56,12 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const TestPage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const LandingPage(),));
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: const TestPage(),));
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: const TestPage(),));           
+          
           case "/account/login":
             return MaterialPageRoute(builder: (bd)=> canLogin(page: const TestPage(), args: args));
           case "/page1": 
