@@ -1,5 +1,7 @@
 const emailValidator = require('email-validator')
 const AccountModel = require('../../models/AccountModel')
+const CodeModel = require('../../models/ResetAccount')
+
 const bcrypt = require('bcrypt')
 
 
@@ -38,9 +40,10 @@ module.exports.Regiser = async (req, res, next) =>{
         var index = 0
         while(await AccountModel.findOne({user: user}))
         {
-            user = `${user}${index}`
             index++
         }
+        if(index !== 0)
+            user = `${user}${index}`
     
         req.vars.userName = user
     
@@ -64,17 +67,15 @@ module.exports.Regiser = async (req, res, next) =>{
 }
 
 module.exports.Login = async (req, res, next) =>{
-
-
     try
     {
-        let {email, user, password} = req.body
-        email= email?.toLowerCase()
+        let { user, password} = req.body
+        // email= email?.toLowerCase()
         user= user?.toLowerCase()
         
         let message = ''
     
-        if(!email && !user)
+        if(!user)
             message = "Vui lòng nhập bằng Email hoặc UserName" 
         else if(!password)
             message = "Vui lòng nhập mật khẩu"
@@ -89,10 +90,11 @@ module.exports.Login = async (req, res, next) =>{
         let Account
        
         // Find Account
-        if(email)
-            Account = await AccountModel.findOne({email: email})
-        else
+        if(user)
             Account = await AccountModel.findOne({user: user})
+
+        if(!Account)
+            Account = await AccountModel.findOne({email: user})
 
         // Checking Pass if exists
         if(!Account)
@@ -108,8 +110,7 @@ module.exports.Login = async (req, res, next) =>{
             return res.status(400).json({
                 status: "Error at Client - Account not valid",
                 message: message,
-                data: {
-                    email,
+                data: {                 
                     user,
                     password
                 }
@@ -126,8 +127,7 @@ module.exports.Login = async (req, res, next) =>{
         return res.status(500).json({
             status: "Error Server When Login",
             message: "Thao tác không thành công. Vui lòng thử lại sau!",
-            data: {
-                email,
+            data: {              
                 user,
                 password
             }
@@ -145,7 +145,11 @@ module.exports.ChangeProfile = (req, res, next) =>{
 
 module.exports.ChangePassword = async (req, res, next) =>{
     let {oldPass, newPass} = req.body
+
     let Account = req.vars.User
+
+    // console.log(`oldPass: ${oldPass} - newPass: ${newPass} - AccountPass: ${Account.passWord}`);
+
     if(!oldPass || !newPass)
         return res.status(400).json({
             status: 'Null request data',
@@ -165,8 +169,6 @@ module.exports.ChangePassword = async (req, res, next) =>{
 
         if(oldPass == newPass)
             throw new Error('Mật khẩu mới không được trùng với mật khẩu cũ')
-
-        return next()
     })
     .catch(err =>{
         return res.status(400).json({
@@ -174,18 +176,126 @@ module.exports.ChangePassword = async (req, res, next) =>{
             message: err.message
         })
     })
+
+    return next()
+}
+
+module.exports.GetCode = async (req, res, next) =>{
+    try{
+
+        let {email} = req.body
+        if(!email)
+        {
+            return res.status(400).json({
+                status: "Get code reset failed",
+                message: "Vui lòng cung cấp email"
+            })
+        }
+
+        var Account = await AccountModel.findOne({email: email})
+        if(!Account)
+        {
+            return res.status(400).json({
+                status: "Get code reset failed",
+                message: "Email này chưa có tài khoản!"
+            })
+        }
+
+        req.vars.User = Account
+
+        return next()
+    }
+    catch(err)
+    {
+        console.log("Error at Validator - GetCode: \n" + err)
+        return res.status(500).json({
+            status: "Get code reset failed",
+            message: "Server đang bận. Vui lòng  thử lại sau!"
+        })
+    }
    
 }
 
-module.exports.GetCodeReset = (req, res, next) =>{
-    
-    
-    return next()
+module.exports.ValidCode = async (req, res, next) =>{
+    try{
+        let {code, email} = req.body
+        var mess = ""
+        if(!email)
+        {
+            mess = "Vui lòng cung cấp email"
+        }
+        if(!code)
+        {
+            mess = "Vui lòng cung cấp code"
+        }
+        if(!mess)
+        {
+            return res.status(400).json({
+                status: 'Reset password Failed',
+                message: mess
+            })
+        }    
+
+        var Account = await AccountModel.findOne({email: email})
+        if(!Account)
+        {
+            return res.status(400).json({
+                status: "Reset password failed",
+                message: "Email này chưa có tài khoản!"
+            })
+        }
+        
+        var ResetCode = await CodeModel.findOne({id: Account._id})
+
+        if(!ResetCode || ResetCode.code !== code)
+        {
+            return res.status(400).json({
+                status: "Code invalid",
+                message: "Code không đúng hoặc hết hạn"
+            })
+        }
+        
+        req.vars.User = Account
+
+        return next()
+    }
+    catch(err)
+    {
+        console.log("Error at Validator - GetCode: \n" + err)
+        return res.status(500).json({
+            status: "Get code reset failed",
+            message: "Server đang bận. Vui lòng  thử lại sau!"
+        })
+    }
+   
+
 }
 
-module.exports.ResetPassword = (req, res, next) =>{
-    
-    
-    return next()
+module.exports.ResetPass = async (req, res, next) =>{
+    try{
+        let {newPass} = req.body
+       
+        if(!newPass)
+        {
+            return res.status(400).json({
+                status: 'Reset password Failed',
+                message: "Vui lòng cung cấp mật khẩu mới"
+            })
+        }  
+        
+
+        return next()
+    }
+    catch(err)
+    {
+        console.log("Error at Validator - GetCode: \n" + err)
+        return res.status(500).json({
+            status: "Get code reset failed",
+            message: "Server đang bận. Vui lòng  thử lại sau!"
+        })
+    }
+   
+
 }
+
 

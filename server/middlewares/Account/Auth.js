@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const SECRET_LOGIN = process.env.KEY_SECRET_LOGIN || 'key-login'
 const AccountModel = require('../../models/AccountModel')
+
 module.exports.AuthAccount = (req, res, next) =>{
     try{
         // Get token from header or body
@@ -36,13 +37,19 @@ module.exports.AuthAccount = (req, res, next) =>{
     
             let emailU = data.email?.toLowerCase()
             let userU = data.user?.toLowerCase()
-    
-            let account = await AccountModel.findOne({
-                $or:[
-                    {email: emailU},
-                    {user: userU}
-                ]
-            })
+            let account 
+            if(emailU)
+            {
+                account = await AccountModel.findOne({               
+                        email: emailU,               
+                })
+            }
+            else if(userU)
+            {
+                account = await AccountModel.findOne({               
+                        user: userU,               
+                })
+            }
             
             if(!account)
             {
