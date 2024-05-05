@@ -165,6 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(
+                          keyboardType: TextInputType.emailAddress,
                           controller: userController,                       
                           onChanged: (value) => setState(() {
                             ErrorMessage = "";
@@ -173,7 +174,8 @@ class _LoginPageState extends State<LoginPage> {
                             user = newValue ?? "";
                           }),
                           style: TextStyle(color: Colors.grey[700]),
-                          decoration: const InputDecoration(                       
+                          decoration: const InputDecoration( 
+                                                  
                             border: InputBorder.none,
                             prefixIcon: Icon(
                               Icons.person,
@@ -211,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Icons.lock,
                                 color: Colors.black54,
                               ),
-                              label: Text("Password"),
+                              label: Text("Mật khẩu"),
                               labelStyle: TextStyle(color: Colors.grey, fontSize: 12),
                               suffixIcon: IconButton(
                                   onPressed: () {
@@ -246,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                                   Color.fromARGB(255, 229, 212, 255),
                                 ])),
                             width: double.infinity,
-                            child: isWaiting ? CircularProgressIndicator() : Text("Login", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+                            child: isWaiting ? CircularProgressIndicator() : Text("Đăng Nhập", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                           ),
                         ),
                       ),
@@ -255,14 +257,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       
                       // Other options
-                      const Text("or", style: TextStyle( fontSize: 12, )),
+                      const Text("hoặc", style: TextStyle( fontSize: 12, )),
                       const SizedBox(
                         height: 3,
                       ),
 
-                      TextButton(onPressed: toRegister, child:const Text("Register account",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
+                      TextButton(onPressed: toRegister, child:const Text("Đăng Ký",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
                      
-                      TextButton(onPressed: toForgotPass, child:const Text("Forgot password",  style: TextStyle(color: Color.fromARGB(255, 216, 17, 133), fontSize: 12, ),)),
+                      TextButton(onPressed: toForgotPass, child:const Text("Quên Mật Khẩu",  style: TextStyle(color: Color.fromARGB(255, 216, 17, 133), fontSize: 12, ),)),
                     ],
                   ),
                 ),

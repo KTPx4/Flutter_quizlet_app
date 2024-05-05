@@ -199,6 +199,7 @@ module.exports.ValidCode = async (req, res) =>{
 
         await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30m"}, (err, token)=>{
             if(err) throw err
+          
             return res.status(200).json({
                 message: 'Code đúng! Vui lòng nhập mật khẩu mới',
                 data: {
