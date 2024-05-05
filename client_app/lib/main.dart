@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const LandingPage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const TestPage(),));
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
           case "/account/forgot":

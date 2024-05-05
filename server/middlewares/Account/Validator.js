@@ -218,6 +218,7 @@ module.exports.GetCode = async (req, res, next) =>{
 
 module.exports.ValidCode = async (req, res, next) =>{
     try{
+      
         let {code, email} = req.body
         var mess = ""
         if(!email)
@@ -228,7 +229,7 @@ module.exports.ValidCode = async (req, res, next) =>{
         {
             mess = "Vui lòng cung cấp code"
         }
-        if(!mess)
+        if(mess)
         {
             return res.status(400).json({
                 status: 'Reset password Failed',
@@ -249,6 +250,8 @@ module.exports.ValidCode = async (req, res, next) =>{
 
         if(!ResetCode || ResetCode.code !== code)
         {
+           
+
             return res.status(400).json({
                 status: "Code invalid",
                 message: "Code không đúng hoặc hết hạn"

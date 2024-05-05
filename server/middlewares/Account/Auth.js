@@ -20,7 +20,7 @@ module.exports.AuthAccount = (req, res, next) =>{
         {
             return res.status(400).json({
                 status: "Authorization",           
-                message: 'Vui lòng đăng nhập mới có quyền truy cập'
+                message: 'Vui lòng cung cấp token mới có quyền truy cập'
             })
         }
 
