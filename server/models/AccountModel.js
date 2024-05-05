@@ -15,7 +15,8 @@ let AccountSchema = new mongoose.Schema({
     nameAvt: {
         type: String,
         default: null
-    }
+    },
+
 })
 
 // Thêm hook để đặt giá trị mặc định cho các dòng đã có dữ liệu
