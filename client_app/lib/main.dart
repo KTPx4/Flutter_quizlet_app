@@ -10,6 +10,7 @@ import 'package:client_app/page/account/RegisterPage.dart';
 import 'package:client_app/page/page1.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'apiservices/accountAPI.dart';
@@ -203,4 +204,5 @@ Future<bool> CheckLogin() async
  
   return false;
 }
+
 
