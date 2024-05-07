@@ -5,6 +5,7 @@ import 'package:client_app/page/404/NotFoundPage.dart';
 import 'package:client_app/page/account/ForgotPage.dart';
 import 'package:client_app/page/account/LoginPage.dart';
 import 'package:client_app/page/Test.dart';
+import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/account/RegisterPage.dart';
 // import 'package:client_app/page/account/ScreenAuth.dart';
 import 'package:client_app/page/page1.dart';
@@ -56,7 +57,7 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const LandingPage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
           case "/account/forgot":

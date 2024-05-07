@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import '../models/account.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
@@ -142,7 +142,7 @@ class AccountAPI {
       
       if(res.statusCode == 200)
       {
-        return {'success': true, 'message': "Gửi yêu cầu thành công. Vui lòng kiểm tra email", "token": resBody["data"]["token"]};
+        return {'success': true, 'message': "Vui lòng nhập mật khẩu mới", "token": resBody["data"]["token"]};
       }
       
       return {'success': false, 'message': resBody["message"], 'token': ''};
@@ -172,17 +172,18 @@ class AccountAPI {
       );
 
       var resBody = jsonDecode(res.body);    
-      
+
       if(res.statusCode == 200)
       {
-        return {'success': true, 'message': "Khôi phục mật khẩu thành công. Vui lòng kiểm tra email", "token": resBody["data"]["token"]};
+        return {'success': true, 'message': "Khôi phục mật khẩu thành công. Vui lòng đăng nhập lại"};
       }
       
-      return {'success': false, 'message': resBody["message"], 'token': ''};
+      return {'success': false, 'message': resBody["message"]};
     }
     catch(e)
-    {
-      return {'success': false, 'message': "Đăng nhập thất bại. Vui lòng thử lại sau!", 'token': ''};
+    {      
+      print("Err: " + e.toString());
+      return {'success': false, 'message': "Đổi mật khẩu thất bại. Vui lòng thử lại sau!", 'token': ''};
     }    
   }
   

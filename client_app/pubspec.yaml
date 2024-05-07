@@ -30,7 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   flutter_web_plugins:
     sdk: flutter
 
@@ -94,6 +93,18 @@ flutter:
     - family: Prompt
       fonts:
         - asset: fonts/Prompt/Prompt-Black.ttf
+
+    - family: SanProBold
+      fonts:
+        # - asset: fonts/SanPro/SF-Pro-Display-Regular.ttf
+        - asset: fonts/SanPro/SF-Pro-Display-Bold.ttf
+
+    - family: SanPro
+      fonts:
+        - asset: fonts/SanPro/SF-Pro-Display-Regular.ttf
+        # - asset: fonts/SanPro/SF-Pro-Display-Bold.ttf
+        #   weight: 700
+        
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
