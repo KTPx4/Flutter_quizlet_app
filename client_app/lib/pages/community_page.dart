@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CommunityPage extends StatelessWidget {
-  final String subjectName;
+  final String catName;
 
-  // This constructor cannot be const because it is initialized at runtime
-  CommunityPage({Key? key, required this.subjectName}) : super(key: key);
+ 
+  CommunityPage({Key? key, required this.catName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
