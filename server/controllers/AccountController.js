@@ -137,11 +137,27 @@ module.exports.ChangePassword = async (req, res) =>{
             {email: account.email},
             {passWord: passHashed}
         )
+
         req.vars.User = newAccount
-        return res.status(200).json({
-            status: 'Change password success',
-            message: 'Đổi mật khẩu thành công'
-        })
+        
+        let data  = {
+            id: newAccount._id,
+            user: newAccount.user,
+            fullName: newAccount.fullName,            
+            phone: newAccount.phone,
+            email: newAccount.email,
+            avt: newAccount.nameAvt,
+        }
+        await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30d"}, (err, tokenLogin)=>{
+            if(err) throw err
+            return res.status(200).json({
+                status: "Change password success",
+                message: "Đổi mật khẩu thành công",
+                data: {
+                    token: tokenLogin,
+                }
+            })
+        })        
     }
     catch(err)
     {
@@ -210,14 +226,137 @@ module.exports.ValidCode = async (req, res) =>{
     }
     catch(err)
     {
-        console.log("Error at AccountController - Login: ", err);
+        console.log("Error at AccountController - ValidCode: ", err);
         return res.status(500).json({
-            status: "Error Server When Login",
+            status: "Error Server When ValidCode",
             message: "Server đang bận. Vui lòng  thử lại sau!"
         })
     }     
 
     
+}
+
+module.exports.Edit = async(req, res) =>{
+    try{
+        
+        let {email, fullName} = req.body
+        var account = req.vars.User
+        var id = account._id
+        email = email?.toLowerCase()
+
+        var newAccount = await AccountModel.findOneAndUpdate({_id: id}, {
+            email: email,
+            fullName: fullName
+        }, {new: true})
+
+        let data  = {
+            id: newAccount._id,
+            user: newAccount.user,
+            fullName: newAccount.fullName,            
+            phone: newAccount.phone,
+            email: newAccount.email,
+            avt: newAccount.nameAvt,
+        }
+
+        await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30d"}, (err, tokenLogin)=>{
+            if(err) throw err
+            return res.status(200).json({
+                status: "Change password success",
+                message: "Cập nhật thành công",
+                data: {
+                    token: tokenLogin,
+                    account: newAccount
+                }
+            })
+        })
+       
+    }
+    catch(err)
+    {
+        console.log("Error at AccountController - Edit: ", err);
+        return res.status(500).json({
+            status: "Error Server When Edit",
+            message: "Server đang bận. Vui lòng  thử lại sau!"
+        })
+    }   
+    
+}
+
+module.exports.UpdateProfile = async (req, res) =>{
+   
+    
+   
+    try
+    {
+        let {root}  = req.vars
+        var Account = req.vars.User
+        
+        if(!Account)
+        {
+            return res.status(401).json({            
+                message: 'Tài khoản vừa bị xóa. Không thể cập nhật.'
+            })
+        }   
+
+        let newNameAVT = await upLoadAvt(req.file, root,  Account)
+
+        var newAccount = await AccountModel.findOneAndUpdate({_id: Account._id}, {
+            nameAvt: newNameAVT
+        }, {new: true})   
+               
+        return res.status(200).json({          
+            message: 'Thay đổi thông tin thành công',
+            data: {
+                account: newAccount
+            }
+        })      
+    }
+    catch(err)
+    {
+        console.log("Error At Account Contronller - UpdateProfile: ", err.message);
+        return res.status(500).json({
+            status: "Error Server When Edit",
+            message: "Server đang bận. Vui lòng  thử lại sau!"
+        })
+    }
+ 
+
+}
+
+const upLoadAvt =async (file, root, AccUser)=>{
+    //console.log("Upload Avt call");
+ let id = AccUser._id
+ 
+ const currentPath = `${root}/public/account/${id}`
+
+ if(file)
+ {
+     if(!fs.existsSync(currentPath))
+     {
+         fs.mkdir(currentPath, (error) => 
+         { 
+             if (error) 
+             {
+                console.log("Error at create Folder Upload: ", error.message);    
+             }
+         });
+     }
+
+
+     let name = file.originalname
+     let temp = name.split('.')
+     let extension = temp[temp.length - 1]
+
+
+     let newFilePath = currentPath + '/' +  `${id}.${extension}`
+
+     fs.renameSync(file.path, newFilePath)
+
+     return `${id}.${extension}`
+ }
+
+ return undefined
+
 }
 
 

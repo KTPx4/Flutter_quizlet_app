@@ -67,7 +67,7 @@ class _ForgotPageState extends State<ForgotPage> {
       isWaiting = true;
     });
     
-    await Future.delayed(Duration(seconds: 1));
+  
 
     var res = await AccountAPI.getCode(email: user);     
     
@@ -111,7 +111,7 @@ class _ForgotPageState extends State<ForgotPage> {
     setState(() {
       isWaiting = true;
     });
-    await Future.delayed(Duration(seconds: 1));
+   
 
     var res = await AccountAPI.sendCode(email: user, code: code);     
   
@@ -171,9 +171,9 @@ class _ForgotPageState extends State<ForgotPage> {
     setState(() {
       isWaiting = true;
     });
-    await Future.delayed(Duration(seconds: 1));
 
-    var res = await AccountAPI.ResetPass(token: token, newPass: password);     
+
+    var res = await AccountAPI.resetPass(token: token, newPass: password);     
   
     setState(() {
       isWaiting = false;
