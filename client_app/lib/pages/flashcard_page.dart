@@ -4,8 +4,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:client_app/values/flashcard_data.dart';
 
 
-class FlashcardPage extends StatefulWidget {  // Đã đổi tên class từ MyApp thành FlashcardPage
-  const FlashcardPage({super.key, required String subjectName});
+class FlashcardPage extends StatefulWidget {  
+  const FlashcardPage({super.key, required String catName});
 
   @override
   State<FlashcardPage> createState() => _FlashcardPageState();
@@ -14,7 +14,7 @@ class FlashcardPage extends StatefulWidget {  // Đã đổi tên class từ MyA
 class _FlashcardPageState extends State<FlashcardPage> {
   final FlutterTts flutterTts = FlutterTts();
   final List<Map<String, String>> _data = FlashcardData.flashcards;
-  int _currentIndex = 0;
+  int _currIdx = 0;
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Flashcard'),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple,
       ),
       body: Center(
         child: Column(
@@ -41,10 +41,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
           children: <Widget>[
             FlipCard(
               direction: FlipDirection.HORIZONTAL,
-              front: buildCardFace(),
-              back: buildCardBack(),
+              front: FrontCard(),
+              back: BackCard(),
             ),
-            SizedBox(height: 30), // Adds spacing between the card and the buttons
+            SizedBox(height: 30), 
             navigationButtons(),
           ],
         ),
@@ -52,8 +52,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
     );
   }
 
-  Widget buildCardFace() {
-  var currentCard = _data[_currentIndex];
+  Widget FrontCard() {
+  var currCard = _data[_currIdx];
   return Card(
     elevation: 12,
     shadowColor: Colors.deepPurpleAccent,
@@ -69,15 +69,15 @@ class _FlashcardPageState extends State<FlashcardPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(currentCard['word']!,
-              textAlign: TextAlign.center, // Đảm bảo văn bản được căn giữa
+          Text(currCard['word']!,
+              textAlign: TextAlign.center, 
               style: TextStyle(
                   fontSize: 28,
                   color: Colors.black,
                   fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
-          Text(currentCard['phonetic']!,
-              textAlign: TextAlign.center, // Đảm bảo văn bản được căn giữa
+          Text(currCard['phonetic']!,
+              textAlign: TextAlign.center, 
               style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey[700],
@@ -86,7 +86,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
           Align(
             alignment: Alignment.bottomRight,
             child: InkWell(
-              onTap: () => _speak(currentCard['word']!),
+              onTap: () => _speak(currCard['word']!),
               child: Icon(Icons.volume_up, size: 36, color: Colors.blue),
             ),
           ),
@@ -96,8 +96,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
   );
 }
 
-Widget buildCardBack() {
-  var currentCard = _data[_currentIndex];
+Widget BackCard() {
+  var currCard = _data[_currIdx];
   return Card(
     elevation: 12,
     shadowColor: Colors.deepPurpleAccent,
@@ -111,10 +111,10 @@ Widget buildCardBack() {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Căn giữa nội dung trong Column
+        mainAxisAlignment: MainAxisAlignment.center, 
         children: <Widget>[
-          Text(currentCard['translation']!,
-              textAlign: TextAlign.center, // Đảm bảo văn bản được căn giữa trên card
+          Text(currCard['translation']!,
+              textAlign: TextAlign.center, 
               style: TextStyle(fontSize: 24, color: Colors.black)),
         ],
       ),
@@ -125,22 +125,22 @@ Widget buildCardBack() {
 
   Widget navigationButtons() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.0), // Thêm lề cho Row
+      margin: EdgeInsets.symmetric(horizontal: 20.0), 
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple, // Màu nền cho nút
-              foregroundColor: Colors.white, // Màu chữ
+              backgroundColor: Colors.deepPurple, 
+              foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
-                // Chỉnh hình dạng nút
-                borderRadius: BorderRadius.circular(10), // Bán kính góc bo tròn
+                
+                borderRadius: BorderRadius.circular(10), 
               ),
             ),
-            onPressed: _currentIndex > 0
-                ? () => setState(() => _currentIndex--)
+            onPressed: _currIdx > 0
+                ? () => setState(() => _currIdx--)
                 : null,
             child: Text('Previous'),
           ),
@@ -154,8 +154,8 @@ Widget buildCardBack() {
                 borderRadius: BorderRadius.circular(10), // Bán kính góc bo tròn
               ),
             ),
-            onPressed: _currentIndex < _data.length - 1
-                ? () => setState(() => _currentIndex++)
+            onPressed: _currIdx < _data.length - 1
+                ? () => setState(() => _currIdx++)
                 : null,
             child: Text('Next'),
           ),

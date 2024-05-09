@@ -9,6 +9,7 @@ import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/account/RegisterPage.dart';
 // import 'package:client_app/page/account/ScreenAuth.dart';
 import 'package:client_app/page/page1.dart';
+import 'package:client_app/pages/home_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +58,7 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: HomePage(),));
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
           case "/account/forgot":

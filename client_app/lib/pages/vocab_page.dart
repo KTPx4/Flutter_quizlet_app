@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class VocabPage extends StatelessWidget {
-  final String subjectName;
+  final String catName; 
 
-  // This constructor cannot be const because it is initialized at runtime
-  VocabPage({Key? key, required this.subjectName}) : super(key: key);
+  VocabPage({Key? key, required this.catName}) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Placeholder(); 
   }
 }
