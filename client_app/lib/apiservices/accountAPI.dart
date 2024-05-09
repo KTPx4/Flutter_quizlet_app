@@ -7,9 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 const WEB_URL = 'http://localhost:3000/api'; // kết nối từ web
 const ANDROID_URL = 'http://10.0.2.2:3000/api'; // kết nối từ máy ảo android
-
+const KEY_LOGIN = "quizlet-login";
 
 
 class AccountAPI {
@@ -154,7 +156,7 @@ class AccountAPI {
   }
   
   
-  static Future<Map<String, dynamic>> ResetPass({required String token, required String newPass}) async
+  static Future<Map<String, dynamic>> resetPass({required String token, required String newPass}) async
   {
     try
     {
@@ -182,7 +184,7 @@ class AccountAPI {
     }
     catch(e)
     {      
-      print("Err: " + e.toString());
+      
       return {'success': false, 'message': "Đổi mật khẩu thất bại. Vui lòng thử lại sau!", 'token': ''};
     }    
   }
@@ -218,5 +220,170 @@ class AccountAPI {
     }    
   }
 
+  static Future<Map<String, dynamic>> changePass({ required String oldPass, required String newPass}) async
+  {
+    try
+    {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      if(token == null) return {'success': false, 'message': "Không thể đổi mật khẩu",};
+
+      var server = getServer();
+      var link = "$server/account/changepass";
+      var body = {
+        'oldPass': oldPass,
+        'newPass': newPass
+      };
+
+      var res = await http.post(
+        Uri.parse(link),   
+        headers: {"Authorization": "Bearer $token"},    
+        body: body
+      );
+
+      var resBody = jsonDecode(res.body);    
+      
+      if(res.statusCode == 200)
+      {
+        var newtoken = resBody["data"]['token'];
+        if(newtoken != null) pref?.setString(KEY_LOGIN, newtoken);
+
+        return {'success': true, 'message': "Đổi mật khẩu thành công"};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    }
+    catch(e)
+    {
+      return {'success': false, 'message': "Đổi mật khẩu thất bại. Vui lòng thử lại sau!", };
+    }    
+  }
+
+  
+  static Future<Map<String, dynamic>> changeEmail({ required String email}) async
+  {
+    try
+    {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      if(token == null) return {'success': false, 'message': "Chưa đăng nhập. Vui lòng đăng nhập lại",};
+
+      var server = getServer();
+      var link = "$server/account/";
+      var body = {
+        'email': email
+      };
+
+      var res = await http.patch(
+        Uri.parse(link),   
+        headers: {"Authorization": "Bearer $token"},    
+        body: body
+      );
+
+      var resBody = jsonDecode(res.body);    
+      
+      if(res.statusCode == 200)
+      {       
+        var Account = resBody["data"]["account"];   
+        var account =  jsonEncode( Account) ?? "";
+
+        var newtoken = resBody["data"]['token'];
+
+        pref?.setString("Account", account);
+        if(newtoken != null) pref?.setString(KEY_LOGIN, newtoken);
+
+        return {'success': true, 'message': "Cập nhật thành công"};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    }
+    catch(e)
+    {
+      return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
+    }    
+  }
+
+  static Future<Map<String, dynamic>> changeName({ required String name}) async
+  {
+    try
+    {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      if(token == null) return {'success': false, 'message': "Không thể đổi mật khẩu",};
+
+      var server = getServer();
+      var link = "$server/account/";
+      var body = {
+        'fullName': name
+      };
+
+      var res = await http.patch(
+        Uri.parse(link),   
+        headers: {"Authorization": "Bearer $token"},    
+        body: body
+      );
+
+      var resBody = jsonDecode(res.body);         
+
+
+      if(res.statusCode == 200)
+      {  
+        var Account = resBody["data"]["account"];   
+        var account =  jsonEncode( Account) ?? "";
+        var newtoken = resBody["data"]['token'];
+
+        pref?.setString("Account", account);
+        if(newtoken != null) pref?.setString(KEY_LOGIN, newtoken);
+        
+        return {'success': true, 'message': "Cập nhật thành công"};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    }
+    catch(e)
+    {
+      return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
+    }    
+  }
+
+  static Future<Map<String, dynamic>> changeAvt({required String path}) async
+  {
+      
+    try{
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var server = getServer();
+      var link = "$server/account/Avt";
+
+      var uri = Uri.parse(link);
+      var request = http.MultipartRequest('PUT', uri)
+        ..headers['Authorization'] = 'Bearer ${token}'
+        ..files.add(await http.MultipartFile.fromPath('avt', path));
+
+      var res = await request.send();    
+      var response = await http.Response.fromStream(res);
+      var resBody = jsonDecode(response.body);
+
+      if(res.statusCode == 200)
+      {        
+        var Account = resBody["data"]["account"];   
+        var account =  jsonEncode(Account) ?? "";
+        print(account);
+        pref?.setString("Account", account);   
+
+        return {'success': true, 'message': "Cập nhật thành công"};
+      }
+      return {'success': false, 'message': resBody["message"]};
+    }
+    catch(e)
+    {
+      return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
+    }    
+
+  }
 
 }

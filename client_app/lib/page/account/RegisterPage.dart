@@ -76,7 +76,6 @@ class _RegisterPageState extends State<RegisterPage> {
         isWaiting = true;
       });
       
-      await Future.delayed(Duration(seconds: 1));
 
       var res = await AccountAPI.register(email: user, password: password);     
       
@@ -186,6 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(     
+                          maxLength: 20,
                           controller: passController,                 
                           onChanged: (value) => setState(() {
                             ErrorMessage = "";

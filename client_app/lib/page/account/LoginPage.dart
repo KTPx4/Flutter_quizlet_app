@@ -79,8 +79,6 @@ class _LoginPageState extends State<LoginPage> {
         isWaiting = true;
       });
 
-      await Future.delayed(Duration(seconds: 1));
-
 
       var res = await AccountAPI.login( user: user, password: password);     
       
