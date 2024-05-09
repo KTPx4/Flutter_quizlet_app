@@ -11,6 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const WEB_URL = 'http://localhost:3000/api'; // kết nối từ web
 const ANDROID_URL = 'http://10.0.2.2:3000/api'; // kết nối từ máy ảo android
+// const ANDROID_URL = 'https://flutter-quizlet-app.onrender.com/api'; // kết nối từ máy ảo android
+// const WEB_URL = 'https://flutter-quizlet-app.onrender.com/api'; // kết nối từ web
+
 const KEY_LOGIN = "quizlet-login";
 
 
@@ -24,10 +27,11 @@ class AccountAPI {
   {
     return _instance;
   }
+  
   static String getServer()
   {
     var url = ANDROID_URL;
-    if(kIsWeb)
+    if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
     {
       url = WEB_URL;
     }
@@ -312,7 +316,7 @@ class AccountAPI {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      if(token == null) return {'success': false, 'message': "Không thể đổi mật khẩu",};
+      if(token == null) return {'success': false, 'message': "Chưa đăng nhập hoặc hết hạn",};
 
       var server = getServer();
       var link = "$server/account/";
@@ -372,18 +376,19 @@ class AccountAPI {
       {        
         var Account = resBody["data"]["account"];   
         var account =  jsonEncode(Account) ?? "";
-        print(account);
+        
         pref?.setString("Account", account);   
 
-        return {'success': true, 'message': "Cập nhật thành công"};
+        return {'success': true, 'message': "Cập nhật ảnh thành công"};
       }
       return {'success': false, 'message': resBody["message"]};
     }
     catch(e)
     {
-      return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
+      return {'success': false, 'message': "Cập nhật ảnh thất bại. Vui lòng thử lại sau!", };
     }    
 
   }
 
+  
 }

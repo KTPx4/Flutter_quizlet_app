@@ -17,10 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'apiservices/accountAPI.dart';
 import 'pages/landing_page.dart';
-// import 'package:flutter/foundation.dart' show kIsWeb;
-// ignore: unused_import
-// import './middleware/MobilePlatform.dart' 
-//   if (kIsWeb ) './middleware/WebPlatform.dart' ;
+
 
 const KEY_LOGIN = "quizlet-login";
 
@@ -58,14 +55,15 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: HomePage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
           case "/account/register":
-            return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
+            return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(),));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: const TestPage(),));           
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));           
           
           case "/account/login":
-            return MaterialPageRoute(builder: (bd)=> canLogin(page: const TestPage(), args: args));
+            return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
+
           case "/page1": 
             return MaterialPageRoute(builder: (bd)=> AuthPage(page: const Page1(), path: "/page1"));
           default:

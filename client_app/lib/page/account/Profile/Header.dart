@@ -1,11 +1,14 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client_app/modules/callFunction.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-const SERVER = "http://10.0.2.2:3000/images/account";
+const SERVER_MOBILE = "http://10.0.2.2:3000/images/account";
+const SERVER_WEB = "http://localhost:3000/images/account";
 
 class Header extends StatefulWidget {
   double width;
@@ -20,7 +23,8 @@ class Header extends StatefulWidget {
 class _HeaderState extends State<Header> {
   String fullName = "Kiều Thành Phát";
   String email = "px4.vnd@gmail.com";
-  String linkAvt = "http://10.0.2.2:3000/images/account/1.png";
+  String linkAvt = "https://randomuser.me/api/portraits/men/1.jpg";
+  String SERVER = SERVER_MOBILE;
 
   @override
   void initState() {
@@ -28,6 +32,15 @@ class _HeaderState extends State<Header> {
     super.initState();
     widget.callFunction.refreshWidget = refreshWidget;
     initInfor();
+    initServer();
+    
+  }
+  void initServer()
+  {
+    if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+    {
+      SERVER = SERVER_WEB;
+    }
   }
   void initInfor() async {
     var pref = await SharedPreferences.getInstance();
@@ -44,6 +57,7 @@ class _HeaderState extends State<Header> {
   void refreshWidget()
   {
     initInfor();
+    initServer();
     setState(() {
     });
   }

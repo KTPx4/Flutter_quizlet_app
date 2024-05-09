@@ -1,7 +1,9 @@
 import 'package:client_app/apiservices/accountAPI.dart';
 import 'package:client_app/page/account/Profile/ChangeAvt.dart';
+import 'package:client_app/page/account/Profile/ChangeAvtWeb.dart';
 import 'package:client_app/page/account/Profile/ChangeInfor.dart';
 import 'package:client_app/page/account/Profile/ChangePass.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -94,11 +96,12 @@ class _BodyState extends State<Body> {
 
   void changeAvt() async
   {
+  
     var isTrue = await showDialog(      
       barrierDismissible: false,
       context: context,
       builder: (context) {        
-        return ChangeAvt();     
+        return kIsWeb ? ChangeAvtWeb() : ChangeAvtMobile();     
       } 
     );  
     if(isTrue)

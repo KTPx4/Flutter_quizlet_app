@@ -288,6 +288,7 @@ module.exports.UpdateProfile = async (req, res) =>{
    
     try
     {
+        console.log("1 request");
         let {root}  = req.vars
         var Account = req.vars.User
         
