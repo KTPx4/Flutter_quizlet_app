@@ -2,30 +2,31 @@ import 'package:client_app/pages/community_page.dart';
 import 'package:client_app/pages/flashcard_page.dart';
 import 'package:client_app/pages/quiz_page.dart';
 import 'package:client_app/pages/vocab_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class Subject {
-  final String subjectName;
-  final String subjectImage;
+class Category {
+  final String catName;
+  final String catImage;
 
-  Subject(this.subjectName, this.subjectImage);
+  Category(this.catName, this.catImage);
 }
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  final List<Subject> subjects = [
-    Subject('Flashcard', 'assets/images/cards.png'),
-    Subject('Quiz', 'assets/images/answer.png'),
-    Subject('Vocab', 'assets/images/dictionary.png'),
-    Subject('Community', 'assets/images/community.png'),
-    // Add more subjects here...
+  final List<Category> categories = [
+    Category('Flashcard', 'assets/images/cards.png'),
+    Category('Quiz', 'assets/images/answer.png'),
+    Category('Vocab', 'assets/images/dictionary.png'),
+    Category('Community', 'assets/images/community.png'),
+    
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[300],
+      
       body: Stack(
         children: [
           Container(
@@ -94,11 +95,7 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                // SizedBox(height: 20),
-                // Text(
-                //   "Alright",
-                //   style: TextStyle(fontSize: 30),
-                // ),
+              
               ],
             ),
           ),
@@ -107,20 +104,20 @@ class HomePage extends StatelessWidget {
                 top: 230,
                 left: 20,
                 right:
-                    20), // Offset the grid view by the height of the top container
+                    20), 
             child: GridView.builder(
               padding:
-                  EdgeInsets.zero, // Adjust padding to remove default padding
+                  EdgeInsets.zero,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 10, // Horizontal space between cells
-                mainAxisSpacing: 10, // Vertical space between cells
+                crossAxisSpacing: 10, 
+                mainAxisSpacing: 10, 
                 childAspectRatio: 0.9,
               ),
-              itemCount: subjects.length,
+              itemCount: categories.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
@@ -128,21 +125,21 @@ class HomePage extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(.1),
-                          blurRadius: 4.0,
+                          blurRadius: 4,
                           spreadRadius: .05,
                         ),
                       ],
                     ),
                     child: InkWell(
                       onTap: () {
-                        final subject = subjects[index];
-                        switch (subject.subjectName) {
+                        final category = categories[index];
+                        switch (category.catName) {
                           case 'Flashcard':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FlashcardPage(
-                                      subjectName: subject.subjectName)),
+                                      catName: category.catName)),
                             );
                             break;
                           case 'Quiz':
@@ -150,7 +147,7 @@ class HomePage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => QuizPage(
-                                      subjectName: subject.subjectName)),
+                                      catName: category.catName)),
                             );
                             break;
                           case 'Vocab':
@@ -158,7 +155,7 @@ class HomePage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VocabPage(
-                                      subjectName: subject.subjectName)),
+                                      catName: category.catName)),
                             );
                             break;
                           case 'Community':
@@ -166,7 +163,7 @@ class HomePage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => CommunityPage(
-                                      subjectName: subject.subjectName)),
+                                      catName: category.catName)),
                             );
                             break;
                           default:
@@ -185,14 +182,14 @@ class HomePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            subjects[index].subjectImage,
+                            categories[index].catImage,
                             fit: BoxFit.cover,
                             height: 70,
                             width: 70,
                           ),
                           SizedBox(height: 15),
                           Text(
-                            subjects[index].subjectName,
+                            categories[index].catName,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),

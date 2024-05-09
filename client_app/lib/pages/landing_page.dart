@@ -28,12 +28,7 @@ class _LandingPageState extends State<LandingPage> {
             margin: EdgeInsets.all(20),
             decoration: BoxDecoration(
             
-              // gradient: LinearGradient(begin: Alignment.bottomCenter, colors: [
-              //   Colors.black.withOpacity(.8),
-              //   Colors.black.withOpacity(.6),
-              //   Colors.black.withOpacity(.8),
-              //   Colors.black.withOpacity(.3),
-              // ]),
+        
             ),
             child: Column(
             
