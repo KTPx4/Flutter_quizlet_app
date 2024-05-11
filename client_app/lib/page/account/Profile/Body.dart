@@ -1,7 +1,9 @@
 import 'package:client_app/apiservices/accountAPI.dart';
 import 'package:client_app/page/account/Profile/ChangeAvt.dart';
+import 'package:client_app/page/account/Profile/ChangeAvtWeb.dart';
 import 'package:client_app/page/account/Profile/ChangeInfor.dart';
 import 'package:client_app/page/account/Profile/ChangePass.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,25 +39,27 @@ class _BodyState extends State<Body> {
     return Column(
       children: [
         Container(
+          
           alignment: Alignment.topLeft,
           margin: EdgeInsets.only(left: 20, right: 17, top: 50),   
-
           child: Text("Cài đặt",
             style: TextStyle(  fontFamily: "SanProBold", fontSize: 20),
           )),
-        Container(
+
+        Container(    
+     
           margin: EdgeInsets.only(left: 17, right: 17, top: 10),   
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.grey[200]
-          ),
+          padding: EdgeInsets.only(top: 0),
+
           child: 
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
+               
                 child: ListView.separated(
+                  padding: EdgeInsets.zero,
                   shrinkWrap: true,
                   itemBuilder: (context, index) => _buildButton(index), 
-                  separatorBuilder: (context, index) => Divider(height: 1,color: Colors.grey), 
+                  separatorBuilder: (context, index) => Divider(height: 1,color: Colors.grey[300]), 
                   itemCount: ListButton.length 
                 ),
               )
@@ -83,7 +87,7 @@ class _BodyState extends State<Body> {
               logOut(); 
           }
         },
-        child: ListTile(  
+        child: ListTile(           
           title: Text(ListButton[index]["title"]),
           leading: Icon(ListButton[index]["icon"], color:   Color.fromARGB(244, 230, 88, 142),),
           trailing: Icon(Icons.arrow_forward_ios_rounded),
@@ -94,11 +98,12 @@ class _BodyState extends State<Body> {
 
   void changeAvt() async
   {
+  
     var isTrue = await showDialog(      
       barrierDismissible: false,
       context: context,
       builder: (context) {        
-        return ChangeAvt();     
+        return kIsWeb ? ChangeAvtWeb() : ChangeAvtMobile();     
       } 
     );  
     if(isTrue)
@@ -184,7 +189,7 @@ class _BodyState extends State<Body> {
     if (confirm) {
       var pref = await SharedPreferences.getInstance();
       pref.remove(KEY_LOGIN);
-      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, "/account/login", (route) => false);
     }
   }
 

@@ -9,8 +9,11 @@ import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-const WEB_URL = 'http://localhost:3000/api'; // kết nối từ web
-const ANDROID_URL = 'http://10.0.2.2:3000/api'; // kết nối từ máy ảo android
+const WEB_URL = 'http://localhost:3000'; // kết nối từ web
+const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
+// const ANDROID_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ máy ảo android
+// const WEB_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ web
+
 const KEY_LOGIN = "quizlet-login";
 
 
@@ -27,9 +30,19 @@ class AccountAPI {
   static String getServer()
   {
     var url = ANDROID_URL;
-    if(kIsWeb)
+    if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
     {
       url = WEB_URL;
+    }
+    return url;
+  }
+
+  static String getLink()
+  {
+    var url = ANDROID_URL + "/api";
+    if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+    {
+      url = WEB_URL +"/api";
     }
     return url;
   }
@@ -38,7 +51,7 @@ class AccountAPI {
   {
     try
     {
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/validate";          
 
       var res = await http.get(
@@ -66,7 +79,7 @@ class AccountAPI {
     try
     {
       
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/login";
       var body = {
         'user': user,
@@ -97,7 +110,7 @@ class AccountAPI {
     try
     {
       
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/getcode";
       var body = {
         'email': email,       
@@ -128,7 +141,7 @@ class AccountAPI {
     try
     {
       
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/validcode";
       var body = {
         'email': email, 
@@ -161,7 +174,7 @@ class AccountAPI {
     try
     {
       
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/reset";
       var body = {
         'newPass': newPass,           
@@ -194,7 +207,7 @@ class AccountAPI {
   {
     try
     {
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/register";
       var body = {
         'email': email,
@@ -229,7 +242,7 @@ class AccountAPI {
 
       if(token == null) return {'success': false, 'message': "Không thể đổi mật khẩu",};
 
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/changepass";
       var body = {
         'oldPass': oldPass,
@@ -270,7 +283,7 @@ class AccountAPI {
 
       if(token == null) return {'success': false, 'message': "Chưa đăng nhập. Vui lòng đăng nhập lại",};
 
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/";
       var body = {
         'email': email
@@ -312,9 +325,9 @@ class AccountAPI {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      if(token == null) return {'success': false, 'message': "Không thể đổi mật khẩu",};
+      if(token == null) return {'success': false, 'message': "Chưa đăng nhập hoặc hết hạn",};
 
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/";
       var body = {
         'fullName': name
@@ -356,7 +369,7 @@ class AccountAPI {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      var server = getServer();
+      var server = getLink();
       var link = "$server/account/Avt";
 
       var uri = Uri.parse(link);
@@ -372,18 +385,19 @@ class AccountAPI {
       {        
         var Account = resBody["data"]["account"];   
         var account =  jsonEncode(Account) ?? "";
-        print(account);
+        
         pref?.setString("Account", account);   
 
-        return {'success': true, 'message': "Cập nhật thành công"};
+        return {'success': true, 'message': "Cập nhật ảnh thành công"};
       }
       return {'success': false, 'message': resBody["message"]};
     }
     catch(e)
     {
-      return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
+      return {'success': false, 'message': "Cập nhật ảnh thất bại. Vui lòng thử lại sau!", };
     }    
 
   }
 
+  
 }

@@ -339,6 +339,7 @@ module.exports.UpdateProfile = async(req, res, next)=>
     let file = req.file
     if(!file)
     {
+        console.log("Not file");
         return res.status(400).json({
             message: "Vui lòng cung cấp ảnh"
         })
