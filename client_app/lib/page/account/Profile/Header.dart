@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:client_app/apiservices/accountAPI.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-const SERVER_MOBILE = "http://10.0.2.2:3000/images/account";
-const SERVER_WEB = "http://localhost:3000/images/account";
+
 
 class Header extends StatefulWidget {
   double width;
@@ -24,7 +24,7 @@ class _HeaderState extends State<Header> {
   String fullName = "Kiều Thành Phát";
   String email = "px4.vnd@gmail.com";
   String linkAvt = "https://randomuser.me/api/portraits/men/1.jpg";
-  String SERVER = SERVER_MOBILE;
+  String SERVER = "";
 
   @override
   void initState() {
@@ -37,10 +37,8 @@ class _HeaderState extends State<Header> {
   }
   void initServer()
   {
-    if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
-    {
-      SERVER = SERVER_WEB;
-    }
+    SERVER = AccountAPI.getServer() + "/images/account"; 
+    
   }
   void initInfor() async {
     var pref = await SharedPreferences.getInstance();
@@ -49,7 +47,8 @@ class _HeaderState extends State<Header> {
 
     setState(() {
       fullName = Account["fullName"];
-      email = Account["email"];   
+      email = Account["email"];  
+      
       linkAvt = "$SERVER/${Account["_id"]}/${Account["nameAvt"]}?v=${DateTime.now().toString()}";
     });
   }

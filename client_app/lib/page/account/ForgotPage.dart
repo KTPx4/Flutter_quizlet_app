@@ -46,7 +46,15 @@ class _ForgotPageState extends State<ForgotPage> {
     super.initState();
     
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    userController.dispose();
+    codeController.dispose();
+    passController.dispose();
+    confirmController.dispose();
+  }
 
   void requestCode() async {
     if(isWaiting) return;

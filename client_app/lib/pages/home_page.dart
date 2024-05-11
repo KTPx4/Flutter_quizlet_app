@@ -25,9 +25,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      body: Stack(
+    return      Stack(
         children: [
           Container(
             padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
@@ -202,7 +200,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+      )
+    ;
   }
 }
