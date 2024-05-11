@@ -5,53 +5,67 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
-class ChangeAvt extends StatefulWidget {
+class ChangeAvtMobile extends StatefulWidget {
   
 
-  ChangeAvt({Key? key,}) : super(key: key);
+  ChangeAvtMobile({Key? key,}) : super(key: key);
 
   @override
-  _ChangeAvtState createState() => _ChangeAvtState();
+  _ChangeAvtMobileState createState() => _ChangeAvtMobileState();
 }
 
-class _ChangeAvtState extends State<ChangeAvt> {
+class _ChangeAvtMobileState extends State<ChangeAvtMobile> {
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool isBlock = false;
+  bool waitLoad = false;
 
   Future<void> _pickImage() async {
-    if(isBlock) return;
-
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    if(isBlock || waitLoad) return;
+    if(mounted)
+    {
       setState(() {
-        _imageFile = pickedFile;
+        waitLoad = true;
       });
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = pickedFile;
+        });
+      }
+
+      setState(() {
+        waitLoad = false;
+      });
+
     }
   }
 
   Future<void> _uploadImage() async {
-    if (_imageFile == null) {
-      return;
-    }
-    setState(() {
-      isBlock = true;
-    });
+      if (_imageFile == null) {
+        return;
+      }
+      setState(() {
+        isBlock = true;
+      });
 
-    print("File: ${_imageFile?.path}" );
+      var res = await AccountAPI.changeAvt(path: _imageFile!.path);
+      
+      if(mounted)
+      {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
+        
+        setState(() {
+          isBlock = false;
+        });
+        if(res['success'] == true)
+        {           
+          Navigator.of(context).pop(true);  
+        }
 
-    var res = await AccountAPI.changeAvt(path: _imageFile!.path);
-
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
-    
-    setState(() {
-      isBlock = false;
-    });
-    if(res['success'] == true)
-    {           
-      Navigator.of(context).pop(true);  
-    }
+      }
+   
     
     
   }
