@@ -10,4 +10,16 @@ class AccountModel {
     AccountModel({this.id="", required this.fullName, required this.user, 
       required this.passWord, required this.email, required this.phone, required this.nameAvt});
 
+
+
+
+
+sdfdsfd
+
+
+
+
+
+
+
 }
