@@ -46,15 +46,7 @@ class _ForgotPageState extends State<ForgotPage> {
     super.initState();
     
   }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    userController.dispose();
-    codeController.dispose();
-    passController.dispose();
-    confirmController.dispose();
-  }
+
 
   void requestCode() async {
     if(isWaiting) return;
@@ -75,7 +67,7 @@ class _ForgotPageState extends State<ForgotPage> {
       isWaiting = true;
     });
     
-  
+    await Future.delayed(Duration(seconds: 1));
 
     var res = await AccountAPI.getCode(email: user);     
     
@@ -105,7 +97,6 @@ class _ForgotPageState extends State<ForgotPage> {
   
   void sendCode() async
   {
-  
     if(isWaiting) return;
     var code = codeController.text.replaceAll(' ', '');
     if(code.length != 4)
@@ -119,7 +110,7 @@ class _ForgotPageState extends State<ForgotPage> {
     setState(() {
       isWaiting = true;
     });
-   
+    await Future.delayed(Duration(seconds: 1));
 
     var res = await AccountAPI.sendCode(email: user, code: code);     
   
@@ -179,9 +170,9 @@ class _ForgotPageState extends State<ForgotPage> {
     setState(() {
       isWaiting = true;
     });
+    await Future.delayed(Duration(seconds: 1));
 
-
-    var res = await AccountAPI.resetPass(token: token, newPass: password);     
+    var res = await AccountAPI.ResetPass(token: token, newPass: password);     
   
     setState(() {
       isWaiting = false;
@@ -192,9 +183,10 @@ class _ForgotPageState extends State<ForgotPage> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
 
-      var obj = jsonEncode({"user": user, "pass": password});
-        
-      Navigator.pushNamedAndRemoveUntil(context, '/account/login', (Route<dynamic> route) => false, arguments: obj);
+      setState(() {
+        isInputPass = true;
+        token = res['token'] ;
+      });
       
     }
     else
@@ -341,7 +333,6 @@ class _ForgotPageState extends State<ForgotPage> {
                             color: isInputCode ? Colors.grey[350] : Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(
-                          keyboardType: TextInputType.emailAddress,
                           enabled: !isInputCode,
                           controller: userController,                       
                           onChanged: (value) => setState(() {
@@ -369,16 +360,6 @@ class _ForgotPageState extends State<ForgotPage> {
                       ),
 
                       // input code
-                      if(isInputCode && !isInputPass) ElevatedButton(onPressed: (){
-                        setState(() {
-                          isInputCode = false; 
-                          ErrorMessage = "";                         
-                        });
-                      }, child: Text("Đổi email")),
-                      
-                      const SizedBox(
-                        height: 8,
-                      ),
                       if(isInputCode && !isInputPass) Container(                        
                         padding: EdgeInsets.only(left: 30, bottom: 2),
                         decoration: BoxDecoration(
@@ -421,21 +402,7 @@ class _ForgotPageState extends State<ForgotPage> {
                       // Button login
                       Material(                   
                         child: InkWell(    
-                          onTap: (){
-                            if(!isInputCode && !isInputPass) 
-                            {
-                              requestCode();
-                            }
-                            // After input email - input code
-                            else if(isInputCode && !isInputPass) 
-                            {                               
-                              sendCode();
-                            }
-                            else if(isInputPass) // After input code - input new pass word
-                            {
-                              changePass();
-                            }
-                          },
+                          onTap: requestCode,
                           child: Container(                          
                             height: 50,
                             alignment: Alignment.center,
@@ -447,7 +414,7 @@ class _ForgotPageState extends State<ForgotPage> {
 
                                 ])),
                             width: double.infinity,
-                            child: isWaiting ? CircularProgressIndicator() : Text("Gửi", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+                            child: isWaiting ? CircularProgressIndicator() : Text("Send", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                           ),
                         ),
                       ),
@@ -456,13 +423,13 @@ class _ForgotPageState extends State<ForgotPage> {
                       ),
                       
                       // Other options
-                      const Text("hoặc", style: TextStyle( fontSize: 12, )),
+                      const Text("or", style: TextStyle( fontSize: 12, )),
                       const SizedBox(
                         height: 3,
                       ),
-                      TextButton(onPressed: toLogin, child:const Text("Đăng Nhập",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
+                      TextButton(onPressed: toLogin, child:const Text("Login",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
                      
-                      TextButton(onPressed: toRegister, child:const Text("Đăng Ký",  style: TextStyle(color: Color.fromARGB(255, 240, 23, 150), fontSize: 12, ),)),
+                      TextButton(onPressed: toRegister, child:const Text("Register",  style: TextStyle(color: Color.fromARGB(255, 240, 23, 150), fontSize: 12, ),)),
                     ],
                   ),
                 ),
