@@ -31,7 +31,7 @@ const sendEmail = async (toEmail, subject, html) => {
       accessToken: ACCESS_TOKEN,
     },
     tls: {
-      rejectUnauthorized: false,
+      rejectUnauthorized: true,
     },
   });
 

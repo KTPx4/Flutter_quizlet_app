@@ -76,6 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
         isWaiting = true;
       });
       
+      await Future.delayed(Duration(seconds: 1));
 
       var res = await AccountAPI.register(email: user, password: password);     
       
@@ -88,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
        
         var obj = jsonEncode({"user": user, "pass": password});
         
-        Navigator.pushNamedAndRemoveUntil(context, '/account/login', (Route<dynamic> route) => false, arguments: obj);
+         Navigator.pushNamedAndRemoveUntil(context, '/account/login', (Route<dynamic> route) => false, arguments: obj);
       }
       else
       {
@@ -153,7 +154,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(
-                          keyboardType: TextInputType.emailAddress,
                           controller: userController,                       
                           onChanged: (value) => setState(() {
                             ErrorMessage = "";
@@ -185,7 +185,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(     
-                          maxLength: 20,
                           controller: passController,                 
                           onChanged: (value) => setState(() {
                             ErrorMessage = "";
@@ -275,7 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   Color.fromARGB(169, 166, 246, 255),
                                 ])),
                             width: double.infinity,
-                            child: isWaiting ? CircularProgressIndicator() : Text("Gửi", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+                            child: isWaiting ? CircularProgressIndicator() : Text("Submit", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                           ),
                         ),
                       ),
@@ -284,13 +283,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       
                       // Other options
-                      const Text("hoặc", style: TextStyle( fontSize: 12, )),
+                      const Text("or", style: TextStyle( fontSize: 12, )),
                       const SizedBox(
                         height: 3,
                       ),
-                      TextButton(onPressed: toLogin, child:const Text("Đăng Nhập",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
+                      TextButton(onPressed: toLogin, child:const Text("Login",  style: TextStyle(color: Color.fromARGB(171, 18, 141, 241), fontSize: 12, ),)),
                      
-                      TextButton(onPressed: toForgotPass, child:const Text("Quên Mật Khẩu",  style: TextStyle(color: Color.fromARGB(255, 189, 11, 115), fontSize: 12, ),)),
+                      TextButton(onPressed: toForgotPass, child:const Text("Forgot password",  style: TextStyle(color: Color.fromARGB(255, 189, 11, 115), fontSize: 12, ),)),
                     ],
                   ),
                 ),
