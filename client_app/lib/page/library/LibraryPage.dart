@@ -1,5 +1,6 @@
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
+import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,9 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStateMixin{
   late final _tabController = TabController(length: 2, vsync: this);
   var _pageController = PageController();
-  var childLib = [TopicPage(), FolderTab()];
+  final CallFunction callFuntion = CallFunction();
+
+  var childLib = [];
 
   bool isTopic = true; // use for button add in AppBar
  
@@ -54,7 +57,7 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
     setState(() {
       isTopic = !isTopic;
     });
-    
+
     _pageController.animateToPage(index, duration: const Duration(milliseconds: 200),
                               curve: Curves.linear);
 
@@ -62,6 +65,7 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
                               curve: Curves.linear);
                               
   }
+  
   Widget _buildTabBar()
   {
     return Container(
@@ -76,8 +80,13 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildPage()
+  Future<Widget> _buildPage() async
   {
+    if(childLib.length == 0)
+    {
+      childLib = [TopicPage(callFunction: callFuntion,), FolderTab()];
+    }
+
     return PageView.builder(
       onPageChanged: _animationToPage,
       controller: _pageController,
@@ -94,8 +103,26 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        TextButton(onPressed: ()
+            {
+              callFuntion.refreshWidget();
+            }, child: Text("Test Refresh")),
         _buildTabBar(),
-        Expanded(child: _buildPage())
+        Expanded(child: FutureBuilder(future: _buildPage(), builder: (context, snapshot) {
+          if(!snapshot.hasData)
+          {
+            return CircularProgressIndicator();
+          }
+          else if(snapshot.hasData)
+          {
+            var page = snapshot.data;
+            return page!;
+          }
+          else
+          {
+            return Center(child: Text("Error When loading"),);
+          }
+        },))
       ],
     );
   }
