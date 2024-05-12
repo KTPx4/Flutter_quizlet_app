@@ -84,7 +84,7 @@ const authAccessTopic =  async ( req, res, next) =>{
         try{
             var topicID = req.params.id
             var Account = req.vars.User
-            var uid = Account._id
+            var uid = Account._id.toString()
             
             var Topic = await TopicModel.findOne({_id: topicID})
             if(!Topic)
@@ -116,7 +116,7 @@ const authCRUD_Topic = async (req, res, next) =>
         try{
             var topicID = req.params.id
             var Account = req.vars.User
-            var uid = Account._id // get from login token
+            var uid = Account._id.toString() // get from login token
             
             var Topic = await TopicModel.findOne({_id: topicID})
             if(!Topic)
@@ -125,6 +125,8 @@ const authCRUD_Topic = async (req, res, next) =>
             }
             if(Topic.authorID !== uid)
             {
+                console.log(Topic.authorID);
+                console.log(uid);
                 throw new CustomError("Tài khoản của bạn không có quyền truy cập vào Topic này")
             }
             return next()

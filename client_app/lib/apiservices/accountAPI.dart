@@ -278,6 +278,7 @@ class AccountAPI {
   {
     try
     {
+   
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
