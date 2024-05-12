@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken')
 const SECRET_LOGIN = process.env.KEY_SECRET_LOGIN || 'key-login'
 const AccountModel = require('../../models/AccountModel')
+const TopicModel = require("../../models/TopicModel")
+const CustomError = require("../../modules/CustomError")
 
-module.exports.AuthAccount = (req, res, next) =>{
+const AuthAccount = async (req, res, next) =>{
     try{
         // Get token from header or body
         let tokenFromHeader =  req.header('Authorization')
@@ -18,15 +20,15 @@ module.exports.AuthAccount = (req, res, next) =>{
     
         if(!token || token === undefined)
         {
-            return res.status(400).json({
+            return res.status(401).json({
                 status: "Authorization",           
-                message: 'Vui lòng đăng nhập mới có quyền truy cập'
+                message: 'Vui lòng cung cấp token mới có quyền truy cập'
             })
         }
 
         // verify token
     
-        jwt.verify(token, SECRET_LOGIN, async(err, data)=>{
+        await jwt.verify(token, SECRET_LOGIN, async(err, data)=>{
             if(err)
             {
                 return res.status(400).json({
@@ -67,7 +69,7 @@ module.exports.AuthAccount = (req, res, next) =>{
     catch(err)
     {
         console.log("Error at Auth - AuthAccount: ", err);
-        return res.stauts(500).json({
+        return res.status(500).json({
             status: "Error Server",
             message: "Vui lòng thử lại sau"
         })
@@ -76,3 +78,72 @@ module.exports.AuthAccount = (req, res, next) =>{
 
   
 }
+
+const authAccessTopic =  async ( req, res, next) =>{
+    await AuthAccount(req, res, async() =>{
+        try{
+            var topicID = req.params.id
+            var Account = req.vars.User
+            var uid = Account._id.toString()
+            
+            var Topic = await TopicModel.findOne({_id: topicID})
+            if(!Topic)
+            {
+                throw new CustomError("Topic không tồn tại")
+            }
+            if(Topic.authorID !== uid && !Topic.isPublic)
+            {
+                throw new CustomError("Tài khoản của bạn không có quyền truy cập vào Topic này")
+            }
+            return next()
+        }
+        catch(err)
+        {
+            if (!(err instanceof CustomError)) {
+                console.log("Error at Auth.js - AccessTopic: ", err);
+            }
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+        
+    })
+}
+
+const authCRUD_Topic = async (req, res, next) =>
+{
+    await AuthAccount(req, res, async() =>{
+        try{
+            var topicID = req.params.id
+            var Account = req.vars.User
+            var uid = Account._id.toString() // get from login token
+            
+            var Topic = await TopicModel.findOne({_id: topicID})
+            if(!Topic)
+            {
+                throw new CustomError("Topic không tồn tại")
+            }
+            if(Topic.authorID !== uid)
+            {
+                console.log(Topic.authorID);
+                console.log(uid);
+                throw new CustomError("Tài khoản của bạn không có quyền truy cập vào Topic này")
+            }
+            return next()
+        }
+        catch(err)
+        {
+            if (!(err instanceof CustomError)) {
+                console.log("Error at Auth.js - authCRUD_Topic: ", err);
+            }
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+
+        
+    })    
+}
+module.exports.AuthAccount = AuthAccount
+module.exports.AccessTopic = authAccessTopic
+module.exports.CRUDTopic = authCRUD_Topic
