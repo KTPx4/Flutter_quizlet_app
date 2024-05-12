@@ -18,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   double width = double.infinity;
   final CallFunction callFuntion = CallFunction();
+  
   @override
   void initState() {
     // TODO: implement initState

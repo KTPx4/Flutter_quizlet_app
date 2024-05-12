@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatform();
   }
+
   void initPlatform()
   {
     if(kIsWeb )
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: Home(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: HomePage(),));
           case "/account/profile": 
             return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
           case "/account/register":

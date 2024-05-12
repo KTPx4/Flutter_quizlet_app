@@ -65,7 +65,6 @@ class AppBarCustomState extends State<AppBarCustom> with SingleTickerProviderSta
     });
   }
 
-
   void clearAll()
   {
      WidgetsBinding.instance.addPostFrameCallback((_) {

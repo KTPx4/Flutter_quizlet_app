@@ -34,7 +34,36 @@ module.exports.getAll = async(req, res) =>{
         })
     }
 }
-
+module.exports.GetByID = async(req, res) =>{
+    try {
+        let id = req.params.id
+        var account = await AccountModel.findOne({_id: id});
+        if(!account)
+        {
+            return res.status(400).json({
+                message: `Account '${id}' not exists`,
+                data: null
+            })
+        }
+        
+        return res.status(200).json({
+            message: "Get account",
+            data: {
+                "fullName": account.fullName,
+                "user": account.user,
+                "nameAvt": account.nameAvt
+            }
+        })
+    }
+    catch(e)
+    {
+        console.log("Error at AccountController - getbyid: \n" + err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!",
+            data: []
+        })
+    }
+}
 module.exports.Register = async (req, res) =>{
     let {email,  password} = req.body
     let {root, userName} = req.vars

@@ -8,6 +8,7 @@ require('dotenv').config()
 //Call Router
 const HomeRouter = require('./routes/HomeRouter')
 const AccountRouter = require('./routes/AccountRouter')
+const TopicRouter = require('./routes/TopicRouter')
 
 
 // Define variable 
@@ -33,6 +34,8 @@ _APP.use((req, res, next)=>{
 _APP.use('/api/', HomeRouter)
 
 _APP.use('/api/account', AccountRouter(__dirname))
+_APP.use('/api/topic', TopicRouter)
+
 
 _APP.use('*', (req, res)=>{
     res.status(404).json({
