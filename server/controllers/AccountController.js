@@ -55,7 +55,7 @@ module.exports.GetByID = async(req, res) =>{
             }
         })
     }
-    catch(e)
+    catch(err)
     {
         console.log("Error at AccountController - getbyid: \n" + err);
         return res.status(500).json({

@@ -14,13 +14,13 @@ _APP.post('/:id/word', Auth.CRUDTopic, Validator.AddWords, TopicController.AddWo
 
 _APP.delete('/:id/word/:wordid', Auth.CRUDTopic, Validator.DeleteWord, TopicController.DeleteWord)
 
-_APP.patch('/:id/word/:wordid', Auth.CRUDTopic, Validator.AddWords, TopicController.AddWords)
-
 _APP.get('/:id', Auth.AccessTopic, TopicController.GetByID)
 
 _APP.delete('/:id', Auth.CRUDTopic, TopicController.Delete)
 
 _APP.patch('/:id', Auth.CRUDTopic, Validator.Edit, TopicController.Edit)
+
+
 
 
 
