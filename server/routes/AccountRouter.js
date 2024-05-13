@@ -10,7 +10,8 @@ const AccountControler = require('../controllers/AccountController')
 
 _APP.get('/', AccountControler.getAll)
 
-_APP.get('/:id', AccountControler.GetByID)
+_APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
+
 
 _APP.get('/validate', Auth.AuthAccount, AccountControler.validAuth)
 
@@ -34,8 +35,8 @@ _APP.post('/validcode',  AccountValidator.ValidCode, AccountControler.ValidCode)
 _APP.post('/reset', Auth.AuthAccount, AccountValidator.ResetPass, AccountControler.ChangePassword)
 
 // Edit Account ( fullName - email)
-_APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
+_APP.get('/:id', AccountControler.GetByID)
 
 module.exports = (root) =>{
 

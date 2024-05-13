@@ -95,7 +95,7 @@ module.exports.Add = async(req, res) =>{
     try{
         var Account = req.vars.User
         var idu = Account._id
-        var {topicName, desc, isPublic, words} = req.body
+        var {topicName, desc, isPublic} = req.body
 
         var newTopic = await TopicModel.create({
             topicName: topicName,
@@ -105,40 +105,40 @@ module.exports.Add = async(req, res) =>{
         })
 
         var idTopic = newTopic._id
-        var listWords = await Promise.all(words.map(async (word) => {
 
-            var newcombine = await CombineModel.create({
-                topicID: idTopic,
-                desc: word["desc"],
-                img:  word["img"],
-                mean1: {
-                    title: word["mean1"]["title"],
-                    lang: word["mean1"]["lang"]
-                },
-                mean2: {
-                    title: word["mean2"]["title"],
-                    lang: word["mean2"]["lang"]
-                },             
+        // var listWords = await Promise.all(words.map(async (word) => {
+
+        //     var newcombine = await CombineModel.create({
+        //         topicID: idTopic,
+        //         desc: word["desc"],
+        //         img:  word["img"],
+        //         mean1: {
+        //             title: word["mean1"]["title"],
+        //             lang: word["mean1"]["lang"]
+        //         },
+        //         mean2: {
+        //             title: word["mean2"]["title"],
+        //             lang: word["mean2"]["lang"]
+        //         },             
               
-            })
+        //     })
         
-            return {
-                "desc": newcombine.desc,
-                "img": newcombine.img,
-                mean1: newcombine.mean1,
-                mean2: newcombine.mean2
-            }
-        }));
+        //     return {
+        //         "desc": newcombine.desc,
+        //         "img": newcombine.img,
+        //         mean1: newcombine.mean1,
+        //         mean2: newcombine.mean2
+        //     }
+        // }));
         
-        var result = [{
-            ...newTopic["_doc"],
-            "words": listWords
-        }]
-        
-        
+        // var result = [{
+        //     ...newTopic["_doc"],
+        //     "words": listWords
+        // }]
+
         return res.status(200).json({
             message: "Thêm thành công topic",
-            data: result[0]
+            data: newTopic
         })
 
     }
