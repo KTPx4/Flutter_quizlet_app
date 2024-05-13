@@ -1,6 +1,5 @@
 const express = require('express')
 const _APP = express.Router()
-const multer = require('multer')
 
 //Middleware
 const AccountValidator = require('../middlewares/Account/Validator')
@@ -31,15 +30,5 @@ _APP.post('/validcode',  AccountValidator.ValidCode, AccountControler.ValidCode)
 // Get valid code reset
 _APP.post('/reset', Auth.AuthAccount, AccountValidator.ResetPass, AccountControler.ChangePassword)
 
-// Edit Account ( fullName - email)
-_APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
-
-module.exports = (root) =>{
-
-    const uploader = multer({dest: root +'/uploads/'})
-
-    _APP.put('/Avt', uploader.single('avt'), Auth.AuthAccount, AccountValidator.UpdateProfile,  AccountControler.UpdateProfile)
-    
-    return _APP
-}
+module.exports = _APP

@@ -1,29 +1,35 @@
 
 import 'dart:convert';
-import 'dart:io';
-import 'package:client_app/component/AuthForMobile.dart';
-import 'package:client_app/component/BottomNav.dart';
-import 'package:client_app/component/BuildPage.dart';
-import 'package:client_app/modules/callFunction.dart';
+
 import 'package:client_app/page/404/NotFoundPage.dart';
-import 'package:client_app/page/RecentStudy/RecentStudyPage.dart';
 import 'package:client_app/page/account/ForgotPage.dart';
 import 'package:client_app/page/account/LoginPage.dart';
-import 'package:client_app/page/account/ProfilePage.dart';
+import 'package:client_app/page/Test.dart';
 import 'package:client_app/page/account/RegisterPage.dart';
-import 'package:client_app/page/home/Home.dart';
-import 'package:client_app/page/library/LibraryPage.dart';
-import 'package:client_app/pages/home_page.dart';
+// import 'package:client_app/page/account/ScreenAuth.dart';
+import 'package:client_app/page/page1.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'apiservices/accountAPI.dart';
+// import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: unused_import
+// import './middleware/MobilePlatform.dart' 
+//   if (kIsWeb ) './middleware/WebPlatform.dart' ;
 
 const KEY_LOGIN = "quizlet-login";
 
 
 
 void main() {
+  // PlatformRun pl;
+  // if(kIsWeb){
+  //   pl = WebPlatform();
+  //   // setUrlStrategy(PathUrlStrategy());
+  //   pl.main();
+  // }
+
   runApp(MyApp());
 }
 
@@ -33,26 +39,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool haveBody = true;
-
-  
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initPlatform();
-  }
-  void initPlatform()
-  {
-    if(kIsWeb )
-    {
-      haveBody = false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       
       debugShowCheckedModeBanner: false,
@@ -66,30 +54,30 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
+<<<<<<< HEAD
             return MaterialPageRoute(builder: (bd)=> AuthPage(page: HomePage(),));
           case "/account/profile": 
             return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
+=======
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const TestPage(),));
+>>>>>>> 5440f8543b8312b1fe4d7e825f112996fb3c0033
           case "/account/register":
-            return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(),));
+            return MaterialPageRoute(builder: (bd)=> canRegister(page: const TestPage(),));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));           
-          
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: const TestPage(),));
           case "/account/login":
-            return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
-
+            return MaterialPageRoute(builder: (bd)=> canLogin(page: const TestPage(), args: args));
+          case "/page1": 
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: const Page1(), path: "/page1"));
           default:
             return MaterialPageRoute(builder: (bd)=> const NotFoundPage());
 
         }
 
       },
-      home: !haveBody ? null :  AuthForMoblie()
-
     );
   }
 }
-
-
 
 FutureBuilder canForgot({page, path = "/", args = ""})
 {
@@ -143,6 +131,10 @@ FutureBuilder canLogin({page, path = "/", args = ""})
   );
 }
 
+
+
+
+
 FutureBuilder canRegister({page, path = "/"})
 {
   return FutureBuilder(
@@ -171,7 +163,6 @@ FutureBuilder canRegister({page, path = "/"})
 
 FutureBuilder AuthPage({page, path = "/"})
 {
-
   return FutureBuilder(
     future: CheckLogin(), 
     builder: (context, snapshot) {
@@ -185,22 +176,7 @@ FutureBuilder AuthPage({page, path = "/"})
       {
         if(snapshot.data)
         {
-          return Scaffold(              
-            
-            body: Container(
-              height: double.infinity,
-              decoration: const BoxDecoration(gradient:  LinearGradient(
-                transform:  GradientRotation(14),
-                colors: [
-                  Color.fromARGB(202, 96, 125, 139),
-                  Color.fromARGB(192, 96, 125, 139),
-                  Color.fromARGB(179, 96, 125, 139),
-                ]
-              )
-              ),
-            child: SafeArea(child: page),
-            )
-          );
+          return page;
         }
         else
         {
@@ -237,5 +213,4 @@ Future<bool> CheckLogin() async
  
   return false;
 }
-
 
