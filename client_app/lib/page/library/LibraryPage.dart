@@ -1,132 +1,230 @@
+import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
+
+
+
+
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
+import 'package:client_app/page/topic/addtopic.dart';
+import 'package:client_app/values/folder.dart';
+import 'package:client_app/values/topic.dart';
 import 'package:flutter/material.dart';
 
+import 'AddFolder.dart';
+
 class LibraryPage extends StatefulWidget {
-  GlobalKey<State<AppBarCustom>>? appBarKey ;
-  LibraryPage({this.appBarKey,super.key});
+  GlobalKey<State<AppBarCustom>>? appBarKey;
+  LibraryPage({this.appBarKey, super.key});
+
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
-class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStateMixin{
+
+class _LibraryPageState extends State<LibraryPage>
+    with SingleTickerProviderStateMixin {
+  final CallFunction callFuntionTopic = CallFunction();
+  final CallFunction callFuntionFolder = CallFunction();
   late final _tabController = TabController(length: 2, vsync: this);
   var _pageController = PageController();
+
+  late var childLib;
+
   final CallFunction callFuntion = CallFunction();
 
-  var childLib = [];
-
   bool isTopic = true; // use for button add in AppBar
- 
+
   @override
   void initState() {
     // TODO: implement initState
+    childLib = [
+      TopicPage(callFunction: callFuntionTopic),
+      FolderTab(
+        callFunction: callFuntionFolder,
+      )
+    ];
+
     initStartup();
     super.initState();
   }
 
-  void initStartup() async 
-  {
-   
+
+  void initStartup() async {
     var action = _actionAppBar();
 
-    if (widget.appBarKey?.currentState != null) 
-    {
-
-      (widget.appBarKey?.currentState as AppBarCustomState ).updateTitle("Thư viện");
-      (widget.appBarKey?.currentState as AppBarCustomState ).updateAction(action);
-  
+    if (widget.appBarKey?.currentState != null) {
+      (widget.appBarKey?.currentState as AppBarCustomState)
+          .updateTitle("Thư viện");
+      (widget.appBarKey?.currentState as AppBarCustomState)
+          .updateAction(action);
     }
-    
   }
 
-  List<Widget> _actionAppBar()
-  {
-    return [
-      IconButton(onPressed: (){}, icon: Icon(Icons.add))
-    ];
-  }
-  //////
+  void addFolder() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddFolderDialog(
+          onAddFolder: (folderName, folderDescription) {
+            folderList.add(folder(
+              id: 1,
+              folderName: folderName,
+              topics: topicList,
+              accountID: '1',
+            ));
 
-  void _animationToPage(index)
-  {
-    setState(() {
-      isTopic = !isTopic;
-    });
-
-    _pageController.animateToPage(index, duration: const Duration(milliseconds: 200),
-                              curve: Curves.linear);
-
-    _tabController.animateTo(index, duration: const Duration(milliseconds: 200),
-                              curve: Curves.linear);
-                              
-  }
-  
-  Widget _buildTabBar()
-  {
-    return Container(
-        color: AppColors.libTabBar,
-        child: TabBar(
-        onTap: _animationToPage,      
-        controller: _tabController,
-        tabs: [
-          Tab(icon: Icon(Icons.library_books_outlined),),
-          Tab(icon: Icon(Icons.folder_copy_outlined),),
-        ]),
+            callFuntionFolder.refreshWidget();
+          },
+        );
+      },
     );
   }
 
-  Future<Widget> _buildPage() async
-  {
-    if(childLib.length == 0)
-    {
-      childLib = [TopicPage(callFunction: callFuntion,), FolderTab()];
+  void addTopic() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddTopicPage()),
+    );
+
+    callFuntionTopic.refreshWidget();
+  }
+
+  List<Widget> _actionAppBar() {
+    return [
+      IconButton(
+          onPressed: (isTopic) ? addTopic : addFolder, icon: Icon(Icons.add)),
+    ];
+  }
+
+  //////
+// transition function   control the current tab and the current page
+  void _animationToPage(index) {
+    // check if it is a topic or not
+
+    _pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 200), curve: Curves.linear);
+
+    _tabController.animateTo(index,
+        duration: const Duration(milliseconds: 200), curve: Curves.linear);
+
+    setState(() {
+      isTopic = (index == 0);
+      initStartup();
+    });
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      color: AppColors.libTabBar,
+      child: TabBar(onTap: _animationToPage, controller: _tabController, tabs: [
+        Tab(
+          icon: Icon(Icons.library_books_outlined),
+        ),
+        Tab(
+          icon: Icon(Icons.folder_copy_outlined),
+        ),
+      ]),
+    );
+  }
+
+  Future<Widget> _buildPage() async {
+    if (childLib.length == 0) {
+      childLib = [
+        TopicPage(
+          callFunction: callFuntionTopic,
+        ),
+        FolderTab(
+          callFunction: callFuntionFolder,
+        )
+      ];
     }
 
     return PageView.builder(
       onPageChanged: _animationToPage,
       controller: _pageController,
-      itemBuilder:  (context, index) => 
-        Container(
-          child: childLib[index],
-        ),
+      itemBuilder: (context, index) => Container(
+        child: childLib[index],
+      ),
+
       itemCount: 2,
     );
   }
+
+
+  Widget _searchbar() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: "Tìm kiếm",
+          prefixIcon: Icon(Icons.search),
+          suffixIcon: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.clear),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextButton(onPressed: ()
-            {
-              callFuntion.refreshWidget();
-            }, child: Text("Test Refresh")),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testGetPublicTopics();
+                },
+                child: Text("Add Topic")),
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testGetAccountTopics();
+                },
+                child: Text("Account Topic")),
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testAddTopic();
+                },
+                child: Text("add Topic")),
+          ],
+        ),
+
         _buildTabBar(),
-        Expanded(child: FutureBuilder(future: _buildPage(), builder: (context, snapshot) {
-          if(!snapshot.hasData)
-          {
-            return CircularProgressIndicator();
-          }
-          else if(snapshot.hasData)
-          {
-            var page = snapshot.data;
-            return page!;
-          }
-          else
-          {
-            return Center(child: Text("Error When loading"),);
-          }
-        },))
+        (isTopic) ? _searchbar() : Container(),
+        Expanded(
+            child: FutureBuilder(
+          future: _buildPage(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasData) {
+              var page = snapshot.data;
+              return page!;
+            } else {
+              return Center(
+                child: Text("Error When loading"),
+              );
+            }
+          },
+        ))
       ],
     );
   }
-
-
-  
 }
+

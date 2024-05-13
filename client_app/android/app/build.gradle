@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+
     namespace "com.example.client_app"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
@@ -45,7 +46,7 @@ android {
         applicationId "com.example.client_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -57,6 +58,11 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
+    }
+    defaultConfig {
+        // Other settings
+        minSdkVersion 21
+        // Other settings
     }
 }
 
