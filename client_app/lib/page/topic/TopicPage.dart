@@ -1,3 +1,4 @@
+
 import 'package:client_app/models/AccountService.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/topic/questionPage.dart';
@@ -8,11 +9,13 @@ class TopicPage extends StatefulWidget {
   final CallFunction callFunction;
   const TopicPage({super.key, required this.callFunction});
 
+
   @override
   State<TopicPage> createState() => _TopicPageState();
 }
 
 class _TopicPageState extends State<TopicPage> {
+
   String title = "topic";
 
   @override
@@ -91,3 +94,4 @@ class _TopicPageState extends State<TopicPage> {
     return _buildTopicsListView();
   }
 }
+

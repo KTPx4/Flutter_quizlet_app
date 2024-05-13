@@ -1,6 +1,10 @@
 import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
+
+
+
+
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
@@ -15,9 +19,11 @@ class LibraryPage extends StatefulWidget {
   GlobalKey<State<AppBarCustom>>? appBarKey;
   LibraryPage({this.appBarKey, super.key});
 
+
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
+
 
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
@@ -41,9 +47,11 @@ class _LibraryPageState extends State<LibraryPage>
         callFunction: callFuntionFolder,
       )
     ];
+
     initStartup();
     super.initState();
   }
+
 
   void initStartup() async {
     var action = _actionAppBar();
@@ -141,9 +149,11 @@ class _LibraryPageState extends State<LibraryPage>
       itemBuilder: (context, index) => Container(
         child: childLib[index],
       ),
+
       itemCount: 2,
     );
   }
+
 
   Widget _searchbar() {
     return Container(
@@ -164,11 +174,13 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -192,6 +204,7 @@ class _LibraryPageState extends State<LibraryPage>
                 child: Text("add Topic")),
           ],
         ),
+
         _buildTabBar(),
         (isTopic) ? _searchbar() : Container(),
         Expanded(
@@ -214,3 +227,4 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 }
+

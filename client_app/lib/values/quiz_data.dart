@@ -59,5 +59,8 @@ final List<Question> questionsData = [
         'A car',
       ],
       answer: "A pillow",
-      feedback: "A pillow: cái gối: sẽ cao hơn khi ta không nằm lên nó"),
+
+      feedback:
+          "A pillow: cái gối: sẽ cao hơn khi ta không nằm lên nó"),
+
 ];
