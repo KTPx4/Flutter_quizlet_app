@@ -1,3 +1,4 @@
+import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
@@ -168,11 +169,29 @@ class _LibraryPageState extends State<LibraryPage>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextButton(
-            onPressed: () {
-              callFuntion.refreshWidget();
-            },
-            child: Text("Test Refresh")),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testGetPublicTopics();
+                },
+                child: Text("Add Topic")),
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testGetAccountTopics();
+                },
+                child: Text("Account Topic")),
+            TextButton(
+                onPressed: () async {
+                  TopicAPITester topic = TopicAPITester();
+                  await topic.testAddTopic();
+                },
+                child: Text("add Topic")),
+          ],
+        ),
         _buildTabBar(),
         (isTopic) ? _searchbar() : Container(),
         Expanded(
