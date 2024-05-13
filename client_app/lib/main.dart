@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatform();
   }
+
   void initPlatform()
   {
     if(kIsWeb )

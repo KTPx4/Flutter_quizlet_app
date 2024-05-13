@@ -29,6 +29,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
   }
 
   @override
+
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
@@ -82,6 +83,7 @@ Widget build(BuildContext context) {
 
 
 
+
   Widget FrontCard() {
   var currCard = _data[_currIdx];
   return Card(
@@ -100,14 +102,18 @@ Widget build(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(currCard['word']!,
+
               textAlign: TextAlign.center,
+
               style: TextStyle(
                   fontSize: 28,
                   color: Colors.black,
                   fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           Text(currCard['phonetic']!,
+
               textAlign: TextAlign.center,
+
               style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey[700],
@@ -141,16 +147,20 @@ Widget BackCard() {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
+
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(currCard['translation']!,
               textAlign: TextAlign.center,
+
               style: TextStyle(fontSize: 24, color: Colors.black)),
         ],
       ),
     ),
   );
 }
+
+
 
 
 
@@ -178,12 +188,14 @@ Widget BackCard() {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
+
               backgroundColor: Colors.deepPurple, 
               foregroundColor: Colors.white, 
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 // Chỉnh hình dạng nút
                 borderRadius: BorderRadius.circular(10),
+
               ),
             ),
             onPressed: _currIdx < _data.length - 1

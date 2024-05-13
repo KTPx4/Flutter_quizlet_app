@@ -1,3 +1,4 @@
+
 import 'package:client_app/pages/typing_page.dart';
 import 'package:flutter/material.dart';
 
@@ -40,5 +41,6 @@ class VocabPage extends StatelessWidget {
         ),
       ),
     );
+
   }
 }
