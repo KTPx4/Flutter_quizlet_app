@@ -13,6 +13,7 @@ _APP.get('/', AccountControler.getAll)
 _APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
 
+
 _APP.get('/validate', Auth.AuthAccount, AccountControler.validAuth)
 
 // register account
@@ -35,6 +36,8 @@ _APP.post('/validcode',  AccountValidator.ValidCode, AccountControler.ValidCode)
 _APP.post('/reset', Auth.AuthAccount, AccountValidator.ResetPass, AccountControler.ChangePassword)
 
 // Edit Account ( fullName - email)
+
+_APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
 _APP.get('/:id', AccountControler.GetByID)
 

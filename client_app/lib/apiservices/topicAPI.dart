@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client_app/models/topic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/word.dart';
 
 const WEB_URL = 'http://localhost:3000'; // kết nối từ web
 const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
@@ -92,11 +95,7 @@ class TopicAPI {
   }
 
   // Add a new topic for the account
-  static Future<Map<String, dynamic>> addTopic(
-      {required String topicName,
-      required String desc,
-      required bool isPublic,
-      required List<String> words}) async {
+  static Future<Map<String, dynamic>> addTopic({required Topic topic}) async {
     try {
       var server = getLink();
       var link = "$server/topic/";
@@ -104,10 +103,10 @@ class TopicAPI {
       String? token = pref.getString(KEY_LOGIN);
 
       var body = {
-        'topicName': topicName,
-        'desc': desc,
-        'isPublic': isPublic.toString(),
-        'words': jsonEncode(words),
+        'topicName': topic.topicName,
+        'desc': topic.desc,
+        'isPublic': topic.isPublic,
+        'words': topic.words.map((word) => word.toJson()).toList(),
       };
 
       var res = await http.post(
@@ -133,11 +132,7 @@ class TopicAPI {
 
   // Edit a topic
   static Future<Map<String, dynamic>> editTopic(
-      {required String id,
-      required String topicName,
-      required String desc,
-      required bool isPublic,
-      required List<String> words}) async {
+      {required String id, required Topic topic}) async {
     try {
       var server = getLink();
       var link = "$server/topic/$id";
@@ -145,16 +140,17 @@ class TopicAPI {
       String? token = pref.getString(KEY_LOGIN);
 
       var body = {
-        'topicName': topicName,
-        'desc': desc,
-        'isPublic': isPublic.toString(),
-        'words': jsonEncode(words),
+        'topicName': topic.topicName,
+        'desc': topic.desc,
+        'isPublic': topic.isPublic.toString(),
+        'words': jsonEncode(topic.words.map((word) => word.toJson()).toList()),
       };
 
+      String bodyJsonString = jsonEncode(body);
       var res = await http.patch(
         Uri.parse(link),
         headers: {"Authorization": "Bearer $token"},
-        body: body,
+        body: bodyJsonString,
       );
 
       var resBody = jsonDecode(res.body);
@@ -230,7 +226,7 @@ class TopicAPI {
 
   // Add new words to a topic
   static Future<Map<String, dynamic>> addWordsToTopic(
-      {required String id, required List<String> words}) async {
+      {required String id, required List<Word> words}) async {
     try {
       var server = getLink();
       var link = "$server/topic/$id/word";
@@ -238,13 +234,13 @@ class TopicAPI {
       String? token = pref.getString(KEY_LOGIN);
 
       var body = {
-        'words': jsonEncode(words),
+        'words': jsonEncode(words.map((word) => word.toJson()).toList()),
       };
-
+      String bodyJsonString = jsonEncode(body);
       var res = await http.post(
         Uri.parse(link),
         headers: {"Authorization": "Bearer $token"},
-        body: body,
+        body: bodyJsonString,
       );
 
       var resBody = jsonDecode(res.body);
@@ -266,7 +262,7 @@ class TopicAPI {
   static Future<Map<String, dynamic>> editWordsInTopic(
       {required String id,
       required String wordId,
-      required List<String> words}) async {
+      required List<Word> words}) async {
     try {
       var server = getLink();
       var link = "$server/topic/$id/word/$wordId";
@@ -274,13 +270,13 @@ class TopicAPI {
       String? token = pref.getString(KEY_LOGIN);
 
       var body = {
-        'words': jsonEncode(words),
+        'words': jsonEncode(words.map((word) => word.toJson()).toList()),
       };
-
+      String bodyJsonString = jsonEncode(body);
       var res = await http.patch(
         Uri.parse(link),
         headers: {"Authorization": "Bearer $token"},
-        body: body,
+        body: bodyJsonString,
       );
 
       var resBody = jsonDecode(res.body);
