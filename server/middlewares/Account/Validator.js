@@ -144,6 +144,7 @@ module.exports.ChangeProfile = (req, res, next) =>{
 }
 
 module.exports.ChangePassword = async (req, res, next) =>{
+    
     let {oldPass, newPass} = req.body
 
     let Account = req.vars.User
@@ -169,6 +170,8 @@ module.exports.ChangePassword = async (req, res, next) =>{
 
         if(oldPass == newPass)
             throw new Error('Mật khẩu mới không được trùng với mật khẩu cũ')
+
+        return next()
     })
     .catch(err =>{
         return res.status(400).json({
@@ -177,7 +180,7 @@ module.exports.ChangePassword = async (req, res, next) =>{
         })
     })
 
-    return next()
+   
 }
 
 module.exports.GetCode = async (req, res, next) =>{
@@ -218,6 +221,7 @@ module.exports.GetCode = async (req, res, next) =>{
 
 module.exports.ValidCode = async (req, res, next) =>{
     try{
+      
         let {code, email} = req.body
         var mess = ""
         if(!email)
@@ -228,7 +232,7 @@ module.exports.ValidCode = async (req, res, next) =>{
         {
             mess = "Vui lòng cung cấp code"
         }
-        if(!mess)
+        if(mess)
         {
             return res.status(400).json({
                 status: 'Reset password Failed',
@@ -249,6 +253,8 @@ module.exports.ValidCode = async (req, res, next) =>{
 
         if(!ResetCode || ResetCode.code !== code)
         {
+           
+
             return res.status(400).json({
                 status: "Code invalid",
                 message: "Code không đúng hoặc hết hạn"
@@ -298,4 +304,48 @@ module.exports.ResetPass = async (req, res, next) =>{
 
 }
 
+module.exports.Edit = async(req, res, next) =>{
+    let {email, fullName} = req.body
+    email = email?.toLowerCase()
+    if(!email && !fullName)
+        return res.status(400).json({
+            message: "Vui lòng nhập email hoặc fullName"
+        })
+        
+    else if(email && !emailValidator.validate(email))
+        return res.status(400).json({
+            message: "Email không hợp lệ"
+        })
 
+    if(email)
+    {      
+        email = email.toLowerCase()
+        var account = await AccountModel.findOne({email: email})
+        if(account)
+        {
+            return res.status(400).json({
+                message: "Email này đã có tài khoản"
+            })        
+        }
+    }
+    
+    return next()
+
+}
+
+
+module.exports.UpdateProfile = async(req, res, next)=>
+{
+    let file = req.file
+    if(!file)
+    {
+        console.log("Not file");
+        return res.status(400).json({
+            message: "Vui lòng cung cấp ảnh"
+        })
+    }
+    return next()
+
+    
+
+}
