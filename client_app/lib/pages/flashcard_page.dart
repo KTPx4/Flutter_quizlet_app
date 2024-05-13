@@ -29,28 +29,60 @@ class _FlashcardPageState extends State<FlashcardPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Flashcard'),
-        // backgroundColor: Colors.deepPurple,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            FlipCard(
-              direction: FlipDirection.HORIZONTAL,
-              front: FrontCard(),
-              back: BackCard(),
-            ),
-            SizedBox(height: 30), 
-            navigationButtons(),
-          ],
+
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Flashcard'),
+    ),
+    body: Column(
+      children: <Widget>[
+        SizedBox(height: 10), 
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              Text(
+                "Card ${_currIdx + 1}/${_data.length}", 
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              SizedBox(height: 4),
+              LinearProgressIndicator(
+                value: (_currIdx + 1) / _data.length,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                FlipCard(
+                  direction: FlipDirection.HORIZONTAL,
+                  front: FrontCard(),
+                  back: BackCard(),
+                ),
+                SizedBox(height: 30),
+                navigationButtons(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+
 
   Widget FrontCard() {
   var currCard = _data[_currIdx];
@@ -70,14 +102,18 @@ class _FlashcardPageState extends State<FlashcardPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(currCard['word']!,
-              textAlign: TextAlign.center, 
+
+              textAlign: TextAlign.center,
+
               style: TextStyle(
                   fontSize: 28,
                   color: Colors.black,
                   fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           Text(currCard['phonetic']!,
-              textAlign: TextAlign.center, 
+
+              textAlign: TextAlign.center,
+
               style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey[700],
@@ -111,16 +147,22 @@ Widget BackCard() {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, 
+
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(currCard['translation']!,
-              textAlign: TextAlign.center, 
+              textAlign: TextAlign.center,
+
               style: TextStyle(fontSize: 24, color: Colors.black)),
         ],
       ),
     ),
   );
 }
+
+
+
+
 
 
   Widget navigationButtons() {
@@ -146,12 +188,14 @@ Widget BackCard() {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple, // Màu nền cho nút
-              foregroundColor: Colors.white, // Màu chữ
+
+              backgroundColor: Colors.deepPurple, 
+              foregroundColor: Colors.white, 
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 // Chỉnh hình dạng nút
-                borderRadius: BorderRadius.circular(10), // Bán kính góc bo tròn
+                borderRadius: BorderRadius.circular(10),
+
               ),
             ),
             onPressed: _currIdx < _data.length - 1
