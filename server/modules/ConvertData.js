@@ -38,10 +38,12 @@ const formatListTopic = async (ListTopic) => {
 const formatListFolder = async (ListFolder) => {
     var resultTopics = await Promise.all(ListFolder.map(async (folder)=>{
         var storeTopic = await StoreTopic.find({folderID: folder._id})
-        var listIDTopic = storeTopic.topicID
+       
+        var listIDTopic = storeTopic.map(e => e.topicID)
         var listTopics = []
         for(let id of listIDTopic)
         {
+          
             var topic = await TopicModel.findOne({_id: id})
             if(topic)
             {
@@ -49,7 +51,7 @@ const formatListFolder = async (ListFolder) => {
             }
         }
         
-        listTopics = await formatListTopic(listTopic)
+        listTopics = await formatListTopic(listTopics)
   
         return {
             ...convertFolder(folder),

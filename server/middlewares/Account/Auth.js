@@ -3,6 +3,7 @@ const SECRET_LOGIN = process.env.KEY_SECRET_LOGIN || 'key-login'
 const AccountModel = require('../../models/AccountModel')
 const TopicModel = require("../../models/TopicModel")
 const CustomError = require("../../modules/CustomError")
+const FolderModel = require('../../models/FolderModel')
 
 const AuthAccount = async (req, res, next) =>{
     try{
@@ -144,6 +145,44 @@ const authCRUD_Topic = async (req, res, next) =>
         
     })    
 }
+
+const authCRUD_Folder = async (req, res, next) =>
+{
+    await AuthAccount(req, res, async() =>{
+        try{
+            var folderID = req.params.id
+            var Account = req.vars.User
+            var uid = Account._id.toString() // get from login token
+            
+            var Folder = await FolderModel.findOne({_id: folderID})
+            if(!Folder)
+            {
+                throw new CustomError("Thư mục không tồn tại")
+            }
+            if(Folder.authorID !== uid)
+            {
+                console.log(Topic.authorID);
+                console.log(uid);
+                throw new CustomError("Tài khoản của bạn không có quyền truy cập vào thư mục này")
+            }
+            return next()
+        }
+        catch(err)
+        {
+            if (!(err instanceof CustomError)) {
+                console.log("Error at Auth.js - authCRUD_Folder: ", err);
+            }
+            return res.status(400).json({
+                message: err.message
+            })
+        }
+
+        
+    })    
+}
+
+
 module.exports.AuthAccount = AuthAccount
 module.exports.AccessTopic = authAccessTopic
 module.exports.CRUDTopic = authCRUD_Topic
+module.exports.CRUDFolder = authCRUD_Folder

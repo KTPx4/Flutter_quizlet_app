@@ -98,15 +98,13 @@ module.exports.AddWords = async(req, res, next) =>{
         })
     }
 
-    
-
-    return next()
 }
 
 module.exports.DeleteWord = async(req, res, next) =>{
     try{
-        let {wordid} = req.params
-        var word = await CombineWordModel.findOne({_id: wordid})
+        let {wordid, id} = req.params
+       
+        var word = await CombineWordModel.findOne({_id: wordid, topicID: id})
         if(!word)
         {
             return res.status(400).json({
