@@ -1,7 +1,3 @@
-
-import 'package:flutter/material.dart';
-
-
 import 'package:client_app/models/AccountService.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/values/folder.dart';
@@ -11,21 +7,12 @@ class FolderTab extends StatefulWidget {
   final CallFunction callFunction;
   const FolderTab({super.key, required this.callFunction});
 
-
   @override
   State<FolderTab> createState() => _FolderTabState();
 }
 
-
-// this page only use for show list topic in library, 
+// this page only use for show list topic in library,
 // when click 1 folder => navigate to Page Folder (page/folder) to show list topic
-
-class _FolderTabState extends State<FolderTab> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("Folder"));
-  }
-}
 
 // this page only use for show list topic in library,
 // when click 1 folder => navigate to Page Folder (page/folder) to show list topic
@@ -98,4 +85,3 @@ class _FolderTabState extends State<FolderTab> {
     return _buildTopicsListView();
   }
 }
-

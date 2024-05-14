@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 application
-INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:2:5-32:19
+INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:6:5-36:19
 MERGED from [:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:5-34:19
 MERGED from [:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:5-34:19
 MERGED from [androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:24:5-31:19
@@ -18,11 +18,11 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\ko
 	android:name
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml
 manifest
-ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
-INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
-INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
-INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
-MERGED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
+ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
+INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
+INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
+INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
+MERGED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
 MERGED from [:shared_preferences_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\shared_preferences_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-21:12
 MERGED from [:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-36:12
@@ -58,18 +58,32 @@ INJECTED from D:\3 hk2\phone application development final project\Flutter_quizl
 INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml:1:1-7:12
 	package
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml
-		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml
-		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml
 	android:versionCode
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml
-		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-33:12
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:1-37:12
 		INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:1:11-69
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:2:5-79
+MERGED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-11:38
+MERGED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-11:38
+	android:maxSdkVersion
+		ADDED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-35
+	android:name
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:2:22-77
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:3:5-4:50
+	android:maxSdkVersion
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:4:22-48
+	android:name
+		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:3:22-78
 uses-sdk
 INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml
@@ -146,12 +160,6 @@ uses-permission#android.permission.INTERNET
 ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml:6:5-66
 	android:name
 		ADDED from D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\debug\AndroidManifest.xml:6:22-64
-uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-11:38
-	android:maxSdkVersion
-		ADDED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-35
-	android:name
-		ADDED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-64
 queries
 ADDED from [:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:13:5-19:15
 intent#action:name:android.intent.action.GET_CONTENT+data:mimeType:*/*

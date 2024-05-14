@@ -28,67 +28,57 @@ class _FlashcardPageState extends State<FlashcardPage> {
   }
 
   @override
-
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Flashcard'),
-    ),
-    body: Column(
-      children: <Widget>[
-        SizedBox(height: 10), 
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Text(
-                "Card ${_currIdx + 1}/${_data.length}", 
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
-              ),
-              SizedBox(height: 4),
-              LinearProgressIndicator(
-                value: (_currIdx + 1) / _data.length,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Center(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Flashcard'),
+      ),
+      body: Column(
+        children: <Widget>[
+          SizedBox(height: 10),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                FlipCard(
-                  direction: FlipDirection.HORIZONTAL,
-                  front: FrontCard(),
-                  back: BackCard(),
+              children: [
+                Text(
+                  "Card ${_currIdx + 1}/${_data.length}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
                 ),
-                SizedBox(height: 30),
-                navigationButtons(),
+                SizedBox(height: 4),
+                LinearProgressIndicator(
+                  value: (_currIdx + 1) / _data.length,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                ),
               ],
             ),
-
-            SizedBox(height: 30),
-            navigationButtons(),
-          ],
-
-        ),
-      ],
-    ),
-  );
-}
-
-
-
-
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  FlipCard(
+                    direction: FlipDirection.HORIZONTAL,
+                    front: FrontCard(),
+                    back: BackCard(),
+                  ),
+                  SizedBox(height: 30),
+                  navigationButtons(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget FrontCard() {
-
     var currCard = _data[_currIdx];
     return Card(
       elevation: 12,
@@ -125,14 +115,12 @@ Widget build(BuildContext context) {
                 onTap: () => _speak(currCard['word']!),
                 child: Icon(Icons.volume_up, size: 36, color: Colors.blue),
               ),
-
             ),
           ],
         ),
       ),
     );
   }
-
 
   Widget BackCard() {
     var currCard = _data[_currIdx];
@@ -156,14 +144,9 @@ Widget build(BuildContext context) {
                 style: TextStyle(fontSize: 24, color: Colors.black)),
           ],
         ),
-
       ),
     );
   }
-
-
-
-
 
   Widget navigationButtons() {
     return Container(
@@ -185,14 +168,12 @@ Widget build(BuildContext context) {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-
-              backgroundColor: Colors.deepPurple, 
-              foregroundColor: Colors.white, 
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 // Chỉnh hình dạng nút
                 borderRadius: BorderRadius.circular(10),
-
               ),
             ),
             onPressed: _currIdx < _data.length - 1

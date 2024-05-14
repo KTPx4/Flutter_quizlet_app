@@ -26,8 +26,8 @@ class Word {
     return {
       'desc': desc,
       'img': img,
-      'mean1': mean1,
-      'mean2': mean2,
+      'mean1': mean1.toJson(),
+      'mean2': mean2.toJson(),
     };
   }
 }

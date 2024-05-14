@@ -19,8 +19,8 @@ class TopicAPITester {
       ),
     ],
   );
-  final String testId = 'your-test-id';
-  final String testWordId = 'your-test-word-id';
+  final String testId = '6641c975c4391ad442d13824';
+  final String testWordId = '6641c975c4391ad442d13826';
 
   Future<void> testGetPublicTopics() async {
     var result = await TopicAPI.getPublicTopics();

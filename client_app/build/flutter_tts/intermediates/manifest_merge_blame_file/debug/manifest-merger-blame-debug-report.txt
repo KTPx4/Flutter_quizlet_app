@@ -4,8 +4,8 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="21"
-6-->C:\Users\konod\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_tts-3.8.5\android\src\main\AndroidManifest.xml
+6-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\flutter_tts\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest12970462964543042122.xml
 7        android:targetSdkVersion="21" />
-7-->C:\Users\konod\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_tts-3.8.5\android\src\main\AndroidManifest.xml
+7-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\flutter_tts\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest12970462964543042122.xml
 8
 9</manifest>
