@@ -1,5 +1,8 @@
+const CustomError = require("../modules/CustomError")
 const TopicModel = require("../models/TopicModel")
 const CombineModel = require("../models/CombineWordModel")
+var ObjectId = require('mongoose').Types.ObjectId;
+const ConverData = require("../modules/ConvertData")
 
 module.exports.GetAll = async(req, res) =>{
     try{
@@ -16,15 +19,13 @@ module.exports.GetAll = async(req, res) =>{
             })
         }   
     
-        var resultTopics =await formatListTopic(ListTopic)
+        var resultTopics =await ConverData.formatListTopic(ListTopic)
         
     
         return res.status(200).json({
             message: "Lấy thành công danh sách topic",
             count: ListTopic.length,
-            data: {
-                topics: resultTopics
-            }
+            data: resultTopics
         })
     }
     catch(err)
@@ -49,13 +50,12 @@ module.exports.GetByID = async(req, res) =>{
         })
     }   
 
-    var resultTopics =await formatListTopic(ListTopic)    
+    var resultTopics =await ConverData.formatListTopic(ListTopic)    
 
     return res.status(200).json({
         message: `Lấy thành công Topic '${topicID}'`,
-        data: {
-            topics: resultTopics
-        }
+        data: {...resultTopics }[0]      
+        
     })
 }
 
@@ -72,15 +72,16 @@ module.exports.GetPublic = async (req, res) =>{
             })
         }   
     
-        var resultTopics = await formatListTopic(ListTopic)
+        var resultTopics = await ConverData.formatListTopic(ListTopic)
         
     
         return res.status(200).json({
             message: "Lấy thành công danh sách topic cộng đồng",
             count: ListTopic.length,
-            data: {
-                topics: resultTopics
-            }
+            data: resultTopics
+            // data: {
+            //     topics: resultTopics
+            // }
         })
     }
     catch(err)
@@ -138,7 +139,7 @@ module.exports.Add = async(req, res) =>{
 
         return res.status(200).json({
             message: "Thêm thành công topic",
-            data: newTopic
+            data: ConverData.convertTopic(newTopic)
         })
 
     }
@@ -173,11 +174,13 @@ module.exports.Delete = async(req, res) => {
 
         return res.status(200).json({
             message: `Xóa thành công topic '${topicID}'`,
-            data: topic
+            data: ConverData.convertTopic(topic)
         })
     }
     catch(err)
     {
+        console.log("Error Add TopicController - Delete: " , err);
+
         return res.status(500).json({
             message: "Server đang bận. Vui lòng thử lại sau!"
         })
@@ -204,7 +207,11 @@ module.exports.Edit =async (req, res) =>{
         {   
 
             listWords = await Promise.all(words.map(async (word) => {
-    
+                if(!word._id || !ObjectId.isValid(word._id))
+                {
+                    throw new CustomError("Thiếu id của từ vựng hoặc id không đúng")
+                }
+
                 var newcombine = await CombineModel.findByIdAndUpdate({_id: word._id},{
                   
                     desc: word["desc"],
@@ -232,7 +239,7 @@ module.exports.Edit =async (req, res) =>{
 
         
         var result = [{
-            ...editTopic["_doc"],
+            ...ConverData.convertTopic(editTopic),
             "words": listWords
         }]
         
@@ -245,20 +252,23 @@ module.exports.Edit =async (req, res) =>{
     }
     catch(err)
     {
-        console.log("Error Add TopicController - Add: " , err);
+        if (!(err instanceof CustomError)) {
+            console.log("Error at TopicController - Add: ", err.message);
+        }
+    
         return res.status(500).json({
-            message: "Chỉnh sửa topic thất bại. Vui lòng thử lại sau!"
+            message: err.message
         })
     }
 }
 
 module.exports.AddWords = async(req, res) =>{
     try{
+        console.log("1 request add word");
         let {id} = req.params
         let {words} = req.body
     
-        var listWords = await Promise.all(words.map(async (word) => {
-            console.log(word);
+        var listWords = await Promise.all(words.map(async (word) => {   
             var newcombine = await CombineModel.create({
                 topicID: id,
                 desc: word["desc"],
@@ -314,33 +324,3 @@ module.exports.DeleteWord = async(req, res) =>{
 
 }
 
-const formatListWord = (listCombine) => {
-    // var listWords = []
-
-    // for(let word of listCombine)
-    // {
-    //     listWords.Add({
-    //         "_id": word._id,
-    //         "desc": word.desc,
-    //         "img": word.img,
-    //         "mean1": word.mean1,
-    //         "mean2": word.mean2,
-    //     })
-    // }
-    return listCombine
-}
-
-const formatListTopic = async (ListTopic) => {
-    var resultTopics = await Promise.all(ListTopic.map(async (topic)=>{
-        var listCombine = await CombineModel.find({topicID: topic._id})
-        var listWords =  formatListWord(listCombine)
-  
-        return {
-            ...topic["_doc"],
-            "countWords": listCombine.length,
-            "words": listWords
-        }
-    }))
-
-    return resultTopics
-}
