@@ -89,7 +89,7 @@ const authAccessTopic =  async ( req, res, next) =>{
             var Topic = await TopicModel.findOne({_id: topicID})
             if(!Topic)
             {
-                throw new CustomError("Topic không tồn tại")
+                throw new CustomError("Topic không tồn tại hoặc vừa bị xóa")
             }
             if(Topic.authorID !== uid && !Topic.isPublic)
             {
