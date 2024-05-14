@@ -2,6 +2,7 @@ const FolderModel = require('../models/FolderModel')
 const TopicModel = require('../models/TopicModel')
 const StoreTopic = require('../models/StoreTopicModel')
 const ConverData = require('../modules/ConvertData')
+const CustomError = require("../modules/CustomError")
 
 module.exports.GetAll = async(req, res) =>{
     try{
@@ -19,7 +20,7 @@ module.exports.GetAll = async(req, res) =>{
             })
         }   
     
-        var resultFolder = await ConverData.formatListFolder(ListTopic)
+        var resultFolder = await ConverData.formatListFolder(ListFolder)
         
     
         return res.status(200).json({
@@ -81,7 +82,7 @@ module.exports.Add = async(req, res) =>{
 
         return res.status(200).json({
             message: "Thêm thành công thư mục",
-            data: ConverData.con(newFolder)
+            data: ConverData.convertFolder(newFolder)
         })
 
     }
@@ -125,3 +126,114 @@ module.exports.Delete = async(req, res) => {
         })
     }
 }
+
+module.exports.Edit =async (req, res) =>{
+    try{
+        var folderID = req.params.id
+        var Account = req.vars.User
+        var idu = Account._id
+
+        var {folderName, desc} = req.body
+
+        var editFolder = await FolderModel.findOneAndUpdate({_id: folderID},{
+            folderName: folderName,
+            desc: desc,          
+        }, {new: true})
+
+
+        
+        var result = [{
+            ...ConverData.convertFolder(editFolder),
+
+        }]
+        
+        
+        return res.status(200).json({
+            message: `Cập nhật thành công '${folderID}'`,
+            data: result[0]
+        })
+
+    }
+    catch(err)
+    {
+        if (!(err instanceof CustomError)) {
+            console.log("Error at FolderController - edit: ", err.message);
+        }
+    
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
+
+module.exports.AddTopic = async(req, res) =>{
+    let count = 0
+    try{
+
+        let {id} = req.params
+        let {topics} = req.body
+        var listtopics = await Promise.all(topics.map(async (idTopic) => {   
+            var topic = await TopicModel.findOne({_id: idTopic})
+            var store = await StoreTopic.findOne({topicID: idTopic, folderID: id})
+
+            if(topic && !store)
+            {
+                count++
+                await StoreTopic.create({
+                    folderID: id,
+                    topicID: idTopic
+                })
+            }
+            else
+            {
+                if(!topic)
+                    throw new CustomError(`Topic '${idTopic}' không tồn tại`)
+                
+                if(store)
+                    throw new CustomError(`Topic '${idTopic}' đã có trong thư mục`)
+
+            }
+        }));
+
+        return res.status(200).json({
+            message: `Đã thêm thành công ${count} chủ đề vào thư mục`,          
+        })
+
+    }
+    catch(err)
+    {
+        var code = 500, mess = "Server đang bận. Vui lòng thử lại sau"
+        if(err instanceof CustomError)
+        {
+            mess = err.message + `. ${count} chủ đề đã được thêm vào`
+            code = 400
+        }
+        else{
+            console.log("Error At FodlerController - AddTopic");
+        }
+        return res.status(code).json({
+            message: mess
+        })
+    }
+}
+
+module.exports.DelTopicfromFolder = async(req, res) =>{
+    try{
+        let {topicid, id} = req.params
+        var store = await StoreTopic.findOneAndDelete({topicID: topicid, folderID: id})
+        return res.status(200).json({
+            message: "Xóa thành công chủ đề ra khỏi thư mục",
+            data: store
+        })
+    }
+    catch(err)
+    {
+        console.log("Error Add TopicController - DeleteWord: " , err);
+        return res.status(500).json({
+            message: "Xóa từ vựng vào topic thất bại. Vui lòng thử lại sau!"
+        })
+    }
+
+}
+

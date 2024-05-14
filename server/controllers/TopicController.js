@@ -253,7 +253,7 @@ module.exports.Edit =async (req, res) =>{
     catch(err)
     {
         if (!(err instanceof CustomError)) {
-            console.log("Error at TopicController - Add: ", err.message);
+            console.log("Error at TopicController - Edit: ", err.message);
         }
     
         return res.status(500).json({
@@ -264,7 +264,7 @@ module.exports.Edit =async (req, res) =>{
 
 module.exports.AddWords = async(req, res) =>{
     try{
-        console.log("1 request add word");
+        // console.log("1 request add word");
         let {id} = req.params
         let {words} = req.body
     
@@ -307,8 +307,8 @@ module.exports.AddWords = async(req, res) =>{
 
 module.exports.DeleteWord = async(req, res) =>{
     try{
-        let {wordid} = req.params
-        var word = await CombineModel.findOneAndDelete({_id: wordid})
+        let {wordid, id} = req.params
+        var word = await CombineModel.findOneAndDelete({_id: wordid, topicID: id})
         return res.status(200).json({
             message: "Xóa thành công từ vựng ra khỏi topic",
             data: word
