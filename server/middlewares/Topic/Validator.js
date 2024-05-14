@@ -9,8 +9,7 @@ module.exports.Add = async(req, res, next) =>
 
         if(!topicName)
             throw new CustomError("Thiếu topicName")
-        if(!desc)
-            throw new CustomError("Thiếu desc")
+        //  
         if(isPublic == null || !(typeof isPublic === "boolean"))
             throw new CustomError("Thiếu isPublic hoặc không đúng kiểu boolean")
         // if(!words || words == null)
