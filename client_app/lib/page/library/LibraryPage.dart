@@ -1,12 +1,12 @@
+import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
 import 'package:client_app/page/topic/addtopic.dart';
-import 'package:client_app/values/folder.dart';
-import 'package:client_app/values/topic.dart';
 import 'package:flutter/material.dart';
 
 import 'AddFolder.dart';
@@ -61,18 +61,7 @@ class _LibraryPageState extends State<LibraryPage>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddFolderDialog(
-          onAddFolder: (folderName, folderDescription) {
-            folderList.add(folder(
-              id: 1,
-              folderName: folderName,
-              topics: topicList,
-              accountID: '1',
-            ));
-
-            callFuntionFolder.refreshWidget();
-          },
-        );
+        return AddFolderDialog();
       },
     );
   }
@@ -175,20 +164,27 @@ class _LibraryPageState extends State<LibraryPage>
           children: [
             TextButton(
                 onPressed: () async {
-                  TopicAPITester topic = TopicAPITester();
-                  await topic.testGetPublicTopics();
+                  TopicService topic = TopicService();
+                  var topics = await topic.getAccountTopics();
                 },
                 child: Text("Add Topic")),
             TextButton(
                 onPressed: () async {
-                  TopicAPITester topic = TopicAPITester();
-                  await topic.testGetAccountTopics();
+                  TopicService topic = TopicService();
+                  Topic newtopic = Topic(
+                      topicName: "test",
+                      desc: "test",
+                      isPublic: true,
+                      words: []);
+                  var topics = await topic.addTopic(newtopic);
+
+                  callFuntionTopic.refreshWidget();
                 },
                 child: Text("Account Topic")),
             TextButton(
                 onPressed: () async {
                   TopicAPITester topic = TopicAPITester();
-                  await topic.testEditWordsInTopic();
+                  await topic.testAddTopic();
                 },
                 child: Text("add Topic")),
           ],

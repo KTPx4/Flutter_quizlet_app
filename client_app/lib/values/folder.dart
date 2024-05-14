@@ -1,3 +1,4 @@
+/*
 import 'package:client_app/values/topic.dart';
 
 class folder {
@@ -24,3 +25,4 @@ List<folder> folderList = [
   folder(id: 4, folderName: "Folder 4", topics: topicList, accountID: '2'),
   folder(id: 5, folderName: "Folder 5", topics: topicList, accountID: '2'),
 ];
+*/

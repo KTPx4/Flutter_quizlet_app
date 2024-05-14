@@ -12,6 +12,7 @@ class TopicAPITester {
     isPublic: true,
     words: [
       Word(
+        id: '6641c975c4391ad442d13827',
         desc: 'Test Word',
         img: '',
         mean1: Meaning(title: 'Hello', lang: 'English'),
@@ -59,8 +60,8 @@ class TopicAPITester {
   }
 
   Future<void> testEditWordsInTopic() async {
-    var result = await TopicAPI.editWordsInTopic(
-        id: testId, wordId: testWordId, words: testTopic.words);
+    var result =
+        await TopicAPI.editWordsInTopic(id: testId, words: testTopic.words);
     print('editWordsInTopic result: $result');
   }
 
