@@ -173,7 +173,7 @@ module.exports.AddTopic = async(req, res) =>{
 
         let {id} = req.params
         let {topics} = req.body
-        var uid = Account._id.toString()
+        var uid = req.vars.User._id.toString()
         var listtopics = await Promise.all(topics.map(async (idTopic) => {   
             var topic = await TopicModel.findOne({_id: idTopic})
             var store = await StoreTopic.findOne({topicID: idTopic, folderID: id})
@@ -214,7 +214,7 @@ module.exports.AddTopic = async(req, res) =>{
             code = 400
         }
         else{
-            console.log("Error At FodlerController - AddTopic");
+            console.log("Error At FodlerController - AddTopic: ", err);
         }
         return res.status(code).json({
             message: mess
