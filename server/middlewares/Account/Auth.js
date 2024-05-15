@@ -164,8 +164,6 @@ const authCRUD_Folder = async (req, res, next) =>
             }
             if(Folder.authorID !== uid)
             {
-                console.log(Topic.authorID);
-                console.log(uid);
                 throw new CustomError("Tài khoản của bạn không có quyền truy cập vào thư mục này")
             }
             return next()
