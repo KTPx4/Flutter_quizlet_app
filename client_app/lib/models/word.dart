@@ -3,10 +3,10 @@ import 'meaning.dart';
 class Word {
   final String? id;
   final String? topicID;
-  final String desc;
-  final String img;
-  final Meaning mean1;
-  final Meaning mean2;
+  String desc;
+  String img;
+  Meaning mean1;
+  Meaning mean2;
 
   Word({
     this.id,

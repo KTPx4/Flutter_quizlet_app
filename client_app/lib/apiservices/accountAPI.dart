@@ -33,7 +33,7 @@ class AccountAPI {
     if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       url = WEB_URL + "/api";
     }
-    return url;
+    return "https://flutter-quizlet-app.onrender.com/api";
   }
 
   static Future<Map<String, dynamic>> isAuth({required String token}) async {

@@ -1,7 +1,5 @@
 import 'package:client_app/apiservices/topicAPI.dart';
-import 'package:client_app/models/meaning.dart';
 import 'package:client_app/models/topic.dart';
-import 'package:client_app/models/word.dart';
 
 class TopicService {
   Future<List<Topic>> getPublicTopics() async {
@@ -63,38 +61,38 @@ class TopicService {
     }
   }
 
-  Future<void> addTopicAndWords(
-      Topic topic,
-      List<String> verbs,
-      List<String> definitions,
-      String verbLanguage,
-      String definitionLanguage) async {
-    // Step 1: Add the topic
-    String topicId = await addTopic(topic);
-
-    // Step 2: Create a list of Word objects
-    List<Word> words = [];
-    for (int i = 0; i < verbs.length; i++) {
-      String currentDate = DateTime.now().toString();
-      words.add(Word(
-        desc: 'added word on $currentDate',
-        img: '', // replace with actual image path or URL
-        mean1: Meaning(
-            title: verbs[i],
-            lang: verbLanguage), // replace 'en' with actual language code
-        mean2: Meaning(
-            title: definitions[i],
-            lang:
-                definitionLanguage), // replace '' and 'en' with actual title and language code
-      ));
-    }
-
-    // Step 3: Add words to the topic
-    var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
-    if (!response['success']) {
-      throw Exception(response['message']);
-    }
-  }
+  // Future<void> addTopicAndWords(
+  //     Topic topic,
+  //     List<Word> newWords,
+  //     List<String> definitions,
+  //     String verbLanguage,
+  //     String definitionLanguage) async {
+  //   // Step 1: Add the topic
+  //   String topicId = await addTopic(topic);
+  //
+  //   // Step 2: Create a list of Word objects
+  //   List<Word> words = [];
+  //   for (int i = 0; i < verbs.length; i++) {
+  //     String currentDate = DateTime.now().toString();
+  //     words.add(Word(
+  //       desc: 'added word on $currentDate',
+  //       img: '', // replace with actual image path or URL
+  //       mean1: Meaning(
+  //           title: verbs[i],
+  //           lang: verbLanguage), // replace 'en' with actual language code
+  //       mean2: Meaning(
+  //           title: definitions[i],
+  //           lang:
+  //               definitionLanguage), // replace '' and 'en' with actual title and language code
+  //     ));
+  //   }
+  //
+  //   // Step 3: Add words to the topic
+  //   var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+  //   if (!response['success']) {
+  //     throw Exception(response['message']);
+  //   }
+  // }
 
 // Implement other methods as needed
 }

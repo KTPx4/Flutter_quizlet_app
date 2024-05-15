@@ -2,6 +2,7 @@ import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/models/AccountService.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/callFunction.dart';
+import 'package:client_app/page/topic/addtopic.dart';
 import 'package:flutter/material.dart';
 
 import 'topicStudy.dart';
@@ -65,7 +66,23 @@ class _TopicPageState extends State<TopicPage> {
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(topic.topicName),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(topic.topicName),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddTopicPage(
+                                        topic: topic,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.edit))
+                          ]),
                       SizedBox(
                         height: 10,
                       ), // First row: Topic name
