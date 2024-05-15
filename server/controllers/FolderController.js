@@ -173,26 +173,30 @@ module.exports.AddTopic = async(req, res) =>{
 
         let {id} = req.params
         let {topics} = req.body
+        var uid = Account._id.toString()
         var listtopics = await Promise.all(topics.map(async (idTopic) => {   
             var topic = await TopicModel.findOne({_id: idTopic})
             var store = await StoreTopic.findOne({topicID: idTopic, folderID: id})
 
-            if(topic && !store)
+            if(!topic)
+            {
+                throw new CustomError(`Topic '${idTopic}' không tồn tại`)
+            }
+            else if(store)
+            {
+                throw new CustomError(`Topic '${idTopic}' đã có trong thư mục`)                
+            }
+            else if(topic.authorID !== uid && !topic.isPublic)
+            {
+                throw new CustomError(`Topic '${idTopic}' không được phép truy cập`)                
+            }
+            else
             {
                 count++
                 await StoreTopic.create({
                     folderID: id,
                     topicID: idTopic
                 })
-            }
-            else
-            {
-                if(!topic)
-                    throw new CustomError(`Topic '${idTopic}' không tồn tại`)
-                
-                if(store)
-                    throw new CustomError(`Topic '${idTopic}' đã có trong thư mục`)
-
             }
         }));
 

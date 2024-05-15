@@ -48,11 +48,7 @@ module.exports.GetByID = async(req, res) =>{
         
         return res.status(200).json({
             message: "Get account",
-            data: {
-                "fullName": account.fullName,
-                "user": account.user,
-                "nameAvt": account.nameAvt
-            }
+            data: account
         })
     }
     catch(err)

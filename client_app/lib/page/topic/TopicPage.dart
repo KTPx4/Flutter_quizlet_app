@@ -2,8 +2,9 @@ import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/models/AccountService.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/callFunction.dart';
-import 'package:client_app/page/topic/questionPage.dart';
 import 'package:flutter/material.dart';
+
+import 'topicStudy.dart';
 
 class TopicPage extends StatefulWidget {
   final CallFunction callFunction;
@@ -61,13 +62,6 @@ class _TopicPageState extends State<TopicPage> {
                   ],
                 ),
                 child: ListTile(
-                  onLongPress: () {
-                    setState(() {
-                      MaterialPageRoute(
-                        builder: (context) => QuestionPage(),
-                      );
-                    });
-                  },
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -93,7 +87,12 @@ class _TopicPageState extends State<TopicPage> {
                     ],
                   ),
                   onTap: () {
-                    setState(() {});
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TopicStudy(topic: topic),
+                      ),
+                    );
                   },
                 ),
               );
