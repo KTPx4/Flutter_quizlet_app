@@ -3,7 +3,7 @@ const TopicModel = require("../models/TopicModel")
 const CombineModel = require("../models/CombineWordModel")
 const StudyWordModel = require("../models/StudyCombine")
 const StudyTopicModel = require("../models/StudyTopic")
-const StorePublic = require('../models/StorePublicTopic')
+// const StorePublic = require('../models/StorePublicTopic')
 var ObjectId = require('mongoose').Types.ObjectId;
 const ConverData = require("../modules/ConvertData")
 
@@ -22,7 +22,7 @@ module.exports.GetAll = async(req, res) =>{
             })
         }   
     
-        var resultTopics =await ConverData.formatListTopic(ListTopic)
+        var resultTopics =await ConverData.formatListTopic(idu, ListTopic)
         
     
         return res.status(200).json({
@@ -33,6 +33,7 @@ module.exports.GetAll = async(req, res) =>{
     }
     catch(err)
     {
+        console.log("Error at TopicController - GetAll: ", err);
         return res.status(500).json({
             message: "Server đang bận. Vui lòng thử lại sau!"
         })
@@ -58,7 +59,7 @@ module.exports.GetAllWords = async(req, res) =>{
             })
         }   
 
-        var listWords =  ConverData.formatListWord(listCombine)
+        var listWords = await ConverData.formatListWord(idu, listCombine)
         
     
         return res.status(200).json({
@@ -79,7 +80,7 @@ module.exports.GetAllWords = async(req, res) =>{
 
 module.exports.GetByID = async(req, res) =>{
     let topicID = req.params.id
-
+    var idu = req.vars.User._id
     var ListTopic = await TopicModel.find({_id: topicID})
     if(!ListTopic || ListTopic.length < 1)
     {
@@ -90,7 +91,7 @@ module.exports.GetByID = async(req, res) =>{
         })
     }   
 
-    var resultTopics =await ConverData.formatListTopic(ListTopic)    
+    var resultTopics =await ConverData.formatListTopic(idu, ListTopic)    
 
     return res.status(200).json({
         message: `Lấy thành công Topic '${topicID}'`,
@@ -101,7 +102,7 @@ module.exports.GetByID = async(req, res) =>{
 
 module.exports.GetPublic = async (req, res) =>{
     try{
-
+        var idu = req.vars.User._id
         var ListTopic = await TopicModel.find({isPublic: true})
         if(!ListTopic || ListTopic.length < 1)
         {
@@ -112,7 +113,7 @@ module.exports.GetPublic = async (req, res) =>{
             })
         }   
     
-        var resultTopics = await ConverData.formatListTopic(ListTopic)
+        var resultTopics = await ConverData.formatListTopic(idu , ListTopic)
         
     
         return res.status(200).json({
@@ -131,7 +132,7 @@ module.exports.GetPublic = async (req, res) =>{
         })
     }
 }
-
+/*
 module.exports.StorePublic = async(req, res)=>{
     try{
         var Tid = req.params.id
@@ -205,7 +206,7 @@ module.exports.RemoveStore = async(req, res)=>{
 
 
 }
-
+*/
 module.exports.Add = async(req, res) =>{
     try{
         var Account = req.vars.User
@@ -398,12 +399,16 @@ module.exports.AddWords = async(req, res) =>{
                 },             
               
             })
+            var studyword = await StudyWordModel.findOne({combineID: newcombine._id, accountID: idu})
+            if(!studyword)
+            {
+                studyword = await StudyWordModel.create({
+                    combineID: newcombine._id,
+                    accountID: idu,
+                    isMark: false,                
+                })
 
-            var studyword = await StudyWordModel.create({
-                combineID: newcombine._id,
-                accountID: idu,
-                isMark: false,                
-            })
+            }
 
             return {
                 "_id": newcombine._id,

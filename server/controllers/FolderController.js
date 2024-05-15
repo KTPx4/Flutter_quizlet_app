@@ -20,7 +20,7 @@ module.exports.GetAll = async(req, res) =>{
             })
         }   
     
-        var resultFolder = await ConverData.formatListFolder(ListFolder)
+        var resultFolder = await ConverData.formatListFolder(idu, ListFolder)
         
     
         return res.status(200).json({
@@ -43,10 +43,10 @@ module.exports.GetAll = async(req, res) =>{
 module.exports.GetByID = async(req, res) =>{
     try{
         let folderID = req.params.id
-    
+        var idu = req.vars.User._id
         var listFolder = await FolderModel.find({_id: folderID})
     
-        var resultFolders = await ConverData.formatListFolder(listFolder)    
+        var resultFolders = await ConverData.formatListFolder(idu, listFolder)    
     
         return res.status(200).json({
             message: `Lấy thành công folder '${folderID}'`,
