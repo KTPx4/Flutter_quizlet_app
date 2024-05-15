@@ -3,27 +3,41 @@ const CombineModel = require("../models/CombineWordModel")
 const FolderModel = require('../models/FolderModel')
 const TopicModel = require('../models/TopicModel')
 const StoreTopic = require('../models/StoreTopicModel')
+const StudyCombineModel = require('../models/StudyCombine')
+const formatListWord = async (idu, listCombine) => {
+    var listWords = []
 
-const formatListWord = (listCombine) => {
-    // var listWords = []
 
-    // for(let word of listCombine)
-    // {
-    //     listWords.Add({
-    //         "_id": word._id,
-    //         "desc": word.desc,
-    //         "img": word.img,
-    //         "mean1": word.mean1,
-    //         "mean2": word.mean2,
-    //     })
-    // }
-    return listCombine
+    for(let word of listCombine)
+    {
+        var study = await StudyCombineModel.findOne({combineID: word._id, accountID: idu})
+        if(!study)
+        {
+      
+            study = await StudyCombineModel.create({
+                combineID: word._id,
+                accountID: idu
+            })
+        }
+
+        listWords.push({
+            "_id": word._id,
+            "desc": word.desc,
+            "img": word.img,
+            "mean1": word.mean1,
+            "mean2": word.mean2,
+            "isMark": study.isMark,
+            "studyCount": study.studyCount 
+
+        })
+    }
+    return listWords
 }
 
-const formatListTopic = async (ListTopic) => {
+const formatListTopic = async (idu, ListTopic) => {
     var resultTopics = await Promise.all(ListTopic.map(async (topic)=>{
         var listCombine = await CombineModel.find({topicID: topic._id})
-        var listWords =  formatListWord(listCombine)
+        var listWords =  await formatListWord(idu, listCombine)
         // console.log(topic);
         return {
             ...convertTopic(topic),
@@ -35,7 +49,7 @@ const formatListTopic = async (ListTopic) => {
     return resultTopics
 }
 
-const formatListFolder = async (ListFolder) => {
+const formatListFolder = async (idu, ListFolder) => {
     var resultTopics = await Promise.all(ListFolder.map(async (folder)=>{
         var storeTopic = await StoreTopic.find({folderID: folder._id})
        
@@ -51,7 +65,7 @@ const formatListFolder = async (ListFolder) => {
             }
         }
         
-        listTopics = await formatListTopic(listTopics)
+        listTopics = await formatListTopic(idu, listTopics)
   
         return {
             ...convertFolder(folder),
