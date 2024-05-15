@@ -100,11 +100,14 @@ const authAccessTopic =  async ( req, res, next) =>{
         }
         catch(err)
         {
+            var mess = err.message, code = 400
             if (!(err instanceof CustomError)) {
                 console.log("Error at Auth.js - AccessTopic: ", err);
+                mess = "Server đang bận. Vui lòng thử lại sau"
+                code = 500
             }
-            return res.status(400).json({
-                message: err.message
+            return res.status(code).json({
+                message: mess
             })
         }
         

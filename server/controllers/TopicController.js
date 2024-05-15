@@ -1,6 +1,9 @@
 const CustomError = require("../modules/CustomError")
 const TopicModel = require("../models/TopicModel")
 const CombineModel = require("../models/CombineWordModel")
+const StudyWordModel = require("../models/StudyCombine")
+const StudyTopicModel = require("../models/StudyTopic")
+const StorePublic = require('../models/StorePublicTopic')
 var ObjectId = require('mongoose').Types.ObjectId;
 const ConverData = require("../modules/ConvertData")
 
@@ -30,6 +33,43 @@ module.exports.GetAll = async(req, res) =>{
     }
     catch(err)
     {
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!"
+        })
+    }
+
+}
+
+module.exports.GetAllWords = async(req, res) =>{
+    try{
+
+        var Account = req.vars.User
+        var idu = Account._id
+        var idtopic = req.params.id
+        var listCombine = await CombineModel.find({topicID: idtopic})
+
+
+        if(!listCombine || listCombine.length < 1)
+        {
+            return res.status(200).json({
+                message:"Chưa có từ vựng nào. Hãy tạo thêm để xem",
+                count: 0,
+                data: null
+            })
+        }   
+
+        var listWords =  ConverData.formatListWord(listCombine)
+        
+    
+        return res.status(200).json({
+            message: "Lấy thành công danh sách từ vựng",
+            count: listWords.length,
+            data: listWords
+        })
+    }
+    catch(err)
+    {
+        console.log("Error at TopicController - GetAllWords: ", err);
         return res.status(500).json({
             message: "Server đang bận. Vui lòng thử lại sau!"
         })
@@ -90,6 +130,80 @@ module.exports.GetPublic = async (req, res) =>{
             message: "Server đang bận. Vui lòng thử lại sau!"
         })
     }
+}
+
+module.exports.StorePublic = async(req, res)=>{
+    try{
+        var Tid = req.params.id
+        var Uid = req.vars.User
+        var storePublic = await StorePublic.find({
+            topicID: Tid,
+            accountID: Uid
+        })
+        if(storePublic)
+        {
+            throw new CustomError("Topic này đã được lưu")
+        }
+
+        var newStore = await StorePublic.create({
+            topicID: Tid,
+            accountID: Uid
+        })
+
+        return res.status(200).json({
+            message: "Đã thêm topic vào mục lưu trữ"            
+        })
+
+    }
+    catch(err)
+    {
+        mess = err.message, code = 400
+        if(!(err instanceof CustomError))
+        {
+            console.log("Error at TopicController - StorePublic: " , err);
+            code = 500
+            mess = "Server đang bận, vui lòng thử lại sau!z"
+        }   
+        return res.status(code).json({message: mess})
+    }
+
+
+
+}
+module.exports.RemoveStore = async(req, res)=>{
+    try{
+        var Tid = req.params.id
+        var Uid = req.vars.User
+        var storePublic = await StorePublic.findOneAndDelete({
+            topicID: Tid,
+            accountID: Uid
+        })
+
+        if(!storePublic)
+        {
+            throw new CustomError("Topic này chưa được lưu để xóa")
+        }
+        else{
+            return res.status(200).json({
+                message: "Đã xóa topic khỏi mục lưu trữ"            
+            })
+        }       
+
+    }
+    catch(err)
+    {
+        mess = err.message, code = 400
+        if(!(err instanceof CustomError))
+        {
+            console.log("Error at TopicController - RemoveStore: " , err);
+            code = 500
+            mess = "Server đang bận, vui lòng thử lại sau!z"
+        }   
+        return res.status(code).json({message: mess})
+    }
+
+
+
 }
 
 module.exports.Add = async(req, res) =>{
@@ -267,7 +381,8 @@ module.exports.AddWords = async(req, res) =>{
         // console.log("1 request add word");
         let {id} = req.params
         let {words} = req.body
-    
+        let idu = req.vars.User._id
+
         var listWords = await Promise.all(words.map(async (word) => {   
             var newcombine = await CombineModel.create({
                 topicID: id,
@@ -283,8 +398,15 @@ module.exports.AddWords = async(req, res) =>{
                 },             
               
             })
-        
+
+            var studyword = await StudyWordModel.create({
+                combineID: newcombine._id,
+                accountID: idu,
+                isMark: false,                
+            })
+
             return {
+                "_id": newcombine._id,
                 "desc": newcombine.desc,
                 "img": newcombine.img,
                 mean1: newcombine.mean1,
@@ -292,7 +414,8 @@ module.exports.AddWords = async(req, res) =>{
             }
         }));
         return res.status(200).json({
-            message: "Đã thêm thành công từ vựng mới vào topic"
+            message: "Đã thêm thành công từ vựng mới vào topic",
+            data: listWords
         })
 
     }
@@ -304,6 +427,7 @@ module.exports.AddWords = async(req, res) =>{
         })
     }
 }
+
 
 module.exports.DeleteWord = async(req, res) =>{
     try{
