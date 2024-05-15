@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddFolderDialog extends StatefulWidget {
-  final Function(String, String) onAddFolder;
-
-  AddFolderDialog({required this.onAddFolder});
+  AddFolderDialog();
 
   @override
   _AddFolderDialogState createState() => _AddFolderDialogState();
@@ -47,7 +45,6 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
         ),
         TextButton(
           onPressed: () {
-            widget.onAddFolder(folderName, folderDescription);
             Navigator.of(context).pop();
           },
           child: Text('Add'),

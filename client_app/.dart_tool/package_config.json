@@ -69,7 +69,13 @@
     },
     {
       "name": "cupertino_icons",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.6",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.8",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "diacritic",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/diacritic-0.1.5",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -87,9 +93,9 @@
     },
     {
       "name": "ffi",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.0",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.2",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.3"
     },
     {
       "name": "file",
@@ -147,7 +153,7 @@
     },
     {
       "name": "flutter_cache_manager",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_cache_manager-3.3.1",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_cache_manager-3.3.2",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -171,9 +177,9 @@
     },
     {
       "name": "flutter_tts",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_tts-3.8.5",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_tts-4.0.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.15"
     },
     {
       "name": "flutter_web_plugins",
@@ -183,7 +189,7 @@
     },
     {
       "name": "go_router",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/go_router-14.0.2",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/go_router-14.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -206,6 +212,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "iconsax_flutter",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/iconsax_flutter-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "image_picker",
       "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker-1.1.1",
       "packageUri": "lib/",
@@ -219,9 +231,9 @@
     },
     {
       "name": "image_picker_for_web",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_for_web-3.0.2",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_for_web-3.0.4",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.3"
     },
     {
       "name": "image_picker_ios",
@@ -252,6 +264,12 @@
       "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_windows-0.2.1+1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
+    },
+    {
+      "name": "language_picker",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/language_picker-0.4.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "leak_tracker",
@@ -339,9 +357,9 @@
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_foundation-2.3.2",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_foundation-2.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.2"
     },
     {
       "name": "path_provider_linux",
@@ -374,6 +392,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "recase",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/recase-4.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "rxdart",
       "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/rxdart-0.27.7",
       "packageUri": "lib/",
@@ -393,9 +417,9 @@
     },
     {
       "name": "shared_preferences_foundation",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_foundation-2.3.5",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_foundation-2.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.2"
     },
     {
       "name": "shared_preferences_linux",
@@ -519,9 +543,9 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.2.0",
+      "rootUri": "file:///C:/Users/konod/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.5.0",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "xdg_directories",
@@ -536,7 +560,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2024-05-13T05:09:25.695130Z",
+  "generated": "2024-05-14T11:04:09.194833Z",
   "generator": "pub",
   "generatorVersion": "3.3.0"
 }

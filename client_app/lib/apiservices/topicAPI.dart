@@ -54,14 +54,15 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'topics': resBody["data"]["topics"]};
+        return {'success': true, 'topics': resBody["data"]};
       }
 
       return {'success': false, 'message': resBody["message"]};
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to fetch public topics. Please try again later!"
+        'message': "Failed to fetch public topics. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -82,14 +83,15 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'topics': resBody["data"]["topics"]};
+        return {'success': true, 'topics': resBody["data"]};
       }
 
       return {'success': false, 'message': resBody["message"]};
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to fetch account topics. Please try again later!"
+        'message': "Failed to fetch account topics. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -97,35 +99,37 @@ class TopicAPI {
   // Add a new topic for the account
   static Future<Map<String, dynamic>> addTopic({required Topic topic}) async {
     try {
-      var server = getLink();
-      var link = "$server/topic/";
+      var link = "${getLink()}/topic";
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      var body = {
+      var body = jsonEncode({
         'topicName': topic.topicName,
         'desc': topic.desc,
         'isPublic': topic.isPublic,
-        'words': topic.words.map((word) => word.toJson()).toList(),
-      };
+      });
 
       var res = await http.post(
         Uri.parse(link),
-        headers: {"Authorization": "Bearer $token"},
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
         body: body,
       );
 
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'message': "Topic added successfully"};
+        return {'success': true, '_id': resBody["data"]["_id"]};
       }
 
       return {'success': false, 'message': resBody["message"]};
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to add topic. Please try again later!"
+        'message': "Failed to add topic. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -139,18 +143,20 @@ class TopicAPI {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      var body = {
+      var body = jsonEncode({
+        '_id': id,
         'topicName': topic.topicName,
         'desc': topic.desc,
-        'isPublic': topic.isPublic.toString(),
-        'words': jsonEncode(topic.words.map((word) => word.toJson()).toList()),
-      };
+        'isPublic': topic.isPublic,
+      });
 
-      String bodyJsonString = jsonEncode(body);
       var res = await http.patch(
         Uri.parse(link),
-        headers: {"Authorization": "Bearer $token"},
-        body: bodyJsonString,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: body,
       );
 
       var resBody = jsonDecode(res.body);
@@ -163,7 +169,8 @@ class TopicAPI {
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to edit topic. Please try again later!"
+        'message': "Failed to edit topic. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -191,7 +198,8 @@ class TopicAPI {
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to delete topic. Please try again later!"
+        'message': "Failed to delete topic. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -212,14 +220,15 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'topic': resBody["data"]["topic"]};
+        return {'success': true, 'topic': resBody["data"]["topics"]};
       }
 
       return {'success': false, 'message': resBody["message"]};
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to fetch topic. Please try again later!"
+        'message': "Failed to fetch topic. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -233,14 +242,16 @@ class TopicAPI {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      var body = {
-        'words': jsonEncode(words.map((word) => word.toJson()).toList()),
-      };
-      String bodyJsonString = jsonEncode(body);
+      var body = jsonEncode(
+          {'words': words.map((word) => word.addWordToJson()).toList()});
+
       var res = await http.post(
         Uri.parse(link),
-        headers: {"Authorization": "Bearer $token"},
-        body: bodyJsonString,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: body,
       );
 
       var resBody = jsonDecode(res.body);
@@ -253,30 +264,32 @@ class TopicAPI {
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to add words. Please try again later!"
+        'message': "Failed to add words. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
 
   // Edit words in a topic
   static Future<Map<String, dynamic>> editWordsInTopic(
-      {required String id,
-      required String wordId,
-      required List<Word> words}) async {
+      {required String id, required List<Word> words}) async {
     try {
       var server = getLink();
-      var link = "$server/topic/$id/word/$wordId";
+      var link = "$server/topic/$id";
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
-      var body = {
-        'words': jsonEncode(words.map((word) => word.toJson()).toList()),
-      };
-      String bodyJsonString = jsonEncode(body);
+      var body = jsonEncode({
+        'words': words.map((word) => word.editWordToJson()).toList(),
+      });
+
       var res = await http.patch(
         Uri.parse(link),
-        headers: {"Authorization": "Bearer $token"},
-        body: bodyJsonString,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: body,
       );
 
       var resBody = jsonDecode(res.body);
@@ -289,7 +302,8 @@ class TopicAPI {
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to edit words. Please try again later!"
+        'message': "Failed to edit words. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }
@@ -318,7 +332,8 @@ class TopicAPI {
     } catch (e) {
       return {
         'success': false,
-        'message': "Failed to delete words. Please try again later!"
+        'message': "Failed to delete words. Please try again later!",
+        'exception': e.toString(),
       };
     }
   }

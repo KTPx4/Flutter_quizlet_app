@@ -1,16 +1,12 @@
+import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
-
-
-
-
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
 import 'package:client_app/page/topic/addtopic.dart';
-import 'package:client_app/values/folder.dart';
-import 'package:client_app/values/topic.dart';
 import 'package:flutter/material.dart';
 
 import 'AddFolder.dart';
@@ -19,11 +15,9 @@ class LibraryPage extends StatefulWidget {
   GlobalKey<State<AppBarCustom>>? appBarKey;
   LibraryPage({this.appBarKey, super.key});
 
-
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
-
 
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
@@ -52,7 +46,6 @@ class _LibraryPageState extends State<LibraryPage>
     super.initState();
   }
 
-
   void initStartup() async {
     var action = _actionAppBar();
 
@@ -68,18 +61,7 @@ class _LibraryPageState extends State<LibraryPage>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddFolderDialog(
-          onAddFolder: (folderName, folderDescription) {
-            folderList.add(folder(
-              id: 1,
-              folderName: folderName,
-              topics: topicList,
-              accountID: '1',
-            ));
-
-            callFuntionFolder.refreshWidget();
-          },
-        );
+        return AddFolderDialog();
       },
     );
   }
@@ -149,11 +131,9 @@ class _LibraryPageState extends State<LibraryPage>
       itemBuilder: (context, index) => Container(
         child: childLib[index],
       ),
-
       itemCount: 2,
     );
   }
-
 
   Widget _searchbar() {
     return Container(
@@ -174,26 +154,31 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
                 onPressed: () async {
-                  TopicAPITester topic = TopicAPITester();
-                  await topic.testGetPublicTopics();
+                  TopicService topic = TopicService();
+                  var topics = await topic.getAccountTopics();
                 },
                 child: Text("Add Topic")),
             TextButton(
                 onPressed: () async {
-                  TopicAPITester topic = TopicAPITester();
-                  await topic.testGetAccountTopics();
+                  TopicService topic = TopicService();
+                  Topic newtopic = Topic(
+                      topicName: "test",
+                      desc: "test",
+                      isPublic: true,
+                      words: []);
+                  var topics = await topic.addTopic(newtopic);
+
+                  callFuntionTopic.refreshWidget();
                 },
                 child: Text("Account Topic")),
             TextButton(
@@ -204,7 +189,6 @@ class _LibraryPageState extends State<LibraryPage>
                 child: Text("add Topic")),
           ],
         ),
-
         _buildTabBar(),
         (isTopic) ? _searchbar() : Container(),
         Expanded(
@@ -227,4 +211,3 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 }
-
