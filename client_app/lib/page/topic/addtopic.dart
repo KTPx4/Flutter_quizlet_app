@@ -1,27 +1,35 @@
 // transition function   control the current tab and the current page
 
 import 'package:client_app/apiservices/TopicService.dart';
+import 'package:client_app/models/meaning.dart';
 import 'package:client_app/models/topic.dart';
+import 'package:client_app/models/word.dart';
 import 'package:flutter/material.dart';
 import 'package:language_picker/language_picker_dropdown.dart';
 import 'package:language_picker/languages.dart';
 
+import 'wordCard.dart';
+
 class AddTopicPage extends StatefulWidget {
+  final Topic? topic;
+
+  AddTopicPage({this.topic});
   @override
   State<AddTopicPage> createState() => _AddTopicPageState();
 }
 
 class _AddTopicPageState extends State<AddTopicPage> {
   final TopicService topicService = TopicService();
-  List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>()];
+  List<GlobalKey<FormState>> formKeys = [];
   final _titleFormKey = GlobalKey<FormState>();
-  List<String> verbs = [];
-  List<String> definitions = [];
+
+  List<Word> words = [];
+  List<String> deletedWords = [];
   final titleController = TextEditingController();
   Language verbLanguage = Languages.english;
   Language definitionLanguage = Languages.english;
   bool isPublic = false;
-  int numberofquestioncard = 1;
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -29,55 +37,123 @@ class _AddTopicPageState extends State<AddTopicPage> {
     super.dispose();
   }
 
-  Widget QuestionCard(index) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: formKeys[index],
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                initialValue: index < verbs.length ? verbs[index] : "",
-                decoration: InputDecoration(
-                  labelText: "Verb",
-                  hintText: "Enter your question here",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'This field cannot be empty';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  verbs.add(value ?? "");
-                },
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                initialValue:
-                    index < definitions.length ? definitions[index] : "",
-                decoration: InputDecoration(
-                  labelText: "Definition",
-                  hintText: "Enter the answer here",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'This field cannot be empty';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  definitions.add(value ?? "");
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    if (widget.topic != null) {
+      titleController.text = widget.topic!.topicName;
+      if (widget.topic!.words.isNotEmpty) {
+        verbLanguage = Languages.defaultLanguages.firstWhere((element) =>
+            element.name.toLowerCase() ==
+            widget.topic!.words.first.mean1.lang.toLowerCase());
+        definitionLanguage = Languages.defaultLanguages.firstWhere((element) =>
+            element.name.toLowerCase() ==
+            widget.topic!.words.first.mean2.lang.toLowerCase());
+
+        isPublic = widget.topic!.isPublic;
+        words = widget.topic!.words;
+        formKeys =
+            List.generate(words.length, (index) => GlobalKey<FormState>());
+      }
+    } else {
+      formKeys = [GlobalKey<FormState>()];
+      words.add(Word(
+        mean1: Meaning(title: '', lang: verbLanguage.name.toString()),
+        mean2: Meaning(title: '', lang: definitionLanguage.name.toString()),
+        desc: '',
+        img: '',
+      ));
+    }
+  }
+
+  void _actionTopic() async {
+    bool allValid = true;
+
+    for (var formKey in formKeys) {
+      if (formKey.currentState != null) {
+        var form = formKey.currentState!;
+        var isValid = form.validate();
+
+        if (!isValid) {
+          allValid = false;
+        }
+      }
+    }
+
+    if (allValid && widget.topic != null) {
+      formKeys.forEach((formKey) => formKey.currentState!.save());
+      List<Word> newWords = words
+          .where((word) => word.id == null)
+          .map((word) => Word(
+                mean1: Meaning(
+                    title: word.mean1.title,
+                    lang: verbLanguage.name.toString()),
+                mean2: Meaning(
+                    title: word.mean2.title,
+                    lang: definitionLanguage.name.toString()),
+                desc: DateTime.now().toIso8601String(),
+                img: '',
+              ))
+          .toList();
+      List<Word> existingWords = words
+          .where((word) => word.id != null)
+          .map((word) => Word(
+                mean1: Meaning(
+                    title: word.mean1.title,
+                    lang: verbLanguage.name.toString()),
+                mean2: Meaning(
+                    title: word.mean2.title,
+                    lang: definitionLanguage.name.toString()),
+                desc: DateTime.now().toIso8601String(),
+                img: '',
+                id: word.id,
+              ))
+          .toList();
+      Topic topic = Topic(
+        topicName: titleController.text,
+        desc: titleController.text,
+        isPublic: isPublic,
+        id: widget.topic!.id,
+        words: [],
+      );
+      await topicService.editDeleteWords(
+          topic, newWords, existingWords, deletedWords);
+
+      Navigator.pop(context);
+    } else if (allValid) {
+      formKeys.forEach((formKey) => formKey.currentState!.save());
+      List<Word> newWords = words
+          .map((word) => Word(
+                mean1: Meaning(
+                    title: word.mean1.title,
+                    lang: verbLanguage.name.toString()),
+                mean2: Meaning(
+                    title: word.mean2.title,
+                    lang: definitionLanguage.name.toString()),
+                desc: DateTime.now().toIso8601String(),
+                img: '',
+              ))
+          .toList();
+      Topic topic = Topic(
+        topicName: titleController.text,
+        desc: titleController.text,
+        isPublic: isPublic,
+        words: [],
+      );
+      await topicService.addWordsToTopic(topic, words);
+      // await topicService.addTopicAndWords(topic);
+      Navigator.pop(context);
+    }
+  }
+
+  void _deleteWord(int index) {
+    if (words[index].id != null) {
+      deletedWords.add(words[index].id!);
+    }
+    setState(() {
+      words.removeAt(index);
+      formKeys.removeAt(index);
+    });
   }
 
   void showLanguageDialog(BuildContext context) {
@@ -146,23 +222,6 @@ class _AddTopicPageState extends State<AddTopicPage> {
     );
   }
 
-  void _addTopic() async {
-    bool allValid =
-        formKeys.every((formKey) => formKey.currentState!.validate());
-    if (allValid && _titleFormKey.currentState!.validate()) {
-      formKeys.forEach((formKey) => formKey.currentState!.save());
-      Topic topic = Topic(
-        topicName: titleController.text,
-        desc: titleController.text,
-        isPublic: isPublic,
-        words: [],
-      );
-      await topicService.addTopicAndWords(topic, verbs, definitions,
-          verbLanguage.name.toString(), verbLanguage.name.toString());
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,7 +238,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
               ),
             ),
             IconButton(
-              onPressed: _addTopic,
+              onPressed: _actionTopic,
               icon: Icon(
                 Icons.save,
                 color: Colors.lightBlue,
@@ -217,9 +276,13 @@ class _AddTopicPageState extends State<AddTopicPage> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: numberofquestioncard,
+                itemCount: words.length,
                 itemBuilder: (context, index) {
-                  return QuestionCard(index);
+                  return QuestionCard(
+                    word: words[index],
+                    onDelete: () => _deleteWord(index),
+                    formKey: formKeys[index],
+                  );
                 },
               ),
             ],
@@ -229,7 +292,13 @@ class _AddTopicPageState extends State<AddTopicPage> {
           onPressed: () {
             setState(() {
               formKeys.add(GlobalKey<FormState>());
-              numberofquestioncard++;
+              words.add(Word(
+                mean1: Meaning(title: '', lang: verbLanguage.name.toString()),
+                mean2: Meaning(
+                    title: '', lang: definitionLanguage.name.toString()),
+                desc: '',
+                img: '',
+              ));
             });
           },
           child: Icon(Icons.add),

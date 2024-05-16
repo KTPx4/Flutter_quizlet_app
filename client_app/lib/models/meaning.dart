@@ -1,6 +1,6 @@
 class Meaning {
-  final String title;
-  final String lang;
+  String title;
+  String lang;
 
   Meaning({
     required this.title,
