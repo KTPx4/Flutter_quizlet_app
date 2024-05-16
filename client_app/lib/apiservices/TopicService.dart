@@ -1,11 +1,13 @@
+import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/topicAPI.dart';
-import 'package:client_app/models/meaning.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/models/word.dart';
 
 class TopicService {
+  final AccountService accountService = AccountService();
   Future<List<Topic>> getPublicTopics() async {
     var response = await TopicAPI.getPublicTopics();
+
     if (response['success']) {
       return response['topics']
           .map((topic) => Topic.fromJson(topic))
@@ -19,6 +21,7 @@ class TopicService {
   Future<List<Topic>> getAccountTopics() async {
     var response = await TopicAPI.getAccountTopics();
     if (response['success']) {
+      if (response['topics'] == null) return [];
       var topic = response['topics']
           .map((topic) => Topic.fromJson(topic))
           .toList()
@@ -63,38 +66,63 @@ class TopicService {
     }
   }
 
-  Future<void> addTopicAndWords(
-      Topic topic,
-      List<String> verbs,
-      List<String> definitions,
-      String verbLanguage,
-      String definitionLanguage) async {
-    // Step 1: Add the topic
-    String topicId = await addTopic(topic);
-
-    // Step 2: Create a list of Word objects
-    List<Word> words = [];
-    for (int i = 0; i < verbs.length; i++) {
-      String currentDate = DateTime.now().toString();
-      words.add(Word(
-        desc: 'added word on $currentDate',
-        img: '', // replace with actual image path or URL
-        mean1: Meaning(
-            title: verbs[i],
-            lang: verbLanguage), // replace 'en' with actual language code
-        mean2: Meaning(
-            title: definitions[i],
-            lang:
-                definitionLanguage), // replace '' and 'en' with actual title and language code
-      ));
-    }
-
-    // Step 3: s to the topic
-    var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+  Future<void> editDeleteWords(Topic topic, List<Word> newWords,
+      List<Word> existingWords, List<String> deleteIds) async {
+    // function implementation
+    String topicId = topic.id!;
+    // Add a new topic and get the topic ID
+    var response = await TopicAPI.editTopic(id: topicId, topic: topic);
     if (!response['success']) {
       throw Exception(response['message']);
     }
+    // Edit the existing words
+
+    for (var id in deleteIds) {
+      var deleteResponse =
+          await TopicAPI.deleteWordsInTopic(id: topicId, wordId: id);
+      if (!deleteResponse['success']) {
+        throw Exception(deleteResponse['message']);
+      }
+    }
+
+
+    // Step 3: s to the topic
+    var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+
+    var editResponse =
+        await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
+    if (!editResponse['success']) {
+      throw Exception(editResponse['message']);
+    }
+
+    // Delete the words with the provided delete IDs
+
+    // Add new words
+    if (newWords.isEmpty) {
+      return;
+    }
+    var addResponse =
+        await TopicAPI.addWordsToTopic(id: topicId, words: newWords);
+    if (!addResponse['success']) {
+      throw Exception(addResponse['message']);
+    }
   }
 
-// Implement other methods as needed
+  Future<void> addWordsToTopic(Topic topic, List<Word> words) async {
+    // Add a new topic and get the topic ID
+    var response = await TopicAPI.addTopic(topic: topic);
+
+    if (!response['success']) {
+      throw Exception(response['message']);
+    }
+    String topicId = response['_id'];
+
+    // Add new words to the topic
+    var addWordsResponse =
+        await TopicAPI.addWordsToTopic(id: topicId, words: words);
+    if (!addWordsResponse['success']) {
+      throw Exception(addWordsResponse['message']);
+    }
+  }
 }
+// Implement other methods as needed

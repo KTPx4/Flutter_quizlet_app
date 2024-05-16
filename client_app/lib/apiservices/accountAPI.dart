@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client_app/models/account.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,7 +88,7 @@ class AccountAPI {
       return {
         'success': false,
         'message': "Đăng nhập thất bại. Vui lòng thử lại sau!",
-        'token': ''
+        'token': e
       };
     }
   }
@@ -360,31 +361,63 @@ class AccountAPI {
     }
   }
 
-  // static Future<Map<String, dynamic>> getAccount() async {
-  //   try {
-  //     var server = getLink();
-  //     var link = "$server/account";
-  //     var pref = await SharedPreferences.getInstance();
-  //     String? token = pref.getString(KEY_LOGIN);
-  //
-  //     var res = await http.get(
-  //       Uri.parse(link),
-  //       headers: {"Authorization": "Bearer $token"},
-  //     );
-  //
-  //     var resBody = jsonDecode(res.body);
-  //
-  //     if (res.statusCode == 200) {
-  //       return {'success': true, 'account': Account.fromJson(resBody["data"])};
-  //     }
-  //
-  //     return {'success': false, 'message': resBody["message"]};
-  //   } catch (e) {
-  //     return {
-  //       'success': false,
-  //       'message': "Failed to fetch account. Please try again later!",
-  //       'exception': e.toString(),
-  //     };
-  //   }
-  // }
+  static Future<Map<String, dynamic>> getAccountById(String id) async {
+    try {
+      var server = getLink();
+      var link = "$server/account/$id";
+
+      var res = await http.get(Uri.parse(link));
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {
+          'success': true,
+          'message': resBody["message"],
+          'account': AccountModel.fromJson(resBody["data"]),
+        };
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch account. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getAllAccounts() async {
+    try {
+      var server = getLink();
+      var link = "$server/account";
+
+      var res = await http.get(Uri.parse(link));
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        List<AccountModel> accounts = [];
+        for (var account in resBody["data"]) {
+          accounts.add(AccountModel.fromJson(account));
+        }
+        return {
+          'success': true,
+          'message': resBody["message"],
+          'accounts': accounts,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': resBody["message"],
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch accounts. Please try again later!",
+      };
+    }
+  }
 }

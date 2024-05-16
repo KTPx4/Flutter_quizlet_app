@@ -10,6 +10,7 @@ const HomeRouter = require('./routes/HomeRouter')
 const AccountRouter = require('./routes/AccountRouter')
 const TopicRouter = require('./routes/TopicRouter')
 const FolderRouter = require('./routes/FolderRouter')
+const StudyRouter = require('./routes/StudyRouter')
 
 // Define variable 
 const _APP = express()
@@ -36,6 +37,7 @@ _APP.use('/api/', HomeRouter)
 _APP.use('/api/account', AccountRouter(__dirname))
 _APP.use('/api/topic', TopicRouter)
 _APP.use('/api/folder', FolderRouter)
+_APP.use('/api/study', StudyRouter)
 
 
 _APP.use('*', (req, res)=>{

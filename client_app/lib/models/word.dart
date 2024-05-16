@@ -2,15 +2,17 @@ import 'meaning.dart';
 
 class Word {
   final String? id;
-  final String? topicID;
-  final String desc;
-  final String img;
-  final Meaning mean1;
-  final Meaning mean2;
+  final bool? isMark;
+  final int? studyCount;
+  String desc;
+  String img;
+  Meaning mean1;
+  Meaning mean2;
 
   Word({
     this.id,
-    this.topicID,
+    this.isMark,
+    this.studyCount,
     required this.desc,
     required this.img,
     required this.mean1,
@@ -19,9 +21,10 @@ class Word {
 
   factory Word.fromJson(Map<String, dynamic> json) {
     if (json['_id'] == null ||
-        json['topicID'] == null ||
+        json['isMark'] == null ||
         json['desc'] == null ||
         json['img'] == null ||
+        json['studyCount'] == null ||
         json['mean1'] == null ||
         json['mean2'] == null) {
       throw Exception('One or more fields are null in the returned Word');
@@ -29,9 +32,10 @@ class Word {
 
     return Word(
       id: json['_id'],
-      topicID: json['topicID'],
+      isMark: json['isMark'],
       desc: json['desc'],
       img: json['img'],
+      studyCount: json['studyCount'],
       mean1: Meaning.fromJson(json['mean1']),
       mean2: Meaning.fromJson(json['mean2']),
     );

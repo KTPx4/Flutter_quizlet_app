@@ -1,3 +1,5 @@
+import 'package:client_app/apiservices/folderSerivce.dart';
+import 'package:client_app/models/folder.dart';
 import 'package:flutter/material.dart';
 
 class AddFolderDialog extends StatefulWidget {
@@ -8,44 +10,50 @@ class AddFolderDialog extends StatefulWidget {
 }
 
 class _AddFolderDialogState extends State<AddFolderDialog> {
-  String folderName = '';
-  String folderDescription = '';
-
+  TextEditingController folderNameController = TextEditingController();
+  TextEditingController folderDescriptionController = TextEditingController();
+  final FolderService folderService = FolderService();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Add Folder'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextField(
-            onChanged: (value) {
-              setState(() {
-                folderName = value;
-              });
-            },
-            decoration: InputDecoration(hintText: "Folder Name"),
-          ),
-          TextField(
-            onChanged: (value) {
-              setState(() {
-                folderDescription = value;
-              });
-            },
-            decoration: InputDecoration(hintText: "Folder Description"),
-          ),
-        ],
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              controller: folderNameController,
+              onChanged: (value) {
+                setState(() {});
+              },
+              decoration: InputDecoration(hintText: "Folder Name"),
+            ),
+            TextFormField(
+              controller: folderDescriptionController,
+              onChanged: (value) {
+                setState(() {});
+              },
+              decoration: InputDecoration(hintText: "Folder Description"),
+            ),
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () {},
           child: Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              Navigator.of(context).pop();
+            }
+            folderService.addFolder(Folder(
+              folderName: folderNameController.text,
+              desc: folderDescriptionController.text,
+            ));
           },
           child: Text('Add'),
         ),

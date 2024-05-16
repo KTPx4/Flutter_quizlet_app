@@ -20,7 +20,7 @@ module.exports.GetAll = async(req, res) =>{
             })
         }   
     
-        var resultFolder = await ConverData.formatListFolder(ListFolder)
+        var resultFolder = await ConverData.formatListFolder(idu, ListFolder)
         
     
         return res.status(200).json({
@@ -43,10 +43,10 @@ module.exports.GetAll = async(req, res) =>{
 module.exports.GetByID = async(req, res) =>{
     try{
         let folderID = req.params.id
-    
+        var idu = req.vars.User._id
         var listFolder = await FolderModel.find({_id: folderID})
     
-        var resultFolders = await ConverData.formatListFolder(listFolder)    
+        var resultFolders = await ConverData.formatListFolder(idu, listFolder)    
     
         return res.status(200).json({
             message: `Lấy thành công folder '${folderID}'`,
@@ -173,7 +173,7 @@ module.exports.AddTopic = async(req, res) =>{
 
         let {id} = req.params
         let {topics} = req.body
-        var uid = Account._id.toString()
+        var uid = req.vars.User._id.toString()
         var listtopics = await Promise.all(topics.map(async (idTopic) => {   
             var topic = await TopicModel.findOne({_id: idTopic})
             var store = await StoreTopic.findOne({topicID: idTopic, folderID: id})
@@ -214,7 +214,7 @@ module.exports.AddTopic = async(req, res) =>{
             code = 400
         }
         else{
-            console.log("Error At FodlerController - AddTopic");
+            console.log("Error At FodlerController - AddTopic: ", err);
         }
         return res.status(code).json({
             message: mess
