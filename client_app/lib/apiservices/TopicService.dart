@@ -85,6 +85,10 @@ class TopicService {
       }
     }
 
+
+    // Step 3: s to the topic
+    var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
     if (!editResponse['success']) {
@@ -107,6 +111,7 @@ class TopicService {
   Future<void> addWordsToTopic(Topic topic, List<Word> words) async {
     // Add a new topic and get the topic ID
     var response = await TopicAPI.addTopic(topic: topic);
+
     if (!response['success']) {
       throw Exception(response['message']);
     }
