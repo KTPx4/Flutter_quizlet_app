@@ -1,7 +1,4 @@
-import 'package:client_app/apiservices/TopicService.dart';
-import 'package:client_app/apiservices/testingtopicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
-import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
@@ -64,10 +61,11 @@ class _LibraryPageState extends State<LibraryPage>
         return AddFolderDialog();
       },
     );
+    callFuntionFolder.refreshWidget();
   }
 
-  void addTopic() {
-    Navigator.push(
+  void addTopic() async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddTopicPage()),
     );
@@ -159,36 +157,6 @@ class _LibraryPageState extends State<LibraryPage>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-                onPressed: () async {
-                  TopicService topic = TopicService();
-                  var topics = await topic.getAccountTopics();
-                },
-                child: Text("Add Topic")),
-            TextButton(
-                onPressed: () async {
-                  TopicService topic = TopicService();
-                  Topic newtopic = Topic(
-                      topicName: "test",
-                      desc: "test",
-                      isPublic: true,
-                      words: []);
-                  var topics = await topic.addTopic(newtopic);
-
-                  callFuntionTopic.refreshWidget();
-                },
-                child: Text("Account Topic")),
-            TextButton(
-                onPressed: () async {
-                  TopicAPITester topic = TopicAPITester();
-                  await topic.testAddTopic();
-                },
-                child: Text("add Topic")),
-          ],
-        ),
         _buildTabBar(),
         (isTopic) ? _searchbar() : Container(),
         Expanded(

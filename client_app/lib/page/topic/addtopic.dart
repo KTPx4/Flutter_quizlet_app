@@ -67,7 +67,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   }
 
   void _actionTopic() async {
-    bool allValid = _titleFormKey.currentState!.validate();
+    bool allValid = true;
 
     for (var formKey in formKeys) {
       if (formKey.currentState != null) {
@@ -79,7 +79,8 @@ class _AddTopicPageState extends State<AddTopicPage> {
         }
       }
     }
-    if (allValid && Topic != null) {
+
+    if (allValid && widget.topic != null) {
       formKeys.forEach((formKey) => formKey.currentState!.save());
       List<Word> newWords = words
           .where((word) => word.id == null)
@@ -103,20 +104,23 @@ class _AddTopicPageState extends State<AddTopicPage> {
                 mean2: Meaning(
                     title: word.mean2.title,
                     lang: definitionLanguage.name.toString()),
-                desc: DateTime.now()
-                    .toIso8601String(), // set desc to the current date and time
+                desc: DateTime.now().toIso8601String(),
                 img: '',
+                id: word.id,
               ))
           .toList();
       Topic topic = Topic(
         topicName: titleController.text,
         desc: titleController.text,
         isPublic: isPublic,
+        id: widget.topic!.id,
         words: [],
       );
-      // await topicService.updateTopicAndWords(topic, newWords, deletedWords);
+      await topicService.editDeleteWords(
+          topic, newWords, existingWords, deletedWords);
+
       Navigator.pop(context);
-    } else {
+    } else if (allValid) {
       formKeys.forEach((formKey) => formKey.currentState!.save());
       List<Word> newWords = words
           .map((word) => Word(
@@ -136,6 +140,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
         isPublic: isPublic,
         words: [],
       );
+      await topicService.addWordsToTopic(topic, words);
       // await topicService.addTopicAndWords(topic);
       Navigator.pop(context);
     }

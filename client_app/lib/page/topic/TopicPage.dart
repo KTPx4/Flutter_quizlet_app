@@ -1,5 +1,6 @@
+import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/TopicService.dart';
-import 'package:client_app/models/AccountService.dart';
+import 'package:client_app/models/account.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/topic/addtopic.dart';
@@ -20,12 +21,60 @@ class _TopicPageState extends State<TopicPage> {
   String title = "topic";
   final AccountService accountService = AccountService();
   final TopicService topicService = TopicService();
+  List<AccountModel> accountList = [];
+
+  Future<void> getAllAccount() async {
+    accountList = await accountService.getAllAccounts();
+  }
+
+  Widget buildPopupMenuButton(Topic topic) {
+    return PopupMenuButton<String>(
+      onSelected: (value) async {
+        if (value == 'Edit') {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTopicPage(
+                topic: topic,
+              ),
+            ),
+          );
+          setState(() {});
+        } else if (value == 'Delete') {
+          await topicService.deleteTopic(topic.id!);
+          setState(() {});
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'Edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit),
+              Text('Edit'),
+            ],
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete),
+              Text('Delete'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     widget.callFunction.refreshWidget = () {
       setState(() {});
     };
+    getAllAccount();
   }
 
   Widget _buildTopicsListView() {
@@ -47,7 +96,8 @@ class _TopicPageState extends State<TopicPage> {
             itemCount: topics.length,
             itemBuilder: (context, index) {
               var topic = topics[index];
-
+              var account = accountList
+                  .firstWhere((element) => element.id == topic.authorID);
               return Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -70,18 +120,9 @@ class _TopicPageState extends State<TopicPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(topic.topicName),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AddTopicPage(
-                                        topic: topic,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: Icon(Icons.edit))
+                            buildPopupMenuButton(
+                              topic,
+                            ),
                           ]),
                       SizedBox(
                         height: 10,
@@ -93,12 +134,12 @@ class _TopicPageState extends State<TopicPage> {
                       Row(
                         // Third row: Account avatar and account name
                         children: [
-                          // CircleAvatar(
-                          //   backgroundImage: NetworkImage(account.nameAvt),
-                          //   radius: 16,
-                          // ),
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(account.nameAvt),
+                            radius: 16,
+                          ),
                           SizedBox(width: 8),
-                          Text('Default Account'),
+                          Text(account.user),
                         ],
                       ),
                     ],
