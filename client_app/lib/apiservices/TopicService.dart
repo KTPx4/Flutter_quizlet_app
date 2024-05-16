@@ -89,7 +89,7 @@ class TopicService {
       ));
     }
 
-    // Step 3: Add words to the topic
+    // Step 3: s to the topic
     var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
     if (!response['success']) {
       throw Exception(response['message']);
