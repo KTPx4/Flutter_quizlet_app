@@ -13,6 +13,13 @@ class FolderTab extends StatefulWidget {
   State<FolderTab> createState() => _FolderTabState();
 }
 
+
+
+
+// this page only use for show list topic in library,
+// when click 1 folder => navigate to Page Folder (page/folder) to show list topic
+
+
 class _FolderTabState extends State<FolderTab> {
   final FolderService folderService = FolderService();
   final AccountService accountService = AccountService();

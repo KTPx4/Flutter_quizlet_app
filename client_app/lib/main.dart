@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
 
         var args = settings.arguments;
         var name = settings.name;
-        
+       
         switch(name)
         {
           case "/": 
@@ -77,6 +77,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));           
           
           case "/account/login":
+           var ob = jsonEncode(args as String);
             return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
 
           
