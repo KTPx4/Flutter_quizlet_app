@@ -1,9 +1,11 @@
 import 'package:client_app/apiservices/testingtopicAPI.dart';
+import 'package:client_app/apiservices/topicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 
 
-
+import 'package:client_app/models/meaning.dart';
+import 'package:client_app/models/word.dart';
 
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/library/FolderTab.dart';
@@ -14,6 +16,7 @@ import 'package:client_app/values/topic.dart';
 import 'package:flutter/material.dart';
 
 import 'AddFolder.dart';
+import '../../models/topic.dart' as TopicModel;
 
 class LibraryPage extends StatefulWidget {
   GlobalKey<State<AppBarCustom>>? appBarKey;
@@ -97,6 +100,59 @@ class _LibraryPageState extends State<LibraryPage>
     return [
       IconButton(
           onPressed: (isTopic) ? addTopic : addFolder, icon: Icon(Icons.add)),
+      IconButton(
+          onPressed: () async{
+            List<Map<String, dynamic>> words = [
+            {
+              "desc": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+              "img": "",
+              "mean1":{
+                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+                "lang": "english"                
+              },
+              "mean2":{
+                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+                "lang": "vietnam"
+              }
+            },
+            {
+              "desc": "ttttttttttttttttttttttttttt",
+              "img": "",
+              "mean1":{
+                "title": "ttttttttttttttttttttttttttt",
+                "lang": "english"                
+              },
+              "mean2":{
+                "title": "ttttttttttttttttttttttttttt",
+                "lang": "vietnam"
+              }
+            }
+          ];
+
+            TopicModel.Topic testTopic = TopicModel.Topic(
+                topicName: 'Test Hoang',
+                desc: 'This is a test topic',
+                isPublic: true,
+                words: [
+                  Word(
+                    desc: 'Test Word',
+                    img: '',
+                    mean1: Meaning(title: 'Hello', lang: 'English'),
+                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
+                  ),
+                  Word(
+                    desc: 'Test Word',
+                    img: '',
+                    mean1: Meaning(title: 'Hello', lang: 'English'),
+                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
+                  ),
+                ],
+              );
+          var res =await  TopicAPI.postWords(words: testTopic.words);
+          print(res);
+
+          }, icon: Icon(Icons.abc)),
+      
     ];
   }
 

@@ -4,6 +4,8 @@ const FolderModel = require('../models/FolderModel')
 const TopicModel = require('../models/TopicModel')
 const StoreTopic = require('../models/StoreTopicModel')
 const StudyCombineModel = require('../models/StudyCombine')
+const StudyTopicModel = require('../models/StudyTopic')
+
 const formatListWord = async (idu, listCombine) => {
     var listWords = []
 
@@ -38,10 +40,16 @@ const formatListTopic = async (idu, ListTopic) => {
     var resultTopics = await Promise.all(ListTopic.map(async (topic)=>{
         var listCombine = await CombineModel.find({topicID: topic._id})
         var listWords =  await formatListWord(idu, listCombine)
+        var studyTopic = await StudyTopicModel.findOne({accountID: idu, topicID: topic._id})
+        if(!studyTopic)
+        {
+            studyTopic = await StudyTopicModel.create({accountID: idu, topicID: topic._id})
+        }
         // console.log(topic);
         return {
             ...convertTopic(topic),
             "countWords": listCombine.length,
+            "studyCount": studyTopic.studyCount,
             "words": listWords
         }
     }))

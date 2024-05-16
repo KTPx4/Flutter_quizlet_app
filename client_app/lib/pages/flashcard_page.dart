@@ -72,11 +72,7 @@ Widget build(BuildContext context) {
                 navigationButtons(),
               ],
             ),
-
-            SizedBox(height: 30),
-            navigationButtons(),
-          ],
-
+          )
         ),
       ],
     ),

@@ -20,5 +20,3 @@ class _BuildPageState extends State<BuildPage> {
 
 }
 
-}
-

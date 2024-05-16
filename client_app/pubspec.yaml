@@ -53,7 +53,7 @@ dependencies:
   cached_network_image: ^3.3.1
   diacritic: ^0.1.5
   carousel_slider: ^4.2.1
-  file_picker: ^8.0.3
+  file_picker: 8.0.0+1
   dio: ^5.4.3+1
 
 

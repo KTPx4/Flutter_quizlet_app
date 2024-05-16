@@ -49,24 +49,72 @@ module.exports.GetAllWords = async(req, res) =>{
         var idtopic = req.params.id
         var listCombine = await CombineModel.find({topicID: idtopic})
 
+        var isStudy = req.query.study; // Lấy tham số truy vấn 'study' từ URL
+        var isMark = req.query.mark;    // Lấy tham số truy vấn 'mark' từ URL
+        var wordid = req.query.wordid;// Lấy tham số truy vấn 'wordid' từ URL
 
-        if(!listCombine || listCombine.length < 1)
+        if(!isMark && !isStudy)
         {
-            return res.status(200).json({
-                message:"Chưa có từ vựng nào. Hãy tạo thêm để xem",
-                count: 0,
-                data: null
-            })
-        }   
-
-        var listWords = await ConverData.formatListWord(idu, listCombine)
-        
+            if(!listCombine || listCombine.length < 1)
+            {
+                return res.status(200).json({
+                    message:"Chưa có từ vựng nào. Hãy tạo thêm để xem",
+                    count: 0,
+                    data: null
+                })
+            }   
     
-        return res.status(200).json({
-            message: "Lấy thành công danh sách từ vựng",
-            count: listWords.length,
-            data: listWords
-        })
+            var listWords = await ConverData.formatListWord(idu, listCombine)
+            
+        
+            return res.status(200).json({
+                message: "Lấy thành công danh sách từ vựng",
+                count: listWords.length,
+                data: listWords
+            })
+
+        }
+        else if(wordid)
+        {
+            var stw = req.vars.StudyWord
+            console.log("mark: ", stw);
+            if(isMark)
+            {
+                var mark = ! (stw.isMark)
+                var markWord =await StudyWordModel.findOneAndUpdate({combineID: wordid, accountID: idu}, {isMark: mark}, {new: true})
+
+            }
+
+            if(isStudy)
+            {
+                console.log("ok: ");
+                var count = stw.studyCount + 1
+                console.log("count : ", count);
+
+                var inStudy = await StudyWordModel.findOneAndUpdate({combineID: wordid, accountID: idu}, {studyCount: count}, {new: true})
+                
+                var isFinishTopic = false
+                if(listCombine || listCombine.length > 0)
+                {
+
+                    for(let word of listCombine)
+                    {
+                        var studyword = await StudyWordModel.findOne({combineID: word._id, accountID: idu})
+                        if(!studyword)
+                        {
+                            await StudyWordModel.create({combineID: word._id, accountID: idu})
+                        }  
+                    }
+
+                }                  
+
+
+            }
+            return res.status(200).json({
+                message: "Cập nhật từ vựng thành công"
+            })
+        }
+
     }
     catch(err)
     {
@@ -222,35 +270,12 @@ module.exports.Add = async(req, res) =>{
 
         var idTopic = newTopic._id
 
-        // var listWords = await Promise.all(words.map(async (word) => {
+        var studytopic = await StudyTopicModel.findOne({accountID: idu, topicID: idTopic})
 
-        //     var newcombine = await CombineModel.create({
-        //         topicID: idTopic,
-        //         desc: word["desc"],
-        //         img:  word["img"],
-        //         mean1: {
-        //             title: word["mean1"]["title"],
-        //             lang: word["mean1"]["lang"]
-        //         },
-        //         mean2: {
-        //             title: word["mean2"]["title"],
-        //             lang: word["mean2"]["lang"]
-        //         },             
-              
-        //     })
-        
-        //     return {
-        //         "desc": newcombine.desc,
-        //         "img": newcombine.img,
-        //         mean1: newcombine.mean1,
-        //         mean2: newcombine.mean2
-        //     }
-        // }));
-        
-        // var result = [{
-        //     ...newTopic["_doc"],
-        //     "words": listWords
-        // }]
+        if(!studytopic)
+        {
+            await StudyTopicModel.create({accountID: idu, topicID: idTopic})
+        }
 
         return res.status(200).json({
             message: "Thêm thành công topic",
