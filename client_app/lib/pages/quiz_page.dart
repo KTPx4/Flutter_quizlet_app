@@ -1,112 +1,145 @@
+
 import 'package:flutter/material.dart';
-import 'package:client_app/pages/result_page.dart';
-import 'package:client_app/values/quiz_data.dart';
+import 'dart:math';
+import 'package:client_app/models/word.dart';
 
 class QuizPage extends StatefulWidget {
-  final String catName;
+  final List<Word> words;
+  final int numberOfQuestions;
+  final bool showAnswersImmediately;
+  final String answerType;
 
-  QuizPage({Key? key, required this.catName}) : super(key: key);
+  QuizPage({
+    Key? key,
+    required this.words,
+    required this.numberOfQuestions,
+    required this.showAnswersImmediately,
+    required this.answerType,
+  }) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
-  int _currQuestIdx = 0;
-  int _score = 0;
-  String? _isSelected;
-  List<String> userAnswers = []; 
+  List<Word> questions = [];
+  Random rand = Random();
+  int currentQuestionIndex = 0;
 
-  void _nextQuestion() {
-    if (_isSelected != null) {
-      userAnswers.add(_isSelected!); 
-      if (_isSelected == questionsData[_currQuestIdx].answer) {
-        _score++;
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
+    initializeQuiz();  // Khởi tạo quiz khi state bắt đầu
+  }
 
-    if (_currQuestIdx < questionsData.length - 1) {
-      setState(() {
-        _currQuestIdx++;
-        _isSelected = null; 
-      });
+  // Hàm trợ giúp để khởi tạo và chờ đợi việc tạo danh sách câu hỏi
+  Future<void> initializeQuiz() async {
+    await _test();
+    if (mounted) setState(() {});  // Cập nhật giao diện nếu widget vẫn tồn tại
+  }
+
+  Future<void> _test() async {
+    if (widget.words.length >= widget.numberOfQuestions) {
+      questions = List<Word>.from(widget.words)..shuffle();
+      questions = questions.sublist(0, widget.numberOfQuestions);
     } else {
-      
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResultsPage(
-            score: _score,
-            totalQuestions: questionsData.length,
-            userAnswers: userAnswers,
-          ),
-        ),
-      );
+      questions = [...widget.words]..shuffle();
     }
   }
 
+  List<String> _generateOptions(String correctAnswer, bool isTerm) {
+  List<String> allAnswers = widget.words.map<String>((word) => isTerm ? word.mean1.title : word.mean2.title).toList();
+  Set<String> options = {correctAnswer};
+  while (options.length < 4) {
+    options.add((allAnswers..shuffle()).first);
+  }
+  return options.toList()..shuffle();
+}
+
+  void _showAnswer(bool correct) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text(correct ? 'Correct!' : 'Incorrect!'),
+      content: Text(correct ? 'You got it right!' : 'Oops! That was not right.'),
+      actions: [
+        TextButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+  void _nextQuestion() {
+  if (currentQuestionIndex < questions.length - 1) {
+    setState(() {
+      currentQuestionIndex++;
+    });
+  } else {
+    // End of quiz
+    Navigator.pop(context);
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
-    final question = questionsData[_currQuestIdx];
+    // Chỉ xây dựng giao diện khi danh sách câu hỏi đã sẵn sàng và không rỗng
+    if (questions.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Quiz")),
+        body: Center(child: Text("Không có đủ từ để tạo câu hỏi"))
+      );
+    }
+
+    Word currentWord = questions[currentQuestionIndex];
+    String questionText;
+    List<String> options;
+
+    switch (widget.answerType) {
+      case 'Thuật ngữ':
+        questionText = currentWord.mean2.title; // Definition is the question
+        options = _generateOptions(currentWord.mean1.title, true);
+        break;
+      case 'Định nghĩa':
+        questionText = currentWord.mean1.title; // Term is the question
+        options = _generateOptions(currentWord.mean2.title, false);
+        break;
+      case 'Cả hai':
+      default:
+        questionText = rand.nextBool() ? currentWord.mean1.title : currentWord.mean2.title;
+        options = _generateOptions(
+          questionText == currentWord.mean1.title ? currentWord.mean2.title : currentWord.mean1.title,
+          questionText == currentWord.mean1.title,
+        );
+        break;
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.catName),
-      ),
+      appBar: AppBar(title: Text("Quiz")),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                Text(
-                  'Question ${_currQuestIdx + 1}/${questionsData.length}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                LinearProgressIndicator(
-                  value: (_currQuestIdx + 1) / questionsData.length,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Text(
-              question.question,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              children: question.options
-                  .map((option) => RadioListTile<String>(
-                        title: Text(option),
-                        value: option,
-                        groupValue: _isSelected,
-                        onChanged: (value) {
-                          setState(() {
-                            _isSelected = value;
-                          });
-                        },
-                      ))
-                  .toList(),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 150, vertical: 30),
-            child: ElevatedButton(
-              onPressed: _isSelected == null ? null : _nextQuestion,
-              child: Text('Next'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              ),
-            ),
-          ),
+        children: [
+          Text(questionText, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Divider(),
+          ...options.map((option) => ListTile(
+            title: Text(option),
+            onTap: () {
+              bool correct = option == (questionText == currentWord.mean1.title ? currentWord.mean2.title : currentWord.mean1.title);
+              if (widget.showAnswersImmediately) {
+                _showAnswer(correct);
+              }
+              if (correct) _nextQuestion();
+            },
+          )).toList(),
         ],
       ),
     );
   }
 }
+
+

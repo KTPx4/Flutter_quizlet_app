@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:client_app/apiservices/accountAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/component/BottomNav.dart';
+import 'package:client_app/models/meaning.dart';
+import 'package:client_app/models/word.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/RecentStudy/RecentStudyPage.dart';
@@ -10,6 +12,7 @@ import 'package:client_app/page/account/LoginPage.dart';
 import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/home/Home.dart';
 import 'package:client_app/page/library/LibraryPage.dart';
+import 'package:client_app/pages/quiz_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,6 +67,7 @@ class _AuthForMoblieState extends State<AuthForMoblie> {
         return ProfilePage(appBarKey: appBarKey);
       default: 
         return Home(appBarKey: appBarKey);
+        // return QuizPage(words: [Word(desc: "", img: "", mean1: Meaning(title: "title", lang: "english"), mean2: Meaning(title: "title", lang: "vietnamese"))], numberOfQuestions: 1, showAnswersImmediately: true, answerType: "");
     }
   }
 

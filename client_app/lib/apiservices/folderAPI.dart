@@ -1,0 +1,156 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:client_app/models/folder.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+const WEB_URL = 'http://localhost:3000'; // kết nối từ web
+const ANDROID_URL = 'http://10.0.2.2:3000';
+const KEY_LOGIN = "quizlet-login";
+
+class FolderAPI {
+  static final FolderAPI _instance = FolderAPI._init();
+
+  FolderAPI._init();
+
+  factory FolderAPI() {
+    return _instance;
+  }
+
+  static String getServer() {
+    var url = ANDROID_URL;
+    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      url = WEB_URL;
+    }
+    return url;
+  }
+
+  static String getLink() {
+    var url = ANDROID_URL + "/api";
+    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      url = WEB_URL + "/api";
+    }
+    return url;
+  }
+
+  // Add a new folder
+  static Future<Map<String, dynamic>> addFolder(Folder folder) async {
+    try {
+      var link = "${getLink()}/folder";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var body = jsonEncode({
+        'folderName': folder.folderName,
+        'desc': folder.desc,
+      });
+
+      var res = await http.post(
+        Uri.parse(link),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: body,
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, '_id': resBody["data"]["_id"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to add folder. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  // Get all folders
+  static Future<Map<String, dynamic>> getFolders() async {
+    try {
+      var link = "${getLink()}/folder";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'folders': resBody["data"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch folders. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  // Delete a folder
+  static Future<Map<String, dynamic>> deleteFolder(String id) async {
+    try {
+      var link = "${getLink()}/folder/$id";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.delete(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'message': "Folder deleted successfully"};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to delete folder. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  static Future<void> addTopicsToFolder(
+      String folderId, List<String> topicIds) async {
+    var link = "${getLink()}/folder/$folderId/topic/";
+    var pref = await SharedPreferences.getInstance();
+    String? token = pref.getString(KEY_LOGIN);
+
+    var body = jsonEncode({
+      'topics': topicIds,
+    });
+
+    var res = await http.post(
+      Uri.parse(link),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json"
+      },
+      body: body,
+    );
+
+    var resBody = jsonDecode(res.body);
+
+    if (res.statusCode != 200) {
+      throw Exception(resBody["message"]);
+    }
+  }
+}
