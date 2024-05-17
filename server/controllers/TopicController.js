@@ -56,6 +56,7 @@ module.exports.GetAllWords = async(req, res) =>{
 
         if(!isMark && !isStudy)
         {
+
             if(!listCombine || listCombine.length < 1)
             {
                 return res.status(200).json({
@@ -64,7 +65,7 @@ module.exports.GetAllWords = async(req, res) =>{
                     data: null
                 })
             }   
-    
+ 
             var listWords = await ConverData.formatListWord(idu, listCombine)
             
         
@@ -182,6 +183,7 @@ module.exports.GetPublic = async (req, res) =>{
     }
 }
 
+
 module.exports.GetPublicv2 = async (req, res) => {
     try {
         var idu = req.vars.User._id;
@@ -225,6 +227,7 @@ module.exports.GetPublicv2 = async (req, res) => {
         });
     }
 };
+
 
 /*
 module.exports.StorePublic = async(req, res)=>{

@@ -100,6 +100,33 @@ class FolderAPI {
     }
   }
 
+  static Future<Map<String, dynamic>> getFolderById(String id) async {
+    try {
+      var link = "${getLink()}/folder/$id";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'data': resBody["data"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch folder. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
   // Delete a folder
   static Future<Map<String, dynamic>> deleteFolder(String id) async {
     try {
@@ -151,6 +178,76 @@ class FolderAPI {
 
     if (res.statusCode != 200) {
       throw Exception(resBody["message"]);
+    }
+  }
+
+  static Future<Map<String, dynamic>> removeTopicFromFolder(
+      String folderId, String topicId) async {
+    try {
+      var link = "${getLink()}/folder/$folderId/topic/$topicId";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.delete(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'data': resBody["data"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message':
+            "Failed to remove topic from folder. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> editFolder(
+      String id, Folder folder) async {
+    try {
+      var link = "${getLink()}/folder/$id";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var body = jsonEncode({
+        'folderName': folder.folderName,
+        'desc': folder.desc,
+      });
+
+      var res = await http.patch(
+        Uri.parse(link),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: body,
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {
+          'success': true,
+          'message': resBody["message"],
+          '_id': resBody["data"]["_id"]
+        };
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to edit folder. Please try again later!",
+        'exception': e.toString(),
+      };
     }
   }
 }

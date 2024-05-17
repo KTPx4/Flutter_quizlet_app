@@ -5,6 +5,9 @@ import 'package:client_app/models/folder.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:flutter/material.dart';
 
+import 'AddEditFolder.dart';
+import 'FolderTopicPage.dart';
+
 class FolderTab extends StatefulWidget {
   final CallFunction callFunction;
   const FolderTab({super.key, required this.callFunction});
@@ -23,6 +26,10 @@ class FolderTab extends StatefulWidget {
 class _FolderTabState extends State<FolderTab> {
   final FolderService folderService = FolderService();
   final AccountService accountService = AccountService();
+  void refreshParent() {
+    setState(() {});
+  }
+
   List<AccountModel> accountList = [];
   Future<void> getAllAccount() async {
     accountList = await accountService.getAllAccounts();
@@ -38,12 +45,55 @@ class _FolderTabState extends State<FolderTab> {
     super.initState();
   }
 
+  Widget buildPopupMenuButton(Folder folder) {
+    return PopupMenuButton<String>(
+      onSelected: (value) async {
+        if (value == 'Edit') {
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AddEditFolderDialog(
+                folder: folder,
+              );
+            },
+          );
+          setState(() {});
+        } else if (value == 'Delete') {
+          await folderService.deleteFolder(folder.id!);
+          setState(() {});
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'Edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit),
+              Text('Edit'),
+            ],
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete),
+              Text('Delete'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFoldersListView() {
     return FutureBuilder<List<Folder>>(
       future: folderService.getFolders(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -74,10 +124,28 @@ class _FolderTabState extends State<FolderTab> {
                   ],
                 ),
                 child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FolderTopicPage(
+                          refreshParent: refreshParent,
+                          account: account,
+                          folder: folder,
+                        ),
+                      ),
+                    );
+                  },
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.folder_copy_outlined),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(Icons.folder_copy_outlined),
+                          buildPopupMenuButton(folder),
+                        ],
+                      ),
                       SizedBox(
                         height: 10,
                       ), // First row: Folder name
@@ -88,7 +156,8 @@ class _FolderTabState extends State<FolderTab> {
                       Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(account.nameAvt),
+                            backgroundImage: NetworkImage(
+                                accountService.getAccountImageUrl(account)),
                             radius: 16,
                           ),
                           SizedBox(width: 8),

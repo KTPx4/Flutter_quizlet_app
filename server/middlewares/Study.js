@@ -1,4 +1,5 @@
 const StudyCombineModel = require('../models/StudyCombine')
+
 const CombineModel = require('../models/CombineWordModel')
 
 module.exports.CreateStudyWord = async(req, res, next) =>{
@@ -35,5 +36,4 @@ module.exports.CreateStudyWord = async(req, res, next) =>{
         return next()
     }
 
-   
 }

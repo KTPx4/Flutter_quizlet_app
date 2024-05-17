@@ -29,7 +29,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   Language verbLanguage = Languages.english;
   Language definitionLanguage = Languages.english;
   bool isPublic = false;
-
+  bool allValid = false;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -67,8 +67,6 @@ class _AddTopicPageState extends State<AddTopicPage> {
   }
 
   void _actionTopic() async {
-    bool allValid = true;
-
     for (var formKey in formKeys) {
       if (formKey.currentState != null) {
         var form = formKey.currentState!;
@@ -79,7 +77,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
         }
       }
     }
-
+    allValid = (_titleFormKey.currentState?.validate() ?? false);
     if (allValid && widget.topic != null) {
       formKeys.forEach((formKey) => formKey.currentState!.save());
       List<Word> newWords = words

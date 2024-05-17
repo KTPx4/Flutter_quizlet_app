@@ -6,6 +6,8 @@ const StudyMiddleware = require('../middlewares/Study')
 const Auth = require('../middlewares/Account/Auth')
 
 _APP.get('/mark/:id', Auth.AuthAccount, StudyMiddleware.CreateStudyWord , StudyController.MarkWord)
+
 _APP.get('/study/:id', Auth.AuthAccount, StudyMiddleware.CreateStudyWord , StudyController.StudyWord)
+
 
 module.exports = _APP
