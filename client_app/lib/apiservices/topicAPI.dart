@@ -66,6 +66,37 @@ class TopicAPI {
       };
     }
   }
+  // Get all public topics of account id
+  static Future<Map<String, dynamic>> getPublicTopicsByUser({required String accountID}) async {
+    try {
+      var server = getLink();
+
+      var link = "$server/account/$accountID/public";
+
+      var pref = await SharedPreferences.getInstance();
+
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'topics': resBody["data"], "count": resBody["count"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch public topics. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
 
   // Get all topics of the account
   static Future<Map<String, dynamic>> getAccountTopics() async {
@@ -337,4 +368,7 @@ class TopicAPI {
       };
     }
   }
+
+
+
 }

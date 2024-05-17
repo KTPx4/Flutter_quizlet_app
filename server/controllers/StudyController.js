@@ -2,6 +2,7 @@ const CombineModel = require('../models/CombineWordModel')
 const StudyWord = require('../models/StudyCombine')
 const CustomError = require('../modules/CustomError')
 const ConverData = require('../modules/ConvertData')
+
 module.exports.MarkWord = async (req, res) =>{
     try{
         
@@ -54,5 +55,5 @@ module.exports.StudyWord = async (req, res) =>{
         })
     }
 
-    
+
 }

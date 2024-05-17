@@ -12,8 +12,10 @@ import 'package:client_app/page/account/LoginPage.dart';
 import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/account/RegisterPage.dart';
 import 'package:client_app/page/home/Home.dart';
+import 'package:client_app/page/home/ViewPublicAccount.dart';
 import 'package:client_app/page/library/LibraryPage.dart';
-import 'package:client_app/pages/home_page.dart';
+import 'package:client_app/pages/quiz_page.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,20 +65,32 @@ class _MyAppState extends State<MyApp> {
 
         var args = settings.arguments;
         var name = settings.name;
-        
+       
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: HomePage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: Home(),));
           case "/account/profile": 
             return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(),));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));           
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));          
           
-          case "/account/login":
+          case "/account/login":      
             return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
+            
+          case "/account/view":      
+            return MaterialPageRoute(builder: (bd)=> ViewPublicAccount(accountID: args.toString()));
+
+          
+          case "/topic/quiz":
+            var decode = args as Map;
+            var words = decode["words"];
+            var numberOfQuestions = decode["numberOfQuestions"];
+            var showAnswersImmediately= decode["showAnswersImmediately"];
+            var answerType= decode["answerType"];
+            return MaterialPageRoute(builder: (bd)=> QuizPage(words: words,numberOfQuestions: numberOfQuestions, showAnswersImmediately: showAnswersImmediately, answerType: answerType,  ));
 
           default:
             return MaterialPageRoute(builder: (bd)=> const NotFoundPage());

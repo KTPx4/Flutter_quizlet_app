@@ -36,6 +36,20 @@ class TopicService {
     }
   }
 
+  Future<Map<String,dynamic>> getAccountTopicsPublic({required accountID}) async {
+    var response = await TopicAPI.getPublicTopicsByUser(accountID: accountID);
+    if (response['success']) {
+      if (response['topics'] == null) return {"topics": [], "count": 0};
+      var topic = response['topics']
+          .map((topic) => Topic.fromJson(topic))
+          .toList()
+          .cast<Topic>();
+      return {"topics": topic, "count": response['count']};
+    } else {
+      throw Exception(response['message']);
+    }
+  }
+
   Future<String> addTopic(Topic topic) async {
     var response = await TopicAPI.addTopic(topic: topic);
     if (response['success']) {
@@ -89,6 +103,10 @@ class TopicService {
       }
     }
 
+
+    // // Step 3: s to the topic
+    // var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
     if (!editResponse['success']) {
@@ -111,6 +129,7 @@ class TopicService {
   Future<void> addWordsToTopic(Topic topic, List<Word> words) async {
     // Add a new topic and get the topic ID
     var response = await TopicAPI.addTopic(topic: topic);
+
     if (!response['success']) {
       throw Exception(response['message']);
     }

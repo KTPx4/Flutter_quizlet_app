@@ -12,7 +12,7 @@ _APP.get('/', AccountControler.getAll)
 
 _APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
-
+_APP.get('/topauthor', AccountControler.GetTopAuthor)
 
 _APP.get('/validate', Auth.AuthAccount, AccountControler.validAuth)
 
@@ -39,6 +39,7 @@ _APP.post('/reset', Auth.AuthAccount, AccountValidator.ResetPass, AccountControl
 
 _APP.patch('/', Auth.AuthAccount, AccountValidator.Edit, AccountControler.Edit)
 
+_APP.get('/:id/public', AccountControler.GetByIDTopic)
 _APP.get('/:id', AccountControler.GetByID)
 
 module.exports = (root) =>{
