@@ -18,6 +18,16 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
   final CarouselController _controller = CarouselController();
 
+  // Edit add topic to folder at here
+  void _addTopicToFolder({topic})
+  {
+    var idTopic = topic["id"];
+    print(idTopic);
+
+  }
+
+
+
   Widget _buildCard({index})
   {
     return Material(
@@ -53,66 +63,76 @@ class _CarouselState extends State<Carousel> {
       ),
     );
   }
- 
+  
   Widget _topicWidget(index)
   {
-    return Column(
+    return Stack(
+      textDirection: TextDirection.rtl,
       children: [
-        SizedBox(
-          height: 35,
-          child: Text(
-            widget.listCard[index]["title"],
-            maxLines: 2,
-            style:  TextStyle(
-                fontFamily: "SanProBold",
-                overflow: TextOverflow.ellipsis,
-                fontSize: 14,
-                color: AppColors.titleLarge),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          margin: EdgeInsets.only(top: 10),
-          height: 30,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            color: Colors.blue,
-          ),
-          child: Text("${widget.listCard[index]["count"]} thuật ngữ",
-              style: TextStyle(
-                  fontFamily: "SanProBold", fontSize: 12, color: AppColors.textCard )),
-        ),
-     
-        Container(
-            child: Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Container(
-                  width: 36.0,
-                  height: 36.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.scaleDown,
-                      image: NetworkImage(widget.listCard[index]["imgAuthor"]),
-                    ),
-                  ),
-                )),
-            Expanded(
-              flex: 2,
+        Column(
+          children: [        
+            SizedBox(
+              height: 30,
               child: Text(
-                widget.listCard[index]["author"],
-                maxLines: 1,
-                style: TextStyle(
+                widget.listCard[index]["title"],
+                maxLines: 2,
+                style:  TextStyle(
                     fontFamily: "SanProBold",
                     overflow: TextOverflow.ellipsis,
                     fontSize: 14,
                     color: AppColors.titleLarge),
               ),
-            )
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: EdgeInsets.only(top: 10),
+              height: 25,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(40),
+                color: Colors.blue,
+              ),
+              child: Text("${widget.listCard[index]["count"]} thuật ngữ",
+                  style: TextStyle(
+                      fontFamily: "SanProBold", fontSize: 12, color: AppColors.textCard )),
+            ),
+         
+            Container(
+                child: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: Container(
+                      width: 36.0,
+                      height: 36.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.scaleDown,
+                          image: NetworkImage(widget.listCard[index]["imgAuthor"]),
+                        ),
+                      ),
+                    )),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    widget.listCard[index]["author"],
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontFamily: "SanProBold",
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: 14,
+                        color: AppColors.titleLarge),
+                  ),
+                )
+              ],
+            )),
+        
+            
+            
           ],
-        )),
+        ),
+        IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special, color: AppColors.titleLarge,)),
+
       ],
     );
   }

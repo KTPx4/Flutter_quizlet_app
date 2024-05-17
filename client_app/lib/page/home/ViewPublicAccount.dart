@@ -31,7 +31,9 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
     account = res["account"];
     return account;
   }
-
+ 
+  // Edit add topic to folder at here
+  
   Widget buildPopupMenuButton(Topic topic) {
     return PopupMenuButton<String>(
       onSelected: (value) async {
@@ -177,7 +179,7 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
   }
   Widget _buildAuthor()
   {
-    print("author");
+
     return FutureBuilder(
       future: getAccountByID(), 
       builder: (context, snapshot) {

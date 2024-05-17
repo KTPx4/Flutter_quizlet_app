@@ -7,7 +7,7 @@ class AppColors
   static Color get background => Color.fromARGB(255, 255, 255, 255);
   static Color get card => Color.fromARGB(174, 105, 105, 105);
 
-  static Color get titleLarge => const Color.fromARGB(255, 253, 253, 253);
+  static Color get titleLarge => Color.fromARGB(255, 255, 255, 255);
   static Color get textCard => Colors.white;
 
   // icon next - back  in carousel

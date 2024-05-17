@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\ephemeral\cpp_client_wrapper\plugin_registrar.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E6848AA2-857C-301F-8C12-8C9FFD003E86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E8F472C3-3C64-3A41-9442-F79A88E124D6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

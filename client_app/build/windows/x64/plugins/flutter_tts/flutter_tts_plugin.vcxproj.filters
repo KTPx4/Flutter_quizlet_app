@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\ephemeral\.plugin_symlinks\flutter_tts\windows\flutter_tts_plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\STUDY\TDTU\3HK2\Mobile\Final Project\Github\flutter_quizlet_app\client_app\windows\flutter\ephemeral\.plugin_symlinks\flutter_tts\windows\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E8F472C3-3C64-3A41-9442-F79A88E124D6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
