@@ -1,53 +1,108 @@
 import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/TopicService.dart';
+import 'package:client_app/apiservices/folderSerivce.dart';
 import 'package:client_app/models/account.dart';
+import 'package:client_app/models/folder.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/topic/addtopic.dart';
 import 'package:flutter/material.dart';
 
+import 'TopicTabMode.dart';
 import 'topicStudy.dart';
 
-class TopicPage extends StatefulWidget {
+class TopicTab extends StatefulWidget {
   final CallFunction callFunction;
-  const TopicPage({super.key, required this.callFunction});
+  final TopicTabMode mode;
+  const TopicTab({super.key, required this.callFunction, required this.mode});
 
   @override
-  State<TopicPage> createState() => _TopicPageState();
+  State<TopicTab> createState() => _TopicTabState();
 }
 
-class _TopicPageState extends State<TopicPage> {
-  List<Topic> topicList = [];
+class _TopicTabState extends State<TopicTab> {
   String title = "topic";
   final AccountService accountService = AccountService();
   final TopicService topicService = TopicService();
+  final FolderService folderService = FolderService();
+  bool? isFolderSelected;
   List<AccountModel> accountList = [];
+  List<String> selectedTopics = [];
+  List<String> exitingTopics = [];
 
   Future<void> getAllAccount() async {
     accountList = await accountService.getAllAccounts();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    isFolderSelected = !widget.mode.multiSelect;
+    if (widget.mode.folderId != null && widget.mode.multiSelect) {
+      selectCurrentFolder().then((value) {
+        setState(() {
+          isFolderSelected = true;
+        });
+      });
+      widget.callFunction.AddTopicToFolder = addTopicToFolder;
+    }
+    widget.callFunction.refreshWidget = () {
+      setState(() {});
+    };
+
+    getAllAccount();
+  }
+
+  void addTopicToFolder() async {
+    await folderService.AddTopicsToFolder(
+        exitingTopics, selectedTopics, widget.mode.folderId!);
+    setState(() {});
+    Navigator.pop(context);
+  }
+
+  Future<void> selectCurrentFolder() async {
+    Folder folder = await folderService.getFolderById(widget.mode.folderId!);
+    exitingTopics.addAll(folder.topics
+        .where((topic) => topic.id != null)
+        .map((topic) => topic.id!));
+    selectedTopics.addAll(exitingTopics);
+  }
+
   Widget buildPopupMenuButton(Topic topic) {
-    return PopupMenuButton<String>(
+    return PopupMenuButton<int>(
       onSelected: (value) async {
-        if (value == 'Edit') {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddTopicPage(
-                topic: topic,
+        switch (value) {
+          case 1: // Edit
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddTopicPage(
+                  topic: topic,
+                ),
               ),
-            ),
-          );
-          setState(() {});
-        } else if (value == 'Delete') {
-          await topicService.deleteTopic(topic.id!);
-          setState(() {});
+            );
+            setState(() {});
+            break;
+          case 2: // Delete
+            await topicService.deleteTopic(topic.id!);
+            setState(() {});
+            break;
+          case 3: // Thêm Vào Thư Mục
+            setState(() {
+              if (selectedTopics.contains(topic.id)) {
+                selectedTopics.remove(topic.id);
+              } else {
+                selectedTopics.add(topic.id!);
+              }
+            });
+            break;
+          default:
+            break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(
-          value: 'Edit',
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+          value: 1,
           child: Row(
             children: [
               Icon(Icons.edit),
@@ -55,8 +110,8 @@ class _TopicPageState extends State<TopicPage> {
             ],
           ),
         ),
-        const PopupMenuItem<String>(
-          value: 'Delete',
+        const PopupMenuItem<int>(
+          value: 2,
           child: Row(
             children: [
               Icon(Icons.delete),
@@ -64,25 +119,43 @@ class _TopicPageState extends State<TopicPage> {
             ],
           ),
         ),
+        if (widget.mode.multiSelect)
+          PopupMenuItem<int>(
+            value: 3,
+            child: Row(
+              children: [
+                Icon(Icons.folder),
+                Text('Thêm Vào Thư Mục'),
+              ],
+            ),
+          ),
       ],
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    widget.callFunction.refreshWidget = () {
-      setState(() {});
-    };
-    getAllAccount();
+  Future<List<Topic>> getTopics(TopicTabMode mode) async {
+    if (mode.accountTopic) {
+      return await topicService.getAccountTopics();
+    }
+    if (mode.publicTopic) {
+      return await topicService.getPublicTopics();
+    }
+    if (mode.folderId != null) {
+      return await topicService.getTopicsByFolderId(mode.folderId!);
+    } else {
+      return [];
+    }
   }
 
   Widget _buildTopicsListView() {
     return FutureBuilder<List<Topic>>(
-      future: topicService.getAccountTopics(),
+      future: getTopics(widget.mode),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !isFolderSelected!) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -93,6 +166,10 @@ class _TopicPageState extends State<TopicPage> {
             );
           }
           return ListView.builder(
+            shrinkWrap: widget.mode.scrollable ? false : true,
+            physics: widget.mode.scrollable
+                ? AlwaysScrollableScrollPhysics()
+                : NeverScrollableScrollPhysics(),
             itemCount: topics.length,
             itemBuilder: (context, index) {
               var topic = topics[index];
@@ -101,7 +178,9 @@ class _TopicPageState extends State<TopicPage> {
               return Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: (selectedTopics.contains(topic.id))
+                      ? Colors.grey[200]
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
@@ -117,13 +196,16 @@ class _TopicPageState extends State<TopicPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(topic.topicName),
-                            buildPopupMenuButton(
-                              topic,
-                            ),
-                          ]),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(topic.topicName),
+                          ),
+                          buildPopupMenuButton(
+                            topic,
+                          ),
+                        ],
+                      ),
                       SizedBox(
                         height: 10,
                       ), // First row: Topic name
@@ -135,7 +217,8 @@ class _TopicPageState extends State<TopicPage> {
                         // Third row: Account avatar and account name
                         children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(account.nameAvt),
+                            backgroundImage: NetworkImage(
+                                accountService.getAccountImageUrl(account)),
                             radius: 16,
                           ),
                           SizedBox(width: 8),

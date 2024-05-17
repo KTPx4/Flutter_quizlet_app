@@ -1,0 +1,11 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.tundralabs.fluttertts" >
+4
+5    <uses-sdk
+6        android:minSdkVersion="21"
+6-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\flutter_tts\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest12282871018610060635.xml
+7        android:targetSdkVersion="21" />
+7-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\flutter_tts\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest12282871018610060635.xml
+8
+9</manifest>

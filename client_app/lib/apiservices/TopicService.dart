@@ -1,10 +1,14 @@
 import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/topicAPI.dart';
+import 'package:client_app/models/folder.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/models/word.dart';
 
+import 'folderSerivce.dart';
+
 class TopicService {
   final AccountService accountService = AccountService();
+  final FolderService folderService = FolderService();
   Future<List<Topic>> getPublicTopics() async {
     var response = await TopicAPI.getPublicTopics();
 
@@ -118,6 +122,11 @@ class TopicService {
     if (!addWordsResponse['success']) {
       throw Exception(addWordsResponse['message']);
     }
+  }
+
+  Future<List<Topic>> getTopicsByFolderId(String folderId) async {
+    Folder folder = await folderService.getFolderById(folderId);
+    return folder.topics;
   }
 }
 // Implement other methods as needed

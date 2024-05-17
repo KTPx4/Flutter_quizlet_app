@@ -1,12 +1,13 @@
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
-import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
+import 'package:client_app/page/topic/TopicTabMode.dart';
 import 'package:client_app/page/topic/addtopic.dart';
 import 'package:flutter/material.dart';
 
-import 'AddFolder.dart';
+import '../folder/AddEditFolder.dart';
+import '../folder/FolderPage.dart';
 
 class LibraryPage extends StatefulWidget {
   GlobalKey<State<AppBarCustom>>? appBarKey;
@@ -18,8 +19,8 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
-  final CallFunction callFuntionTopic = CallFunction();
-  final CallFunction callFuntionFolder = CallFunction();
+  CallFunction callFuntionTopic = CallFunction();
+  CallFunction callFuntionFolder = CallFunction();
   late final _tabController = TabController(length: 2, vsync: this);
   var _pageController = PageController();
 
@@ -33,10 +34,15 @@ class _LibraryPageState extends State<LibraryPage>
   void initState() {
     // TODO: implement initState
     childLib = [
-      TopicPage(callFunction: callFuntionTopic),
+      TopicTab(
+        callFunction: callFuntionTopic,
+        mode: TopicTabMode(
+          accountTopic: true,
+        ),
+      ),
       FolderTab(
         callFunction: callFuntionFolder,
-      )
+      ),
     ];
 
     initStartup();
@@ -58,7 +64,7 @@ class _LibraryPageState extends State<LibraryPage>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddFolderDialog();
+        return AddEditFolderDialog();
       },
     );
     callFuntionFolder.refreshWidget();
@@ -114,8 +120,11 @@ class _LibraryPageState extends State<LibraryPage>
   Future<Widget> _buildPage() async {
     if (childLib.length == 0) {
       childLib = [
-        TopicPage(
+        TopicTab(
           callFunction: callFuntionTopic,
+          mode: TopicTabMode(
+            accountTopic: true,
+          ),
         ),
         FolderTab(
           callFunction: callFuntionFolder,
