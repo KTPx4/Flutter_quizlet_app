@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 let CombineWordSchema = new mongoose.Schema({    
-    topicID: String,
+    topicID: String,    
     desc: {
         type: String,
         default: ""

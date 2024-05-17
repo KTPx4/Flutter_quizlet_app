@@ -3,10 +3,9 @@ const mongoose = require('mongoose')
 let StudyCombineSchema = new mongoose.Schema({
     combineID: String,
     accountID: String,
-    isMark: Boolean,
-    countCorrect: {
-        type: Number,
-        default: 0
+    isMark: {
+        type: Boolean,
+        default: false
     },
     studyCount: {
         type: Number,
