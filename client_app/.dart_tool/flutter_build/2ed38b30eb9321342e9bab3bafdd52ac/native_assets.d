@@ -1,1 +1,0 @@
- D:\\STUDY\\TDTU\\3HK2\\Mobile\\Final\ Project\\Github\\flutter_quizlet_app\\client_app\\.dart_tool\\flutter_build\\2ed38b30eb9321342e9bab3bafdd52ac\\native_assets.yaml: 
