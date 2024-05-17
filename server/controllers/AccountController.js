@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt')
 const AccountModel = require('../models/AccountModel')
 const CodeModel = require('../models/ResetAccount')
+const TopicModel = require('../models/TopicModel')
+
+const ConverData = require('../modules/ConvertData')
+
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const { randomInt } = require('crypto');
@@ -16,6 +20,101 @@ module.exports.validAuth = (req, res) =>{
             account: req.vars.User
         }
     })
+}
+
+module.exports.GetTopAuthor = async(req, res) =>{
+    try {
+        // Sử dụng aggregation pipeline để nhóm và đếm số lượng topic theo authorID
+        const result = await TopicModel.aggregate([
+            {
+                $group: {
+                    _id: "$authorID",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { count: -1 }
+            },
+            {
+                $limit: 10
+            },
+            {
+                $lookup: {
+                    from: 'accounts', // Tên collection của Account
+                    let: { authorID: { $toObjectId: "$_id" } }, // Chuyển đổi authorID từ String sang ObjectId
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$authorID"] } } },
+                        { $project: { fullName: 1, email: 1 , nameAvt: 1, user: 1} } // Chỉ chọn các trường cần thiết
+                    ],
+                    as: 'account'
+                }
+            },
+            {
+                $unwind: "$account"
+            },
+            {
+                $project: {
+                    _id: 0,
+                    authorID: "$_id",
+                    count: 1,
+                    account: "$account"
+                }
+            }
+        ]);
+        const resultv2 = await TopicModel.aggregate([
+            {
+                $match: {
+                    isPublic: true
+                }
+            },
+            {
+                $group: {
+                    _id: "$authorID",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { count: -1 }
+            },
+            {
+                $limit: 10
+            },
+            {
+                $lookup: {
+                    from: 'accounts', // Tên collection của Account
+                    let: { authorID: { $toObjectId: "$_id" } }, // Chuyển đổi authorID từ String sang ObjectId
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$authorID"] } } },
+                        { $project: { fullName: 1, email: 1, nameAvt: 1, user: 1 } } // Chỉ chọn các trường cần thiết
+                    ],
+                    as: 'account'
+                }
+            },
+            {
+                $unwind: "$account"
+            },
+            {
+                $project: {
+                    _id: 0,
+                    authorID: "$_id",
+                    count: 1,
+                    account: "$account"
+                }
+            }
+        ]);
+        
+
+        return res.status(200).json({
+            message: "Lấy thành công top 10 tác giả nổi bậc nhất",
+            data: resultv2
+        })
+    } catch (error) {
+        console.error("Error at get Top 10 - Account Controller",error);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau"      
+        })
+    }
+    
 }
 
 module.exports.getAll = async(req, res) =>{
@@ -34,6 +133,7 @@ module.exports.getAll = async(req, res) =>{
         })
     }
 }
+
 module.exports.GetByID = async(req, res) =>{
     try {
         let id = req.params.id
@@ -60,6 +160,41 @@ module.exports.GetByID = async(req, res) =>{
         })
     }
 }
+
+module.exports.GetByIDTopic = async(req, res) =>{
+    try {
+        let idu = req.params.id
+
+        var ListTopic = await TopicModel.find({authorID: idu, isPublic: true})
+        if(!ListTopic || ListTopic.length < 1)
+        {
+            return res.status(200).json({
+                message:"Chưa có chủ đề nào.",
+                count: 0,
+                data: null
+            })
+        }   
+    
+        var resultTopics =await ConverData.formatListTopic(idu, ListTopic)
+        
+    
+        return res.status(200).json({
+            message: "Lấy thành công danh sách topic",
+            count: ListTopic.length,
+            data: resultTopics
+        })
+
+    }
+    catch(err)
+    {
+        console.log("Error at AccountController - getbyid public: \n" + err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!",
+            data: []
+        })
+    }
+}
+
 module.exports.Register = async (req, res) =>{
     let {email,  password} = req.body
     let {root, userName} = req.vars

@@ -6,6 +6,7 @@ const StudyTopicModel = require("../models/StudyTopic")
 // const StorePublic = require('../models/StorePublicTopic')
 var ObjectId = require('mongoose').Types.ObjectId;
 const ConverData = require("../modules/ConvertData")
+const AccountModel = require("../models/AccountModel")
 
 module.exports.GetAll = async(req, res) =>{
     try{
@@ -180,6 +181,51 @@ module.exports.GetPublic = async (req, res) =>{
         })
     }
 }
+
+module.exports.GetPublicv2 = async (req, res) => {
+    try {
+        var idu = req.vars.User._id;
+        var ListTopic = await TopicModel.find({ isPublic: true });
+        
+        if (!ListTopic || ListTopic.length < 1) {
+            return res.status(200).json({
+                message: "Chưa có topic nào. Hãy tạo thêm để xem",
+                count: 0,
+                data: null
+            });
+        }
+
+        var resultTopics = await ConverData.formatListTopic(idu, ListTopic);
+
+        // Group topics by authorID
+        let groupedTopics = resultTopics.reduce((acc, topic) => {
+            let authorID = topic.authorID;
+            if (!acc[authorID]) {
+                acc[authorID] = [];
+            }
+            acc[authorID].push(topic);
+            return acc;
+        }, {});
+
+        // Convert the grouped object to an array
+        let groupedTopicsArray = Object.keys(groupedTopics).map(authorID => ({
+            authorID: authorID,
+            topics: groupedTopics[authorID]
+        }));
+
+        return res.status(200).json({
+            message: "Lấy thành công danh sách topic cộng đồng",
+            count: ListTopic.length,
+            data: groupedTopicsArray
+        });
+    } catch (err) {
+        console.log("Error at TopicController - get public v2",err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!"
+        });
+    }
+};
+
 /*
 module.exports.StorePublic = async(req, res)=>{
     try{
@@ -259,7 +305,7 @@ module.exports.Add = async(req, res) =>{
     try{
         var Account = req.vars.User
         var idu = Account._id
-        var {topicName, desc, isPublic} = req.body
+        var {topicName, desc, isPublic} = req.body  
 
         var newTopic = await TopicModel.create({
             topicName: topicName,

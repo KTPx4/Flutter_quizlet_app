@@ -84,62 +84,9 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   List<Widget> _actionAppBar() {
-    return [
+     return [
       IconButton(
           onPressed: (isTopic) ? addTopic : addFolder, icon: Icon(Icons.add)),
-      IconButton(
-          onPressed: () async{
-            List<Map<String, dynamic>> words = [
-            {
-              "desc": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-              "img": "",
-              "mean1":{
-                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-                "lang": "english"                
-              },
-              "mean2":{
-                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-                "lang": "vietnam"
-              }
-            },
-            {
-              "desc": "ttttttttttttttttttttttttttt",
-              "img": "",
-              "mean1":{
-                "title": "ttttttttttttttttttttttttttt",
-                "lang": "english"                
-              },
-              "mean2":{
-                "title": "ttttttttttttttttttttttttttt",
-                "lang": "vietnam"
-              }
-            }
-          ];
-
-            TopicModel.Topic testTopic = TopicModel.Topic(
-                topicName: 'Test Hoang',
-                desc: 'This is a test topic',
-                isPublic: true,
-                words: [
-                  Word(
-                    desc: 'Test Word',
-                    img: '',
-                    mean1: Meaning(title: 'Hello', lang: 'English'),
-                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
-                  ),
-                  Word(
-                    desc: 'Test Word',
-                    img: '',
-                    mean1: Meaning(title: 'Hello', lang: 'English'),
-                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
-                  ),
-                ],
-              );
-          var res =await  TopicAPI.postWords(words: testTopic.words);
-          print(res);
-
-          }, icon: Icon(Icons.abc)),
-      
     ];
   }
 
