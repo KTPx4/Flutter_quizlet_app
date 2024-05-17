@@ -11,6 +11,7 @@ _APP.post('/',  Auth.AuthAccount, Validator.Add, TopicController.Add)
 
 // for public topic
 _APP.get('/public', Auth.AuthAccount, TopicController.GetPublic)
+_APP.get('/publicv2',  Auth.AuthAccount, TopicController.GetPublicv2)
 // _APP.post('/public/:id', Auth.AccessTopic, TopicController.StorePublic)
 // _APP.delete('/public/:id', Auth.AccessTopic, TopicController.RemoveStore)
 

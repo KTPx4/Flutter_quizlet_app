@@ -77,6 +77,10 @@ class AccountAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
+        var restoken = resBody["data"]["token"];
+        var token = jsonEncode(restoken) ?? "";
+        var pref = await SharedPreferences.getInstance();
+        if (token != null) pref?.setString(KEY_LOGIN, token);
         return {
           'success': true,
           'message': "Đăng nhập thành công",
@@ -420,4 +424,126 @@ class AccountAPI {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> getTopAuthor() async {
+  try {
+      var server = getLink();
+      var link = "$server/account/topauthor";
+
+      var res = await http.get(Uri.parse(link));
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        var listAccount = resBody["data"];
+        List<Map<String,dynamic>> listResult = [];
+        for(var i in listAccount)
+        {
+          listResult.add({
+            "count": i["count"],
+            "id": i["authorID"],
+            "author": i["account"]["user"],
+            "imgAuthor": "${getServer()}/images/account/${i["authorID"]}/${i["account"]["nameAvt"]}",
+            "type": "author"
+          });
+        }
+     
+        return {
+          'success': true,
+          'message': "Lấy thành công top tác giả",
+          'data': listResult
+        };
+
+      } else {
+        return {
+          'success': false,
+          'message': "Vui lòng tải lại trang",
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch top author. Please try again later!",
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getTopicPublic() async {
+  try {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+  
+      var server = getLink();
+      var link = "$server/topic/publicv2";
+
+      var res = await http.get(
+        Uri.parse(link),   
+        headers: {"Authorization": "Bearer $token"}
+      );
+
+      var resBody = jsonDecode(res.body);
+ 
+      if (res.statusCode == 200) {
+      
+        var listAccount = resBody["data"];
+
+        List<List<Map<String,dynamic>>> listResult = [];        
+
+
+        for(var i in listAccount)
+        {
+
+        var accountID = i["authorID"];
+       
+        var Account = await http.get(
+          Uri.parse("${getLink()}/account/$accountID")
+        );
+
+        var data = jsonDecode(Account.body)["data"];
+
+        var user =  data["user"];
+        var img =  data["nameAvt"];
+
+          var ListTopics = i["topics"];
+          List<Map<String,dynamic>> temList = [];
+
+          for(var j in ListTopics)
+          {
+            var t = {
+              "author": "$user", 
+              "id": "${j["_id"]}", 
+              "imgAuthor": "${getServer()}/images/account/$accountID/$img", 
+              "type": "topic", 
+              "title": "${j["topicName"]}", 
+              "count": j["countWords"]
+            };
+            temList.add(t);  
+          }
+
+          listResult.add(temList);
+
+        }
+     
+        return {
+          'success': true,
+          'message': "Lấy thành công top tác giả",
+          'data': listResult
+        };
+
+      } else {
+        return {
+          'success': false,
+          'message': "Vui lòng tải lại trang",
+        };
+      }
+    } catch (e) {
+      print(e);
+      return {
+        'success': false,
+        'message': "Failed to fetch top author. Please try again later!",
+      };
+    }
+  }
+
+
 }

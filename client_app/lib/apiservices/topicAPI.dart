@@ -66,6 +66,37 @@ class TopicAPI {
       };
     }
   }
+  // Get all public topics of account id
+  static Future<Map<String, dynamic>> getPublicTopicsByUser({required String accountID}) async {
+    try {
+      var server = getLink();
+
+      var link = "$server/account/$accountID/public";
+
+      var pref = await SharedPreferences.getInstance();
+
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'topics': resBody["data"], "count": resBody["count"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch public topics. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
 
   // Get all topics of the account
   static Future<Map<String, dynamic>> getAccountTopics() async {
@@ -338,38 +369,6 @@ class TopicAPI {
     }
   }
 
-  static Future<Map<String, dynamic>> postWords({ required List<Word> words}) async {
-  try {
-    var pref = await SharedPreferences.getInstance();
-    String? token = pref.getString(KEY_LOGIN);
-
-    if(token == null) return {'success': false, 'message': "Chưa đăng nhập hoặc hết hạn",};
-
-    var server = "${getLink()}/topic/6642238164f482e76912bede/word";
-    var body = jsonEncode({'words': words.map((word) => word.toJson()).toList()});
-
-    var res = await http.post(
-      Uri.parse(server),   
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      },    
-      body: body
-    );
-
-    var resBody = jsonDecode(res.body);         
-
-    if(res.statusCode == 200) {  
-      return {'success': true, 'message': "Cập nhật thành công"};
-    }
-
-    return {'success': false, 'message': resBody["message"]};
-  }
-  catch(e) {
-    print(e);
-    return {'success': false, 'message': "Cập nhật thất bại. Vui lòng thử lại sau!", };
-  }    
-}
 
 
 }
