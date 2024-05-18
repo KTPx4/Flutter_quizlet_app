@@ -10,18 +10,16 @@ import 'FolderTopicPage.dart';
 
 class FolderTab extends StatefulWidget {
   final CallFunction callFunction;
-  const FolderTab({super.key, required this.callFunction});
+  final bool selectFolder;
+  const FolderTab(
+      {super.key, required this.callFunction, this.selectFolder = false});
 
   @override
   State<FolderTab> createState() => _FolderTabState();
 }
 
-
-
-
 // this page only use for show list topic in library,
 // when click 1 folder => navigate to Page Folder (page/folder) to show list topic
-
 
 class _FolderTabState extends State<FolderTab> {
   final FolderService folderService = FolderService();
@@ -38,7 +36,7 @@ class _FolderTabState extends State<FolderTab> {
   @override
   void initState() {
     // TODO: implement initState
-    widget.callFunction.refreshWidget = () {
+    widget.callFunction!.refreshWidget = () {
       setState(() {});
     };
     getAllAccount();
@@ -46,39 +44,42 @@ class _FolderTabState extends State<FolderTab> {
   }
 
   Widget buildPopupMenuButton(Folder folder) {
-    return PopupMenuButton<String>(
+    return PopupMenuButton<int>(
       onSelected: (value) async {
-        if (value == 'Edit') {
-          await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AddEditFolderDialog(
-                folder: folder,
-              );
-            },
-          );
-          setState(() {});
-        } else if (value == 'Delete') {
-          await folderService.deleteFolder(folder.id!);
-          setState(() {});
+        switch (value) {
+          case 1:
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AddEditFolderDialog(
+                  folder: folder,
+                );
+              },
+            );
+            setState(() {});
+            break;
+          case 2:
+            await folderService.deleteFolder(folder.id!);
+            setState(() {});
+            break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(
-          value: 'Edit',
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+          value: 1,
           child: Row(
             children: [
               Icon(Icons.edit),
-              Text('Edit'),
+              Text('Sửa'),
             ],
           ),
         ),
-        const PopupMenuItem<String>(
-          value: 'Delete',
+        const PopupMenuItem<int>(
+          value: 2,
           child: Row(
             children: [
               Icon(Icons.delete),
-              Text('Delete'),
+              Text('Xóa'),
             ],
           ),
         ),
@@ -95,12 +96,12 @@ class _FolderTabState extends State<FolderTab> {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('lỗi: ${snapshot.error}');
         } else {
           var folders = snapshot.data;
           if (folders == null || folders.isEmpty) {
             return Center(
-              child: Text('No folder found'),
+              child: Text('không có thư mục nào'),
             );
           }
           return ListView.builder(
@@ -125,16 +126,20 @@ class _FolderTabState extends State<FolderTab> {
                 ),
                 child: ListTile(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FolderTopicPage(
-                          refreshParent: refreshParent,
-                          account: account,
-                          folder: folder,
+                    if (widget.selectFolder) {
+                      Navigator.pop(context, folder.id);
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FolderTopicPage(
+                            refreshParent: refreshParent,
+                            account: account,
+                            folder: folder,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

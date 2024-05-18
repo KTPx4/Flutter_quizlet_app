@@ -1,9 +1,14 @@
 // transition function   control the current tab and the current page
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/models/meaning.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/models/word.dart';
+import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:language_picker/language_picker_dropdown.dart';
 import 'package:language_picker/languages.dart';
@@ -30,11 +35,54 @@ class _AddTopicPageState extends State<AddTopicPage> {
   Language definitionLanguage = Languages.english;
   bool isPublic = false;
   bool allValid = false;
-  @override
-  void dispose() {
-    // TODO: implement dispose
 
-    super.dispose();
+  Future<File> pickCsvFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+    );
+
+    if (result != null) {
+      return File(result.files.single.path!);
+    } else {
+      // Handle the case where no file was picked
+      return File('');
+    }
+  }
+
+  Future<List<Word>> parseCsvFile(File file) async {
+    final input = file.openRead();
+    final rows = await input
+        .transform(utf8.decoder)
+        .transform(CsvToListConverter())
+        .toList();
+
+    if (rows.isEmpty) {
+      return [];
+    }
+
+    final headers = rows.first;
+    int tuIndex = headers.indexOf('từ');
+    int nghiaIndex = headers.indexOf('nghĩa');
+
+    if (tuIndex == -1 || nghiaIndex == -1) {
+      return [];
+    }
+
+    // Skip the header row
+    final dataRows = rows.skip(1);
+
+    return dataRows
+        .map((e) => Word(
+              mean1: Meaning(
+                  title: e[tuIndex], lang: verbLanguage.name.toString()),
+              mean2: Meaning(
+                  title: e[nghiaIndex],
+                  lang: definitionLanguage.name.toString()),
+              desc: '',
+              img: '',
+            ))
+        .toList();
   }
 
   @override
@@ -164,7 +212,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Select a language'),
+              title: Text('Chọn Ngôn Ngữ'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -197,7 +245,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
                     children: [
                       Expanded(
                         child: Center(
-                          child: Text('Is Public',
+                          child: Text('Cộng Đồng',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
@@ -224,7 +272,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Add Topic'),
+          title: Text('Thêm Chủ Đề'),
           actions: [
             IconButton(
               onPressed: () {
@@ -254,7 +302,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
                   controller: titleController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'This field cannot be empty';
+                      return 'Trường này không thể để trống';
                     }
                     return null;
                   },
@@ -267,8 +315,26 @@ class _AddTopicPageState extends State<AddTopicPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TextButton(onPressed: () {}, child: Text('Upload CSV  File')),
-                  TextButton(onPressed: () {}, child: Text('Export CSV  File'))
+                  TextButton(
+                    onPressed: () async {
+                      final file = await pickCsvFile();
+                      final newwords = await parseCsvFile(file);
+                      if (newwords.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('không thể tải lên tệp CSV')),
+                        );
+                      } else {
+                        formKeys.addAll(List.generate(newwords.length,
+                            (index) => GlobalKey<FormState>()));
+                        this.words.addAll(newwords);
+                        setState(() {});
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('thêm chủ đề thành công')),
+                        );
+                      }
+                    },
+                    child: Text('Tải lên tệp CSV'),
+                  ),
                 ],
               ),
               ListView.builder(

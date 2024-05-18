@@ -29,7 +29,7 @@ class _AddEditFolderDialogState extends State<AddEditFolderDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.folder == null ? 'Add Folder' : 'Edit Folder'),
+      title: Text(widget.folder == null ? 'thêm  thư mục' : 'sửa thư mục'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -40,14 +40,14 @@ class _AddEditFolderDialogState extends State<AddEditFolderDialog> {
               onChanged: (value) {
                 setState(() {});
               },
-              decoration: InputDecoration(hintText: "Folder Name"),
+              decoration: InputDecoration(hintText: "tên thư mục"),
             ),
             TextFormField(
               controller: folderDescriptionController,
               onChanged: (value) {
                 setState(() {});
               },
-              decoration: InputDecoration(hintText: "Folder Description"),
+              decoration: InputDecoration(hintText: "mô tả thư mục"),
             ),
           ],
         ),
@@ -78,7 +78,7 @@ class _AddEditFolderDialogState extends State<AddEditFolderDialog> {
               Navigator.of(context).pop();
             }
           },
-          child: Text(widget.folder == null ? 'Add' : 'Save'),
+          child: Text(widget.folder == null ? 'thêm' : 'lưu'),
         ),
       ],
     );

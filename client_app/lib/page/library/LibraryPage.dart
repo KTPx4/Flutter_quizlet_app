@@ -1,14 +1,5 @@
-
-import 'package:client_app/apiservices/testingtopicAPI.dart';
-import 'package:client_app/apiservices/topicAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/modules/ColorsApp.dart';
-
-
-import 'package:client_app/models/meaning.dart';
-import 'package:client_app/models/word.dart';
-
-
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
 import 'package:client_app/page/topic/TopicTabMode.dart';
@@ -28,14 +19,12 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
-  CallFunction callFuntionTopic = CallFunction();
-  CallFunction callFuntionFolder = CallFunction();
+  CallFunction callFunctionTopic = CallFunction();
+  CallFunction callFunctionFolder = CallFunction();
   late final _tabController = TabController(length: 2, vsync: this);
   var _pageController = PageController();
 
   late var childLib;
-
-  final CallFunction callFuntion = CallFunction();
 
   bool isTopic = true; // use for button add in AppBar
 
@@ -44,13 +33,13 @@ class _LibraryPageState extends State<LibraryPage>
     // TODO: implement initState
     childLib = [
       TopicTab(
-        callFunction: callFuntionTopic,
+        callFunction: callFunctionTopic,
         mode: TopicTabMode(
           accountTopic: true,
         ),
       ),
       FolderTab(
-        callFunction: callFuntionFolder,
+        callFunction: callFunctionFolder,
       ),
     ];
 
@@ -76,7 +65,7 @@ class _LibraryPageState extends State<LibraryPage>
         return AddEditFolderDialog();
       },
     );
-    callFuntionFolder.refreshWidget();
+    callFunctionFolder.refreshWidget();
   }
 
   void addTopic() async {
@@ -85,11 +74,11 @@ class _LibraryPageState extends State<LibraryPage>
       MaterialPageRoute(builder: (context) => AddTopicPage()),
     );
 
-    callFuntionTopic.refreshWidget();
+    callFunctionTopic.refreshWidget();
   }
 
   List<Widget> _actionAppBar() {
-     return [
+    return [
       IconButton(
           onPressed: (isTopic) ? addTopic : addFolder, icon: Icon(Icons.add)),
     ];
@@ -130,13 +119,13 @@ class _LibraryPageState extends State<LibraryPage>
     if (childLib.length == 0) {
       childLib = [
         TopicTab(
-          callFunction: callFuntionTopic,
+          callFunction: callFunctionTopic,
           mode: TopicTabMode(
             accountTopic: true,
           ),
         ),
         FolderTab(
-          callFunction: callFuntionFolder,
+          callFunction: callFunctionFolder,
         )
       ];
     }
@@ -176,7 +165,6 @@ class _LibraryPageState extends State<LibraryPage>
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildTabBar(),
-        (isTopic) ? _searchbar() : Container(),
         Expanded(
             child: FutureBuilder(
           future: _buildPage(),
@@ -188,7 +176,8 @@ class _LibraryPageState extends State<LibraryPage>
               return page!;
             } else {
               return Center(
-                child: Text("Error When loading"),
+                child:
+                    Text("lỗi xảy ra khi load dữ liệu, vui lòng thử lại sau"),
               );
             }
           },

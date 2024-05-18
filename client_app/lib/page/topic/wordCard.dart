@@ -32,12 +32,12 @@ class _QuestionCardState extends State<QuestionCard> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   initialValue: widget.word.mean1.title,
                   decoration: InputDecoration(
-                    labelText: "Verb",
-                    hintText: "Enter your question here",
+                    labelText: "từ",
+                    hintText: "Nhập từ vào đây",
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'This field cannot be empty';
+                      return 'cần phải nhập từ';
                     }
                     return null;
                   },
@@ -50,12 +50,12 @@ class _QuestionCardState extends State<QuestionCard> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   initialValue: widget.word.mean2.title,
                   decoration: InputDecoration(
-                    labelText: "Definition",
-                    hintText: "Enter the answer here",
+                    labelText: "nghĩa",
+                    hintText: "Nhập nghĩa vào đây",
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'This field cannot be empty';
+                      return 'cần phải nhập nghĩa';
                     }
                     return null;
                   },
