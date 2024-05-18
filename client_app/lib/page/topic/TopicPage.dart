@@ -96,10 +96,13 @@ class _TopicTabState extends State<TopicTab> {
   }
 
   Future<File> writeStringToCsvFile(String csvString, String fileName) async {
-    var result = await FilePicker.platform.getDirectoryPath();
+    // Let the user pick a directory
+    var status = await Permission.storage.request();
 
-    if (result != null) {
-      final file = File('$result/$fileName.csv');
+    String? directoryPath = await FilePicker.platform.getDirectoryPath();
+
+    if (directoryPath != null) {
+      final file = File('$directoryPath/$fileName.csv');
 
       return file.writeAsString(csvString);
     } else {
@@ -158,13 +161,13 @@ class _TopicTabState extends State<TopicTab> {
             if (!status.isGranted) {
               // Request storage permission
               status = await Permission.storage.request();
+              print(status);
             }
 
-            if (status.isGranted) {
+            if (true) {
               // If permission is granted, proceed with exporting words to CSV
               String csvString = convertWordsToCsv(topic.words);
-              var file =
-                  await writeStringToCsvFile(csvString, 'exported_words');
+              var file = await writeStringToCsvFile(csvString, topic.topicName);
               if (file.path.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to export words to CSV')),
