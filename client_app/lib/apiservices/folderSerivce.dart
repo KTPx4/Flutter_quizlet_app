@@ -10,11 +10,11 @@ class FolderService {
     if (response['success']) {
       return response['_id'];
     } else {
-      throw Exception(response['message']);
+      return response['message'];
     }
   }
 
-  Future<void> AddTopicsToFolder(List<String> exitingTopics,
+  Future<String> AddTopicsToFolder(List<String> exitingTopics,
       List<String> selectedTopics, String id) async {
     List<String> removeFolderTopics =
         exitingTopics.where((item) => !selectedTopics.contains(item)).toList();
@@ -25,7 +25,7 @@ class FolderService {
     for (var topicId in removeFolderTopics) {
       var response = await FolderAPI.removeTopicFromFolder(id, topicId);
       if (!response['success']) {
-        throw Exception(response['message']);
+        return response['message'];
       }
     }
 
@@ -34,9 +34,20 @@ class FolderService {
       if (addFolderTopics.isNotEmpty)
         await FolderAPI.addTopicsToFolder(id, addFolderTopics);
     } catch (e) {
-      throw Exception(
-          "Failed to add topics to folder. Please try again later!");
+      return "Không thể thêm chủ đề vào thư mục. Chủ đề có thể đã có trong thư mục. Vui lòng thử lại sau!";
     }
+
+    return "Chủ đề đã được cập nhật thành công!";
+  }
+
+  Future<String> removeTopicFromFolder(String folderId, String topicId) async {
+    var response = await FolderAPI.removeTopicFromFolder(folderId, topicId);
+
+    if (!response['success']) {
+      return 'Không thể xóa chủ đề khỏi thư mục: ' + response['message'];
+    }
+
+    return 'Chủ đề đã được xóa khỏi thư mục thành công!';
   }
 
   // Get all folders
@@ -50,17 +61,18 @@ class FolderService {
           .toList()
           .cast<Folder>();
     } else {
-      throw Exception(response['message']);
+      return [];
     }
   }
 
   // Delete a folder
-  Future<void> deleteFolder(String id) async {
+  Future<String> deleteFolder(String id) async {
     var response = await FolderAPI.deleteFolder(id);
 
     if (!response['success']) {
-      throw Exception(response['message']);
+      return 'Xóa thư mục không thành công: ' + response['message'];
     }
+    return 'Thư mục đã được xóa thành công!';
   }
 
   Future<Folder> getFolderById(String id) async {
@@ -68,9 +80,8 @@ class FolderService {
 
     if (response['success']) {
       return Folder.fromJson(response['data']);
-    } else {
-      throw Exception(response['message']);
     }
+    return Folder(folderName: "error", desc: "error");
   }
 
   Future<String> editFolder(String id, Folder folder) async {
@@ -79,7 +90,16 @@ class FolderService {
     if (response['success']) {
       return response['_id'];
     } else {
-      throw Exception(response['message']);
+      return response['message'];
+    }
+  }
+
+  Future<String> addTopicToFolder(String folderId, String topicId) async {
+    try {
+      await FolderAPI.addTopicsToFolder(folderId, [topicId]);
+      return "Chủ đề đã được thêm vào thư mục thành công!";
+    } catch (e) {
+      return "Không thể thêm chủ đề vào thư mục. Chủ đề có thể đã có trong thư mục!";
     }
   }
 }
