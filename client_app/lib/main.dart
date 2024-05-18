@@ -81,13 +81,13 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
 
           
-          case "/topic/quiz":
-            var decode = args as Map;
-            var words = decode["words"];
-            var numberOfQuestions = decode["numberOfQuestions"];
-            var showAnswersImmediately= decode["showAnswersImmediately"];
-            var answerType= decode["answerType"];
-            return MaterialPageRoute(builder: (bd)=> QuizPage(words: words,numberOfQuestions: numberOfQuestions, showAnswersImmediately: showAnswersImmediately, answerType: answerType,  ));
+          // case "/topic/quiz":
+          //   var decode = args as Map;
+          //   var words = decode["words"];
+          //   var numberOfQuestions = decode["numberOfQuestions"];
+          //   var showAnswersImmediately= decode["showAnswersImmediately"];
+          //   var answerType= decode["answerType"];
+          //   return MaterialPageRoute(builder: (bd)=> QuizPage(words: words,numberOfQuestions: numberOfQuestions, showAnswersImmediately: showAnswersImmediately, answerType: answerType,  ));
 
           default:
             return MaterialPageRoute(builder: (bd)=> const NotFoundPage());

@@ -87,7 +87,7 @@ class TopicService {
 
 
     // Step 3: s to the topic
-    var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+    
 
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);

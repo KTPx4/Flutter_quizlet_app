@@ -59,4 +59,6 @@ class Word {
       'mean2': mean2.toJson(),
     };
   }
+
+  toJson() {}
 }
