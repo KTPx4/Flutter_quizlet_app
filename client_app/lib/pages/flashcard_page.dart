@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:client_app/models/word.dart';  // Ensure this matches your actual import path
+import 'package:client_app/models/word.dart';  
 import 'package:client_app/pages/flashcard_settings.dart';
 
 class FlashcardPage extends StatefulWidget {

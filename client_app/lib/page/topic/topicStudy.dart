@@ -1,6 +1,6 @@
 import 'package:client_app/pages/flashcard_page.dart';
 import 'package:client_app/pages/quiz_page.dart';
-import 'package:client_app/pages/quiz_settings.dart';
+
 import 'package:client_app/pages/typing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_app/models/topic.dart';
