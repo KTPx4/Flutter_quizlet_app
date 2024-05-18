@@ -8,7 +8,7 @@ let TopicSchema = new mongoose.Schema({
     isPublic: Boolean,
     createAt:{
         type: Date,
-        default: dateVietnam
+        default: () => moment().tz('Asia/Ho_Chi_Minh').toDate()
     }
 
 })

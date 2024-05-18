@@ -1,5 +1,5 @@
 const StudyCombineModel = require('../models/StudyCombine')
-
+const StudyTopic = require('../models/StudyTopic')
 const CombineModel = require('../models/CombineWordModel')
 
 module.exports.CreateStudyWord = async(req, res, next) =>{
@@ -35,5 +35,21 @@ module.exports.CreateStudyWord = async(req, res, next) =>{
     else{
         return next()
     }
+
+}
+
+module.exports.StudyTopic = async(req, res, next) =>{
+    let idt = req.params.id
+    let idu = req.vars.User._id
+
+    var study  = await StudyTopic.findOne({topicID: idt, accountID: idu})
+    if(!study)
+    {
+        study  = await StudyTopic.create({topicID: idt, accountID: idu})
+    }
+
+    req.vars.StudyTopic = study
+
+    return next();
 
 }

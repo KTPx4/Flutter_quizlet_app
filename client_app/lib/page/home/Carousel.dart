@@ -1,7 +1,10 @@
 
 import 'dart:ui';
 
+import 'package:client_app/apiservices/TopicService.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
+import 'package:client_app/page/topic/topicStudy.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -22,7 +25,6 @@ class _CarouselState extends State<Carousel> {
   void _addTopicToFolder({topic})
   {
     var idTopic = topic["id"];
-    print(idTopic);
 
   }
 
@@ -33,16 +35,36 @@ class _CarouselState extends State<Carousel> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {      
-          var id = widget.listCard[index]["id"];  
+        onTap: () async{   
+          try{
+            var id = widget.listCard[index]["id"];  
             if(widget.listCard[index]["type"] == "topic")
             {
-
+              Topic topic = await TopicService().getTopicById(id);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TopicStudy(topic: topic),
+                ),
+              );
             }
             else
             {
               Navigator.pushNamed(context, "/account/view", arguments: id);
             }
+          }
+          catch(err)
+          {
+            var notConnect = err.toString().contains("Connection failed");
+            var mess = "Có chút lỗi nho nhỏ. Vui lòng thử lại sau nha ^^!";
+            if(notConnect == true)
+            {
+              mess = "Không có kết nối mạng. Vui lòng thử lại sau!";
+            }
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mess)));
+          }   
+         
         },
         child: Container(
           padding: EdgeInsets.all(10),
@@ -106,9 +128,10 @@ class _CarouselState extends State<Carousel> {
                       height: 36.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        border: Border.all(width: 2, color:Colors.lightBlue),
                         image: DecorationImage(
                           fit: BoxFit.scaleDown,
-                          image: NetworkImage(widget.listCard[index]["imgAuthor"]),
+                          image: NetworkImage("${widget.listCard[index]["imgAuthor"]}?v=${DateTime.now().toString()}"),
                         ),
                       ),
                     )),
@@ -131,7 +154,7 @@ class _CarouselState extends State<Carousel> {
             
           ],
         ),
-        IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special, color: AppColors.titleLarge,)),
+        IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special_outlined, color: AppColors.titleLarge,)),
 
       ],
     );
@@ -150,10 +173,11 @@ class _CarouselState extends State<Carousel> {
                           width: 56.0,
                           height: 56.0,
                           decoration: BoxDecoration(
+                            border: Border.all(width: 2, color:Colors.pink),
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               fit: BoxFit.scaleDown,
-                              image: NetworkImage(widget.listCard[index]["imgAuthor"]),
+                              image: NetworkImage("${widget.listCard[index]["imgAuthor"]}?v=${DateTime.now().toString()}"),
                             ),
                           ),
                         )
@@ -182,7 +206,7 @@ class _CarouselState extends State<Carousel> {
                     height: 30,
                     decoration:  BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 248, 248, 248),
+                      color: Color.fromARGB(255, 224, 223, 223),
                     ),
                     child: Text("${index+1}",
                         style:  TextStyle(

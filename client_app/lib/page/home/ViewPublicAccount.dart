@@ -33,7 +33,7 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
   }
  
   // Edit add topic to folder at here
-  
+
   Widget buildPopupMenuButton(Topic topic) {
     return PopupMenuButton<String>(
       onSelected: (value) async {
@@ -101,6 +101,7 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: topics.length,
                 itemBuilder: (context, index) {
+                  
                   var topic = topics[index];              
                  
                   return Container(

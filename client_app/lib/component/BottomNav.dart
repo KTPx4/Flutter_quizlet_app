@@ -27,7 +27,7 @@ class _BottomNavState extends State<BottomNav> {
   updateIndex(int index)
   {
     setState(() {
-      currentIndex = (index >= 2) ? index + 1 : index;
+      currentIndex = (index >= 2) ? (index + 1) : index;
     });
    
   }
@@ -81,10 +81,10 @@ class _BottomNavState extends State<BottomNav> {
     else
     {
       index = (index > 2)? (index - 1) : index; // Add Button not navigate page direct 
-     
+    
       widget.pageController.animateToPage(index,
           duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn);
+          curve: Curves.ease);
        
     }
 

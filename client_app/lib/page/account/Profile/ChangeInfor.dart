@@ -52,7 +52,7 @@ class _AlertChangeInforState extends State<AlertChangeInfor> {
       setState(() {
         isWaiting = false;
       });
-      print(emailUser);
+
       var res = await AccountAPI.changeEmail( email: emailUser);     
       
 

@@ -42,6 +42,8 @@ class _LibraryPageState extends State<LibraryPage>
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
+
     childLib = [
       TopicTab(
         callFunction: callFuntionTopic,
@@ -55,13 +57,14 @@ class _LibraryPageState extends State<LibraryPage>
     ];
 
     initStartup();
-    super.initState();
   }
 
-  void initStartup() async {
+  void initStartup() {
     var action = _actionAppBar();
 
     if (widget.appBarKey?.currentState != null) {
+      (widget.appBarKey?.currentState as AppBarCustomState)
+          .clearAll();
       (widget.appBarKey?.currentState as AppBarCustomState)
           .updateTitle("Thư viện");
       (widget.appBarKey?.currentState as AppBarCustomState)
@@ -113,6 +116,7 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   Widget _buildTabBar() {
+    
     return Container(
       color: AppColors.libTabBar,
       child: TabBar(onTap: _animationToPage, controller: _tabController, tabs: [
@@ -172,6 +176,7 @@ class _LibraryPageState extends State<LibraryPage>
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

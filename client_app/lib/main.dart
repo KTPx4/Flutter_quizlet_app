@@ -238,12 +238,8 @@ Future<bool> CheckLogin() async
     // Check token with API
     var res = await AccountAPI.isAuth(token: token);   
 
-    if(res['success'] == true) 
-    {
-      var account =  jsonEncode( res['account']) ?? "";
-      pref?.setString("Account", account);
-      return true;
-    }
+    return res['success'];
+    
   }
   catch(err)
   {

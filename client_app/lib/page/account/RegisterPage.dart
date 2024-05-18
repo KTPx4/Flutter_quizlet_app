@@ -89,6 +89,8 @@ class _RegisterPageState extends State<RegisterPage> {
         var obj = jsonEncode({"user": user, "pass": password});
         
         Navigator.pushNamedAndRemoveUntil(context, '/account/login', (Route<dynamic> route) => false, arguments: obj);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Đăng ký thành công') ));
       }
       else
       {
@@ -153,6 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(
+                          textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.emailAddress,
                           controller: userController,                       
                           onChanged: (value) => setState(() {
@@ -184,7 +187,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
-                        child: TextFormField(     
+                        child: TextFormField(   
+                          textInputAction: TextInputAction.next,  
                           maxLength: 20,
                           controller: passController,                 
                           onChanged: (value) => setState(() {
@@ -196,6 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           obscureText: !isShow,
                           style: TextStyle(color: Colors.grey[700]),
                           decoration: InputDecoration(
+                              counterText: '',
                               border: InputBorder.none,
                               prefixIcon:const Icon(
                                 Icons.lock,
