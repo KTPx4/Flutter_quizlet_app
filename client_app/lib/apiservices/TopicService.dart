@@ -1,10 +1,14 @@
 import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/topicAPI.dart';
+import 'package:client_app/models/folder.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/models/word.dart';
 
+import 'folderSerivce.dart';
+
 class TopicService {
   final AccountService accountService = AccountService();
+  final FolderService folderService = FolderService();
   Future<List<Topic>> getPublicTopics() async {
     var response = await TopicAPI.getPublicTopics();
 
@@ -27,6 +31,20 @@ class TopicService {
           .toList()
           .cast<Topic>();
       return topic;
+    } else {
+      throw Exception(response['message']);
+    }
+  }
+
+  Future<Map<String,dynamic>> getAccountTopicsPublic({required accountID}) async {
+    var response = await TopicAPI.getPublicTopicsByUser(accountID: accountID);
+    if (response['success']) {
+      if (response['topics'] == null) return {"topics": [], "count": 0};
+      var topic = response['topics']
+          .map((topic) => Topic.fromJson(topic))
+          .toList()
+          .cast<Topic>();
+      return {"topics": topic, "count": response['count']};
     } else {
       throw Exception(response['message']);
     }
@@ -86,8 +104,10 @@ class TopicService {
     }
 
 
-    // Step 3: s to the topic
-    
+
+    // // Step 3: s to the topic
+    // var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
+
 
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
@@ -123,6 +143,11 @@ class TopicService {
     if (!addWordsResponse['success']) {
       throw Exception(addWordsResponse['message']);
     }
+  }
+
+  Future<List<Topic>> getTopicsByFolderId(String folderId) async {
+    Folder folder = await folderService.getFolderById(folderId);
+    return folder.topics;
   }
 }
 // Implement other methods as needed

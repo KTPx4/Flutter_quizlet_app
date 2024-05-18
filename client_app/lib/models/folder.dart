@@ -7,7 +7,7 @@ class Folder {
   final String? authorID;
   final String? createAt;
   final int? countTopic;
-  final List<Topic>? topics;
+  final List<Topic> topics;
 
   Folder({
     this.id,
@@ -16,7 +16,7 @@ class Folder {
     this.authorID,
     this.createAt,
     this.countTopic,
-    this.topics,
+    this.topics = const [],
   });
 
   factory Folder.fromJson(Map<String, dynamic> json) {

@@ -10,13 +10,13 @@ import 'package:client_app/models/word.dart';
 
 
 import 'package:client_app/modules/callFunction.dart';
-import 'package:client_app/page/library/FolderTab.dart';
 import 'package:client_app/page/topic/TopicPage.dart';
+import 'package:client_app/page/topic/TopicTabMode.dart';
 import 'package:client_app/page/topic/addtopic.dart';
 import 'package:flutter/material.dart';
 
-import 'AddFolder.dart';
-import '../../models/topic.dart' as TopicModel;
+import '../folder/AddEditFolder.dart';
+import '../folder/FolderPage.dart';
 
 class LibraryPage extends StatefulWidget {
   GlobalKey<State<AppBarCustom>>? appBarKey;
@@ -28,8 +28,8 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
-  final CallFunction callFuntionTopic = CallFunction();
-  final CallFunction callFuntionFolder = CallFunction();
+  CallFunction callFuntionTopic = CallFunction();
+  CallFunction callFuntionFolder = CallFunction();
   late final _tabController = TabController(length: 2, vsync: this);
   var _pageController = PageController();
 
@@ -43,10 +43,15 @@ class _LibraryPageState extends State<LibraryPage>
   void initState() {
     // TODO: implement initState
     childLib = [
-      TopicPage(callFunction: callFuntionTopic),
+      TopicTab(
+        callFunction: callFuntionTopic,
+        mode: TopicTabMode(
+          accountTopic: true,
+        ),
+      ),
       FolderTab(
         callFunction: callFuntionFolder,
-      )
+      ),
     ];
 
     initStartup();
@@ -68,7 +73,7 @@ class _LibraryPageState extends State<LibraryPage>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddFolderDialog();
+        return AddEditFolderDialog();
       },
     );
     callFuntionFolder.refreshWidget();
@@ -84,62 +89,9 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   List<Widget> _actionAppBar() {
-    return [
+     return [
       IconButton(
           onPressed: (isTopic) ? addTopic : addFolder, icon: Icon(Icons.add)),
-      IconButton(
-          onPressed: () async{
-            List<Map<String, dynamic>> words = [
-            {
-              "desc": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-              "img": "",
-              "mean1":{
-                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-                "lang": "english"                
-              },
-              "mean2":{
-                "title": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-                "lang": "vietnam"
-              }
-            },
-            {
-              "desc": "ttttttttttttttttttttttttttt",
-              "img": "",
-              "mean1":{
-                "title": "ttttttttttttttttttttttttttt",
-                "lang": "english"                
-              },
-              "mean2":{
-                "title": "ttttttttttttttttttttttttttt",
-                "lang": "vietnam"
-              }
-            }
-          ];
-
-            TopicModel.Topic testTopic = TopicModel.Topic(
-                topicName: 'Test Hoang',
-                desc: 'This is a test topic',
-                isPublic: true,
-                words: [
-                  Word(
-                    desc: 'Test Word',
-                    img: '',
-                    mean1: Meaning(title: 'Hello', lang: 'English'),
-                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
-                  ),
-                  Word(
-                    desc: 'Test Word',
-                    img: '',
-                    mean1: Meaning(title: 'Hello', lang: 'English'),
-                    mean2: Meaning(title: 'Xin chào', lang: 'Vietnamese'),
-                  ),
-                ],
-              );
-          var res =await  TopicAPI.postWords(words: testTopic.words);
-          print(res);
-
-          }, icon: Icon(Icons.abc)),
-      
     ];
   }
 
@@ -177,8 +129,11 @@ class _LibraryPageState extends State<LibraryPage>
   Future<Widget> _buildPage() async {
     if (childLib.length == 0) {
       childLib = [
-        TopicPage(
+        TopicTab(
           callFunction: callFuntionTopic,
+          mode: TopicTabMode(
+            accountTopic: true,
+          ),
         ),
         FolderTab(
           callFunction: callFuntionFolder,

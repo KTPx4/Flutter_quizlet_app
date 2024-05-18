@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_controller.dart';
@@ -16,18 +18,36 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
   final CarouselController _controller = CarouselController();
 
+  // Edit add topic to folder at here
+  void _addTopicToFolder({topic})
+  {
+    var idTopic = topic["id"];
+    print(idTopic);
+
+  }
+
+
+
   Widget _buildCard({index})
   {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          
+        onTap: () {      
+          var id = widget.listCard[index]["id"];  
+            if(widget.listCard[index]["type"] == "topic")
+            {
+
+            }
+            else
+            {
+              Navigator.pushNamed(context, "/account/view", arguments: id);
+            }
         },
         child: Container(
           padding: EdgeInsets.all(10),
-          height: 100,
-          width: MediaQuery.sizeOf(context).width ,
+          height: 400,
+          width: 300 ,
           margin: const EdgeInsets.symmetric(horizontal:5),
           decoration:  BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -38,129 +58,162 @@ class _CarouselState extends State<Carousel> {
           _topicWidget(index)
           : 
           _authorWidget(index)
-
+            
         ),
       ),
     );
   }
-
+  
   Widget _topicWidget(index)
   {
-    return Column(
+    return Stack(
+      textDirection: TextDirection.rtl,
       children: [
-        SizedBox(
-          height: 35,
-          child: Text(
-            widget.listCard[index]["title"],
-            maxLines: 2,
-            style:  TextStyle(
-                fontFamily: "SanProBold",
-                overflow: TextOverflow.ellipsis,
-                fontSize: 14,
-                color: AppColors.titleLarge),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          margin: EdgeInsets.only(top: 10),
-          height: 30,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            color: Colors.blue,
-          ),
-          child: Text("${widget.listCard[index]["count"]} thuật ngữ",
-              style: TextStyle(
-                  fontFamily: "SanProBold", fontSize: 12, color: AppColors.textCard )),
-        ),
-        Spacer(),
-        Container(
-            child: Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Container(
-                  width: 36.0,
-                  height: 36.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.scaleDown,
-                      image: NetworkImage(widget.listCard[index]["imgAuthor"]),
-                    ),
-                  ),
-                )),
-            Expanded(
-              flex: 2,
+        Column(
+          children: [        
+            SizedBox(
+              height: 30,
               child: Text(
-                widget.listCard[index]["author"],
-                maxLines: 1,
-                style: TextStyle(
+                widget.listCard[index]["title"],
+                maxLines: 2,
+                style:  TextStyle(
                     fontFamily: "SanProBold",
                     overflow: TextOverflow.ellipsis,
                     fontSize: 14,
                     color: AppColors.titleLarge),
               ),
-            )
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: EdgeInsets.only(top: 10),
+              height: 25,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(40),
+                color: Colors.blue,
+              ),
+              child: Text("${widget.listCard[index]["count"]} thuật ngữ",
+                  style: TextStyle(
+                      fontFamily: "SanProBold", fontSize: 12, color: AppColors.textCard )),
+            ),
+         
+            Container(
+                child: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: Container(
+                      width: 36.0,
+                      height: 36.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.scaleDown,
+                          image: NetworkImage(widget.listCard[index]["imgAuthor"]),
+                        ),
+                      ),
+                    )),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    widget.listCard[index]["author"],
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontFamily: "SanProBold",
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: 14,
+                        color: AppColors.titleLarge),
+                  ),
+                )
+              ],
+            )),
+        
+            
+            
           ],
-        )),
+        ),
+        IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special, color: AppColors.titleLarge,)),
+
       ],
     );
   }
   
   Widget _authorWidget(index)
   {
+
     return  Column(
             children: [
-              Container(
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                        child:Container(
-                            width: 56.0,
-                            height: 56.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.scaleDown,
-                                image: NetworkImage(widget.listCard[index]["imgAuthor"]),
-                              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                      child:Container(
+                          width: 56.0,
+                          height: 56.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.scaleDown,
+                              image: NetworkImage(widget.listCard[index]["imgAuthor"]),
                             ),
-                          )
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child:  Text(
-                        widget.listCard[index]["author"] , 
-                        maxLines: 1,
-                        style: TextStyle(
-                        fontFamily: "SanProBold",
-                        overflow: TextOverflow.ellipsis,
-                        fontSize: 20,                
-                        color: AppColors.titleLarge                   
-                      ),),)
-                  ],
-                  )
-              ),
+                          ),
+                        )
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child:  Text(
+                      widget.listCard[index]["author"] , 
+                      maxLines: 1,
+                      style: TextStyle(
+                      fontFamily: "SanProBold",
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 20,                
+                      color: AppColors.titleLarge                   
+                    ),),)
+                ],
+                ),
            
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                margin: EdgeInsets.only(top: 10),
-                height: 30,
-                decoration:  BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: Colors.blue,
-                ),
-                child: Text("${widget.listCard[index]["count"]} chủ đề",
-                    style:  TextStyle(
-                    fontFamily: "SanProBold",
-                    fontSize: 12, 
-                    color: AppColors.card
-                  )
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                 
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    margin: EdgeInsets.only(top: 10, right: 6),
+                    height: 30,
+                    decoration:  BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(255, 248, 248, 248),
+                    ),
+                    child: Text("${index+1}",
+                        style:  TextStyle(
+                        fontFamily: "SanProBold",
+                        fontSize: 12, 
+                        color: Color.fromARGB(255, 3, 155, 243)
+                      )
+                    ),
+                  ),
+                   Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    margin: EdgeInsets.only(top: 10),
+                    height: 30,
+                                     
+                    decoration:  BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Colors.blue,
+                    ),
+                    child: Text("${widget.listCard[index]["count"]} chủ đề",
+                        style:  TextStyle(
+                        fontFamily: "SanProBold",
+                        fontSize: 12, 
+                        color: AppColors.textCard
+                      )
+                    ),
+                  ),
+                  
+                ],
               ),
-              Spacer(),
-
+             
+    
             ],          
           ) 
           ;
@@ -169,71 +222,122 @@ class _CarouselState extends State<Carousel> {
   double get viewportF
   {
     var width = MediaQuery.of(context).size.width;
-    if( width < 600)
+    if(width < 405)
     {
-      return 0.7;
+      return 0.9;
+    }
+    else if(width < 530)
+    {
+      return 0.5;
+    }
+    else if( width < 660)
+    {
+      return 0.5;
+    }
+    else if(width < 791)
+    {
+      return 0.4;
     }
     else if(width < 1106)
     {
-      return 0.4;
+      return 0.3;
+    }
+    else if(width < 1575)
+    {
+      return 0.2;
     }
     return 0.2;
   }
   double get aspectR
   {
     var width = MediaQuery.of(context).size.width;
-    if(width < 600)
+    if(width < 405)
+    {
+      return 1.7;
+    }
+    else if(width < 530)
     {
       return 3;
+    }
+    else if(width < 660)
+    {
+      return 4;
+    }
+    else if(width < 791)
+    {
+      return 5;
+    }
+    else if(width < 1054)
+    {
+      return 6;
     }
     else if(width < 1106)
     {
       return 8;
     }
-    return 15;
+    else if(width < 1575)
+    {
+      return 8;
+    }
+    return 12;
   }
   
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        CarouselSlider.builder(
-          carouselController: _controller,
-          itemCount: widget.listCard.length,  // Giả sử bạn có 10 card
-          itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => _buildCard(index: itemIndex),
-          options: CarouselOptions(
-            autoPlay: false,
-            enlargeCenterPage: false,
-            // viewportFraction: 0.6, // 0.2
-            viewportFraction: viewportF, // 0.2
-            // aspectRatio: 4.0, // 15
-            aspectRatio: aspectR, // 15
-            initialPage: 0,
-  
-            onPageChanged: (index, reason) {
-              setState(() {
-                // Update UI or state if needed
-              });
-            }
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: Row(          
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                onPressed: () => _controller.previousPage(),
-                icon: Icon(Icons.arrow_back_ios_new, color: AppColors.iconNB,),
+    
+    return
+    Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 150,
+            child: ScrollConfiguration(
+              behavior: MyCustomScrollBehavior(),
+              child: ListView(         
+                scrollDirection: Axis.horizontal,
+                children: [
+                  ...widget.listCard.map((e) => _buildCard(index: widget.listCard.indexOf(e)))
+                ],
               ),
-              IconButton(
-                onPressed: () => _controller.nextPage(),
-                icon: Icon(Icons.arrow_forward_ios, color: AppColors.iconNB),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
+            ),
+          )
+          //  CarouselSlider.builder(            
+          //   carouselController: _controller,
+          //   itemCount: widget.listCard.length,  
+          //   itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => _buildCard(index: itemIndex),
+          //   options: CarouselOptions( 
+          //     viewportFraction: 0.5,
+          //     aspectRatio: aspectR,
+          //     autoPlay: false,
+          //     enlargeCenterPage: false,
+          //     enableInfiniteScroll: false,
+          //     initialPage: 0,
+          //       onPageChanged: (index, reason) {
+          //       setState(() {
+          //         // Update UI or state if needed
+          //       });
+          //     }
+          //   ),
+          // ),
+        ],
+      ); 
+
   }
+
+
+
+
+}
+
+class MyCustomScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
 }

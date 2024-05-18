@@ -12,6 +12,7 @@ import 'package:client_app/page/account/LoginPage.dart';
 import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/account/RegisterPage.dart';
 import 'package:client_app/page/home/Home.dart';
+import 'package:client_app/page/home/ViewPublicAccount.dart';
 import 'package:client_app/page/library/LibraryPage.dart';
 import 'package:client_app/pages/quiz_page.dart';
 
@@ -74,11 +75,13 @@ class _MyAppState extends State<MyApp> {
           case "/account/register":
             return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(),));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));           
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));          
           
-          case "/account/login":
-           var ob = jsonEncode(args as String);
+          case "/account/login":      
             return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
+            
+          case "/account/view":      
+            return MaterialPageRoute(builder: (bd)=> ViewPublicAccount(accountID: args.toString()));
 
           
           // case "/topic/quiz":
