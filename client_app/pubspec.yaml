@@ -37,9 +37,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-
+  permission_handler: ^11.3.1
   
-
+  csv: ^5.0.0
   iconsax_flutter: ^1.0.0
   flip_card: ^0.7.0
   flutter_tts: ^4.0.2
@@ -48,12 +48,11 @@ dependencies:
   go_router: ^14.0.2
   google_fonts: ^6.2.0
   mask_text_input_formatter: ^2.9.0
-
   image_picker: ^1.0.8
   cached_network_image: ^3.3.1
   diacritic: ^0.1.5
   carousel_slider: ^4.2.1
-  file_picker: 8.0.0+1
+  file_picker: ^8.0.3
   dio: ^5.4.3+1
   language_picker: ^0.4.3
 

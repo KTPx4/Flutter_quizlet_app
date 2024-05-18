@@ -4,6 +4,7 @@
                      android:maxSdkVersion="28"/> <!-- Optional, for Android 9 and below -->
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:label="client_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

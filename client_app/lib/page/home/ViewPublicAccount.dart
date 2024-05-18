@@ -1,18 +1,19 @@
 import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/accountAPI.dart';
+import 'package:client_app/apiservices/folderSerivce.dart';
 import 'package:client_app/models/account.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/callFunction.dart';
-import 'package:client_app/page/topic/addtopic.dart';
+import 'package:client_app/page/folder/FolderPage.dart';
 import 'package:flutter/material.dart';
 
 import '../topic/topicStudy.dart';
 
 class ViewPublicAccount extends StatefulWidget {
   String accountID;
-  ViewPublicAccount({required this.accountID,super.key});
-  
+  ViewPublicAccount({required this.accountID, super.key});
+
   @override
   State<ViewPublicAccount> createState() => _ViewPublicAccountState();
 }
@@ -20,26 +21,57 @@ class ViewPublicAccount extends StatefulWidget {
 class _ViewPublicAccountState extends State<ViewPublicAccount> {
   List<Topic> topicList = [];
   String title = "topic";
+  final FolderService folderService = FolderService();
+  final CallFunction callFunctionFolder = CallFunction();
   final AccountService accountService = AccountService();
   final TopicService topicService = TopicService();
-  AccountModel? account ;
+  AccountModel? account;
   String titleAppbar = "Tài Khoản";
   int countTopics = 0;
 
   Future<AccountModel?> getAccountByID() async {
-    var res = await AccountAPI.getAccountById(widget.accountID);  
+    var res = await AccountAPI.getAccountById(widget.accountID);
     account = res["account"];
     return account;
   }
- 
+
   // Edit add topic to folder at here
-  
+
   Widget buildPopupMenuButton(Topic topic) {
     return PopupMenuButton<String>(
       onSelected: (value) async {
         if (value == 'Add') {
-          
-        } 
+          var idTopic = topic.id;
+          String? folderId = '';
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                child: FolderTab(
+                    callFunction: callFunctionFolder, selectFolder: true),
+              );
+            },
+          ).then((value) {
+            folderId = value;
+          });
+
+          if (folderId == null || folderId!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Xin Thêm Vào Thư Mục'),
+              ),
+            );
+            return;
+          }
+
+          String response =
+              await folderService.addTopicToFolder(folderId!, idTopic!);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response),
+            ),
+          );
+        }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         const PopupMenuItem<String>(
@@ -66,43 +98,52 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
 
   @override
   void initState() {
-    super.initState();  
+    super.initState();
     getAccountByID();
   }
 
   Widget _buildTopicsListView() {
-
     return FutureBuilder<Map<String, dynamic>>(
       future: topicService.getAccountTopicsPublic(accountID: widget.accountID),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: Colors.pink,));
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.pink,
+          ));
         } else if (snapshot.hasError) {
           return Text('Lỗi: ${snapshot.error}');
         } else {
           var topics = snapshot.data?["topics"];
-          topicList = topics;         
+          topicList = topics;
           if (topics == null || topics.isEmpty) {
             return Center(
               child: Text('Không có chủ đề nào'),
             );
           }
-        
+
           return Column(
             children: [
-              SizedBox(height: 10,),
-              Text( "${topics.length} Chủ đề" , style: const TextStyle(
-                          fontFamily: "SanProBold",
-                          fontSize: 17,                       
-              ),),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "${topics.length} Chủ đề",
+                style: const TextStyle(
+                  fontFamily: "SanProBold",
+                  fontSize: 17,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: topics.length,
                 itemBuilder: (context, index) {
-                  var topic = topics[index];              
-                 
+                  var topic = topics[index];
+
                   return Container(
                     margin: EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -124,7 +165,11 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Expanded(child: Text(topic.topicName, overflow: TextOverflow.ellipsis,)),
+                                Expanded(
+                                    child: Text(
+                                  topic.topicName,
+                                  overflow: TextOverflow.ellipsis,
+                                )),
                                 buildPopupMenuButton(
                                   topic,
                                 ),
@@ -135,7 +180,7 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                           Text('Số từ: ${topic.words.length}'),
                           SizedBox(
                             height: 21,
-                          ), // Second row: Term + number of questions                     
+                          ), // Second row: Term + number of questions
                         ],
                       ),
                       onTap: () {
@@ -164,11 +209,12 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
         title: Text(
           "Danh sách chủ đề",
           maxLines: 1,
-          overflow: TextOverflow.ellipsis,),
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
-            verticalDirection: VerticalDirection.up,
+          verticalDirection: VerticalDirection.up,
           children: [
             _buildTopicsListView(),
             _buildAuthor(),
@@ -177,23 +223,23 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
       ),
     );
   }
-  Widget _buildAuthor()
-  {
 
+  Widget _buildAuthor() {
     return FutureBuilder(
-      future: getAccountByID(), 
+      future: getAccountByID(),
       builder: (context, snapshot) {
-        if(snapshot.connectionState ==  ConnectionState.waiting)
-        {
-          return Center(child: CircularProgressIndicator(),);
-        }   
-        else if(snapshot.hasError)
-        {
-          return Center(child: Text("Có chút lỗi khi load dữ liệu tài khoản này @@!"),);
-        }
-        else{
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text("Có chút lỗi khi load dữ liệu tài khoản này @@!"),
+          );
+        } else {
           var acc = snapshot.data;
-          var linkAvt = "${AccountAPI.getServer()}/images/account/${acc?.id}/${acc?.nameAvt}";
+          var linkAvt =
+              "${AccountAPI.getServer()}/images/account/${acc?.id}/${acc?.nameAvt}";
           return Container(
             // color: Colors.grey,
             margin: EdgeInsets.only(top: 20),
@@ -203,24 +249,28 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                 Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 5),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(width: 2, color:const Color.fromARGB(255, 32, 198, 248))
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          width: 2,
+                          color: const Color.fromARGB(255, 32, 198, 248))),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(linkAvt),
+                    radius: 35,
                   ),
-                  child:  CircleAvatar(                                 
-                    backgroundImage: 
-                    NetworkImage(linkAvt), radius: 35,),
                 ),
-                Text( acc?.fullName ?? "" , style: const TextStyle(
-                          fontFamily: "SanProBold",
-                          fontSize: 18,                       
-                ),),
-                Text( acc?.user ?? "" , style: const TextStyle(
-                          fontFamily: "SanPro",
-                          fontSize: 14,  
-                          color: Colors.grey                     
-                ),),
-               
-              ],  
+                Text(
+                  acc?.fullName ?? "",
+                  style: const TextStyle(
+                    fontFamily: "SanProBold",
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  acc?.user ?? "",
+                  style: const TextStyle(
+                      fontFamily: "SanPro", fontSize: 14, color: Colors.grey),
+                ),
+              ],
             ),
           );
         }

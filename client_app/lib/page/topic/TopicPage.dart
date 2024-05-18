@@ -1,12 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:client_app/apiservices/AccountService.dart';
 import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/folderSerivce.dart';
 import 'package:client_app/models/account.dart';
 import 'package:client_app/models/folder.dart';
 import 'package:client_app/models/topic.dart';
+import 'package:client_app/models/word.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/topic/addtopic.dart';
+import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'TopicTabMode.dart';
 import 'topicStudy.dart';
@@ -21,10 +29,10 @@ class TopicTab extends StatefulWidget {
 }
 
 class _TopicTabState extends State<TopicTab> {
-  String title = "topic";
   final AccountService accountService = AccountService();
   final TopicService topicService = TopicService();
   final FolderService folderService = FolderService();
+  late AccountModel currentAccount;
   bool? isFolderSelected;
   List<AccountModel> accountList = [];
   List<String> selectedTopics = [];
@@ -34,23 +42,14 @@ class _TopicTabState extends State<TopicTab> {
     accountList = await accountService.getAllAccounts();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    isFolderSelected = !widget.mode.multiSelect;
-    if (widget.mode.folderId != null && widget.mode.multiSelect) {
-      selectCurrentFolder().then((value) {
-        setState(() {
-          isFolderSelected = true;
-        });
-      });
-      widget.callFunction.AddTopicToFolder = addTopicToFolder;
-    }
-    widget.callFunction.refreshWidget = () {
-      setState(() {});
-    };
+  Future<void> getCurrentAccount() async {
+    var pref = await SharedPreferences.getInstance();
+    String? accountJson = pref.getString("Account");
 
-    getAllAccount();
+    if (accountJson != null) {
+      Map<String, dynamic> accountMap = jsonDecode(accountJson);
+      currentAccount = AccountModel.fromJson(accountMap);
+    }
   }
 
   void addTopicToFolder() async {
@@ -66,6 +65,66 @@ class _TopicTabState extends State<TopicTab> {
         .where((topic) => topic.id != null)
         .map((topic) => topic.id!));
     selectedTopics.addAll(exitingTopics);
+  }
+
+  Future<List<Topic>> getTopics(TopicTabMode mode) async {
+    if (mode.accountTopic) {
+      return await topicService.getAccountTopics();
+    }
+    if (mode.publicTopic) {
+      return await topicService.getPublicTopics();
+    }
+    if (mode.folderId != null) {
+      return await topicService.getTopicsByFolderId(mode.folderId!);
+    } else {
+      return [];
+    }
+  }
+
+  String convertWordsToCsv(List<Word> words) {
+    List<List<dynamic>> rows = [];
+
+    // Add headers
+    rows.add(['từ', 'nghĩa']);
+
+    // Add data
+    for (Word word in words) {
+      rows.add([word.mean1.title, word.mean2.title]);
+    }
+
+    return const ListToCsvConverter().convert(rows);
+  }
+
+  Future<File> writeStringToCsvFile(String csvString, String fileName) async {
+    var result = await FilePicker.platform.getDirectoryPath();
+
+    if (result != null) {
+      final file = File('$result/$fileName.csv');
+
+      return file.writeAsString(csvString);
+    } else {
+      return File('');
+    }
+  }
+
+  @override
+  void initState() {
+    getCurrentAccount();
+    getAllAccount();
+    isFolderSelected = !widget.mode.multiSelect;
+    if (widget.mode.folderId != null && widget.mode.multiSelect) {
+      selectCurrentFolder().then((value) {
+        setState(() {
+          isFolderSelected = true;
+        });
+      });
+      widget.callFunction.AddTopicToFolder = addTopicToFolder;
+    }
+    widget.callFunction.refreshWidget = () {
+      setState(() {});
+    };
+
+    super.initState();
   }
 
   Widget buildPopupMenuButton(Topic topic) {
@@ -87,64 +146,87 @@ class _TopicTabState extends State<TopicTab> {
             await topicService.deleteTopic(topic.id!);
             setState(() {});
             break;
-          case 3: // Thêm Vào Thư Mục
-            setState(() {
-              if (selectedTopics.contains(topic.id)) {
-                selectedTopics.remove(topic.id);
-              } else {
-                selectedTopics.add(topic.id!);
+          case 3: // Remove from folder
+            if (widget.mode.folderId != null) {
+              await folderService.removeTopicFromFolder(
+                  widget.mode.folderId!, topic.id!);
+              setState(() {});
+            }
+            break;
+          case 4:
+            var status = await Permission.storage.status;
+            if (!status.isGranted) {
+              // Request storage permission
+              status = await Permission.storage.request();
+            }
+
+            if (status.isGranted) {
+              // If permission is granted, proceed with exporting words to CSV
+              String csvString = convertWordsToCsv(topic.words);
+              var file =
+                  await writeStringToCsvFile(csvString, 'exported_words');
+              if (file.path.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to export words to CSV')),
+                );
+                return;
               }
-            });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Words exported to CSV successfully')),
+              );
+            } else {
+              // If permission is not granted, show a message
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Storage permission is not granted')),
+              );
+            }
             break;
           default:
             break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-          value: 1,
-          child: Row(
-            children: [
-              Icon(Icons.edit),
-              Text('Edit'),
-            ],
+        if (topic.authorID == currentAccount.id) ...[
+          PopupMenuItem<int>(
+            value: 1,
+            child: Row(
+              children: [
+                Icon(Icons.edit),
+                Text('Sửa'),
+              ],
+            ),
           ),
-        ),
-        const PopupMenuItem<int>(
-          value: 2,
-          child: Row(
-            children: [
-              Icon(Icons.delete),
-              Text('Delete'),
-            ],
+          PopupMenuItem<int>(
+            value: 2,
+            child: Row(
+              children: [
+                Icon(Icons.delete),
+                Text('Xóa'),
+              ],
+            ),
           ),
-        ),
-        if (widget.mode.multiSelect)
+        ],
+        if (widget.mode.folderId != null)
           PopupMenuItem<int>(
             value: 3,
             child: Row(
               children: [
-                Icon(Icons.folder),
-                Text('Thêm Vào Thư Mục'),
+                Icon(Icons.remove),
+                Text('xóa khỏi thư mục'),
               ],
             ),
           ),
+        PopupMenuItem<int>(
+          value: 4,
+          child: Row(
+            children: [
+              Icon(Icons.file_upload),
+              Text('xuất ra CSV'),
+            ],
+          ),
+        )
       ],
     );
-  }
-
-  Future<List<Topic>> getTopics(TopicTabMode mode) async {
-    if (mode.accountTopic) {
-      return await topicService.getAccountTopics();
-    }
-    if (mode.publicTopic) {
-      return await topicService.getPublicTopics();
-    }
-    if (mode.folderId != null) {
-      return await topicService.getTopicsByFolderId(mode.folderId!);
-    } else {
-      return [];
-    }
   }
 
   Widget _buildTopicsListView() {
@@ -157,12 +239,12 @@ class _TopicTabState extends State<TopicTab> {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Lỗi: ${snapshot.error}');
         } else {
           var topics = snapshot.data;
           if (topics == null || topics.isEmpty) {
             return Center(
-              child: Text('No topic found'),
+              child: Text('Không có chủ đề nào được tìm thấy!'),
             );
           }
           return ListView.builder(
@@ -209,7 +291,7 @@ class _TopicTabState extends State<TopicTab> {
                       SizedBox(
                         height: 10,
                       ), // First row: Topic name
-                      Text('Term: ${topic.words.length}'),
+                      Text('Từ: ${topic.words.length}'),
                       SizedBox(
                         height: 21,
                       ), // Second row: Term + number of questions
@@ -227,14 +309,24 @@ class _TopicTabState extends State<TopicTab> {
                       ),
                     ],
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TopicStudy(topic: topic),
-                      ),
-                    );
-                  },
+                  onTap: (widget.mode.multiSelect)
+                      ? () {
+                          setState(() {
+                            if (selectedTopics.contains(topic.id)) {
+                              selectedTopics.remove(topic.id);
+                            } else {
+                              selectedTopics.add(topic.id!);
+                            }
+                          });
+                        }
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TopicStudy(topic: topic),
+                            ),
+                          );
+                        },
                 ),
               );
             },

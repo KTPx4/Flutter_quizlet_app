@@ -24,7 +24,7 @@ class AccountService {
     if (response['success']) {
       return response['accounts'];
     } else {
-      throw Exception(response['message']);
+      return [];
     }
   }
 }
@@ -34,6 +34,12 @@ Future<AccountModel> getAccountById(String id) async {
   if (response['success']) {
     return AccountModel.fromJson(response['account']);
   } else {
-    throw Exception(response['message']);
+    return AccountModel(
+        fullName: '',
+        user: '',
+        passWord: '',
+        email: '',
+        phone: '',
+        nameAvt: '');
   }
 }
