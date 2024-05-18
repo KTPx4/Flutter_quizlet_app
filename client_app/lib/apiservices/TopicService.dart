@@ -118,7 +118,6 @@ class TopicService {
     // // Step 3: s to the topic
     // var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
 
-
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
     if (!editResponse['success']) {
@@ -160,6 +159,30 @@ class TopicService {
   Future<List<Topic>> getTopicsByFolderId(String folderId) async {
     Folder folder = await folderService.getFolderById(folderId);
     return folder.topics;
+  }
+
+  Future<List<Word>> getWordsInTopic(String topicId) async {
+    var response = await TopicAPI.getWordsInTopic(topicId: topicId);
+    if (response['success']) {
+      return response['words'];
+    } else {
+      return <Word>[];
+    }
+  }
+
+  Future<String> updateWordMark(
+      String topicId, String wordId, bool mark) async {
+    var response = await TopicAPI.updateWordMark(topicId, wordId, mark);
+    return response['message'];
+  }
+
+  Future<List<Word>> getMarkedWordsInTopic(String topicId) async {
+    try {
+      var words = await getWordsInTopic(topicId);
+      return words.where((word) => word.isMark == true).toList();
+    } catch (e) {
+      return [];
+    }
   }
 }
 // Implement other methods as needed
