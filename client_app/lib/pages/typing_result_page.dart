@@ -1,3 +1,5 @@
+import 'package:client_app/apiservices/topicAPI.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/page/topic/topicStudy.dart';
 import 'package:client_app/pages/typing_page.dart';
 import 'package:flutter/material.dart';
@@ -8,17 +10,33 @@ class TypingResultPage extends StatelessWidget {
   final int totalQuestions;
   final List<Word> words;
   final List<String> userAnswers;
-
+  final Topic topic;
   TypingResultPage({
     required this.totalCorrect,
     required this.totalQuestions,
     required this.words,
     required this.userAnswers,
+    required this.topic
   });
+  
+  void _initStudy(context, id, correct) async
+  {
 
+    if(correct == 100)
+    { 
+      var res = await TopicAPI.studyTopic(id: id);
+      if(res["success"] == true)
+      {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res["message"])));
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     double scorePercentage = (totalCorrect / totalQuestions) * 100;
+    
+    _initStudy(context, topic.id, scorePercentage);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +66,7 @@ class TypingResultPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => TypingPage(words: words)),
+                  MaterialPageRoute(builder: (context) => TypingPage(words: words, topic: topic,)),
                 );
               },
               child: Text('Làm lại'),

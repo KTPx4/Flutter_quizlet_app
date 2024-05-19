@@ -1,3 +1,4 @@
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/pages/typing_result_page.dart';
 import 'package:client_app/pages/typing_setting_page.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,9 @@ import 'package:diacritic/diacritic.dart';
 class TypingExercisePage extends StatefulWidget {
   final List<Word> words;
   final bool isTerm;
-
-  TypingExercisePage({required this.words, required this.isTerm});
+  final Topic topic;
+  
+  TypingExercisePage({required this.words, required this.isTerm, required this.topic});
 
   @override
   _TypingExercisePageState createState() => _TypingExercisePageState();
@@ -73,6 +75,7 @@ void navigateToResultsPage() {
       totalQuestions: widget.words.length,
       words: widget.words,
       userAnswers: userAnswers,
+      topic: widget.topic,
     ),
   ));
 }

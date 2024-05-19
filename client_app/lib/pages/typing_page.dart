@@ -1,11 +1,12 @@
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/models/word.dart';
 import 'package:client_app/pages/typing_exercise_page.dart';
 import 'package:flutter/material.dart';
 
 class TypingPage extends StatefulWidget {
   final List<Word> words;
-
-  TypingPage({required this.words});
+  final Topic topic;
+  TypingPage({required this.words, required this.topic});
 
   @override
   _TypingPageState createState() => _TypingPageState();
@@ -24,10 +25,16 @@ class _TypingPageState extends State<TypingPage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
+                if(widget.words.length < 1)
+                {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Không có từ vựng để học")));
+                  return;
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TypingExercisePage(words: widget.words, isTerm: true),
+                    builder: (context) => TypingExercisePage(words: widget.words, isTerm: true, topic: widget.topic,),
                   ),
                 );
               },
@@ -36,10 +43,16 @@ class _TypingPageState extends State<TypingPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                if(widget.words.length < 1)
+                {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Không có từ vựng để học")));
+                  return;
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TypingExercisePage(words: widget.words, isTerm: false),
+                    builder: (context) => TypingExercisePage(words: widget.words, isTerm: false, topic: widget.topic,),
                   ),
                 );
               },
