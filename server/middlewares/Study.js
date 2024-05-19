@@ -57,6 +57,7 @@ module.exports.StudyTopic = async(req, res, next) =>{
 module.exports.StudyWords = async (req, res, next) =>{
     try{
         let listWords = req.body.words
+        // console.log(listWords)
         if(!listWords || listWords.length < 1)
         {
             return res.status(400).json({
@@ -78,8 +79,7 @@ module.exports.StudyWords = async (req, res, next) =>{
             {
                 var study = await StudyCombineModel.findOne({combineID: idw, accountID: idu})
                 if(!study)
-                {
-                    
+                {                    
                     study = await StudyCombineModel.create({
                         combineID: idw,
                         accountID: idu

@@ -71,7 +71,6 @@ module.exports.Login = async (req, res, next) =>{
     {
         let { user, password} = req.body
         // email= email?.toLowerCase()
-        user= user?.toLowerCase()
         
         let message = ''
     
@@ -88,7 +87,9 @@ module.exports.Login = async (req, res, next) =>{
         }
         
         let Account
-       
+        
+        user= user?.toLowerCase()
+        
         // Find Account
         if(user)
             Account = await AccountModel.findOne({user: user})

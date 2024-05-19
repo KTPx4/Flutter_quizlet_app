@@ -249,9 +249,8 @@ class TopicAPI {
       );
 
       var resBody = jsonDecode(res.body);
-
+      // print(resBody["data"]);
       if (res.statusCode == 200) {
-
         return {'success': true, 'topic': resBody["data"]};
       }
 
@@ -450,7 +449,7 @@ class TopicAPI {
       );
 
       var resBody = jsonDecode(res.body);
-
+      
       if (res.statusCode == 200) {
         return {'success': true, 'message': "Đã học xong chủ đề này"};
       }
@@ -468,16 +467,26 @@ class TopicAPI {
     try {
       var server = getLink();
       var link = "$server/topic/${topicID}/study";
+      print(list);
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
 
+
+
+      var body = jsonEncode({'words': list.map((id) => "${id.toString()}").toList()});
+
+      print(body);
+
+
       var res = await http.patch(
         Uri.parse(link),
-        headers: {"Authorization": "Bearer $token"},
-        body: {"words": list}
+        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"},
+        
+        body: body
       );
-
       var resBody = jsonDecode(res.body);
+
+print(resBody); 
 
       if (res.statusCode == 200) {
         return {'success': true, 'message': "Đã học xong từ này"};
@@ -485,6 +494,7 @@ class TopicAPI {
 
       return {'success': false, 'message': "Có chút lỗi xảy ra"};
     } catch (e) {
+      print(e);
       return {
         'success': false,
         'message': "Lỗi khi gửi dữ liệu. Thử lại sau!"      
