@@ -62,8 +62,8 @@ class _AddTopicPageState extends State<AddTopicPage> {
     }
 
     final headers = rows.first;
-    int tuIndex = headers.indexOf('từ');
-    int nghiaIndex = headers.indexOf('nghĩa');
+    int tuIndex = headers.indexOf('verb');
+    int nghiaIndex = headers.indexOf('definition');
 
     if (tuIndex == -1 || nghiaIndex == -1) {
       return [];

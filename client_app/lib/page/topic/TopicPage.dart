@@ -85,7 +85,7 @@ class _TopicTabState extends State<TopicTab> {
     List<List<dynamic>> rows = [];
 
     // Add headers
-    rows.add(['từ', 'nghĩa']);
+    rows.add(['verb', 'definition']);
 
     // Add data
     for (Word word in words) {

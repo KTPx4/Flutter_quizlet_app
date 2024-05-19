@@ -66,8 +66,10 @@ class TopicAPI {
       };
     }
   }
+
   // Get all public topics of account id
-  static Future<Map<String, dynamic>> getPublicTopicsByUser({required String accountID}) async {
+  static Future<Map<String, dynamic>> getPublicTopicsByUser(
+      {required String accountID}) async {
     try {
       var server = getLink();
 
@@ -85,7 +87,11 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'topics': resBody["data"], "count": resBody["count"]};
+        return {
+          'success': true,
+          'topics': resBody["data"],
+          "count": resBody["count"]
+        };
       }
 
       return {'success': false, 'message': resBody["message"]};
@@ -370,6 +376,69 @@ class TopicAPI {
     }
   }
 
+  static Future<Map<String, dynamic>> getWordsInTopic(
+      {required String topicId}) async {
+    try {
+      var server = getLink();
+      var link = "$server/topic/$topicId/word";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
 
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
 
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        var words = (resBody["data"] as List)
+            .map((wordData) => Word.fromJson(wordData))
+            .toList();
+        return {
+          'success': true,
+          'message': resBody["message"],
+          'count': resBody["count"],
+          'words': words
+        };
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to fetch words. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateWordMark(
+      String topicId, String wordId, bool mark) async {
+    try {
+      var server = getLink();
+      var link = "$server/topic/$topicId/word?wordid=$wordId&mark=$mark";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'message': resBody["message"]};
+      }
+
+      return {'success': false, 'message': resBody["message"]};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Failed to update word mark. Please try again later!",
+        'exception': e.toString(),
+      };
+    }
+  }
 }

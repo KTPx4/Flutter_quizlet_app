@@ -171,22 +171,23 @@ class _LibraryPageState extends State<LibraryPage>
       children: [
         _buildTabBar(),
         Expanded(
-            child: FutureBuilder(
-          future: _buildPage(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasData) {
-              var page = snapshot.data;
-              return page!;
-            } else {
-              return Center(
-                child:
-                    Text("lỗi xảy ra khi load dữ liệu, vui lòng thử lại sau"),
-              );
-            }
-          },
-        ))
+          child: FutureBuilder(
+            future: _buildPage(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasData) {
+                var page = snapshot.data;
+                return page!;
+              } else {
+                return Center(
+                  child:
+                      Text("lỗi xảy ra khi load dữ liệu, vui lòng thử lại sau"),
+                );
+              }
+            },
+          ),
+        )
       ],
     );
   }
