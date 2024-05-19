@@ -18,6 +18,7 @@ import 'package:client_app/pages/quiz_page.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'apiservices/accountAPI.dart';
 
@@ -25,7 +26,8 @@ const KEY_LOGIN = "quizlet-login";
 
 
 
-void main() {
+void main() async{
+
   runApp(MyApp());
 }
 

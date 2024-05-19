@@ -45,6 +45,8 @@ class TopicService {
           .map((topic) => Topic.fromJson(topic))
           .toList()
           .cast<Topic>();
+      // var topic = response['topics'];
+          
       return {"topics": topic, "count": response['count']};
     } else {
       return {"topics": [], "count": 0};

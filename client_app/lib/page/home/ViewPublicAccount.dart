@@ -115,7 +115,7 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
           return Text('Lỗi: ${snapshot.error}');
         } else {
           var topics = snapshot.data?["topics"];
-          topicList = topics;
+
           if (topics == null || topics.isEmpty) {
             return Center(
               child: Text('Không có chủ đề nào'),
@@ -169,15 +169,33 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                                     child: Text(
                                   topic.topicName,
                                   overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: "SanProBold",
+                                    fontSize: 18
+                                  ),
                                 )),
                                 buildPopupMenuButton(
                                   topic,
                                 ),
                               ]),
                           SizedBox(
-                            height: 10,
+                            height: 2,
                           ), // First row: Topic name
-                          Text('Số từ: ${topic.words.length}'),
+                          Text('Số từ: ${topic.words.length}',  style: TextStyle(
+                                    fontFamily: "SanPro",
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.italic,
+                                  ),),
+                          Text('Số người học: ${topic.publicStudy}',  style: TextStyle(
+                                    fontFamily: "SanPro",
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.italic,
+                                  ),),
+                          Text('Ngày tạo: ${topic.createAt}',  style: TextStyle(
+                                    fontFamily: "SanPro",
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.italic,
+                                  ),),
                           SizedBox(
                             height: 21,
                           ), // Second row: Term + number of questions
