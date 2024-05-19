@@ -127,10 +127,7 @@ module.exports.Login = async (req, res, next) =>{
         return res.status(500).json({
             status: "Error Server When Login",
             message: "Thao tác không thành công. Vui lòng thử lại sau!",
-            data: {              
-                user,
-                password
-            }
+            
         })
     }  
 

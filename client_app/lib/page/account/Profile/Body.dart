@@ -3,6 +3,7 @@ import 'package:client_app/page/account/Profile/ChangeAvt.dart';
 import 'package:client_app/page/account/Profile/ChangeAvtWeb.dart';
 import 'package:client_app/page/account/Profile/ChangeInfor.dart';
 import 'package:client_app/page/account/Profile/ChangePass.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const KEY_LOGIN = "quizlet-login";
 
 class Body extends StatefulWidget {
-  Body({super.key,required this.onChange});
+
+  Body({super.key,required this.onChange,});
   
   final ValueChanged? onChange;
 
@@ -67,31 +69,54 @@ class _BodyState extends State<Body> {
       ],
     );
   }
-
+  void _reConnect()
+  {
+    widget.onChange!({"type": "reconnect", "value": "non"});
+  }
   Widget _buildButton(index)
   {
     return Material(
       child: InkWell(
-        onTap: (){
-          switch(ListButton[index]["event"])
-          {
-            case "changeAvt":
-              changeAvt(); 
-            case "changeName":
-              changeName(); 
-            case "changeEmail":
-              changeEmail(); 
-            case "changePass":
-              changePass(); 
-            case "logOut":
-              logOut(); 
-          }
+        onTap: () async{
+          // List<ConnectivityResult> result = await Connectivity().checkConnectivity();
+          // var connect = false;
+          // if (result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) 
+          // {             
+          //   connect = true;
+          // } 
+          // if(!connect)
+          // {
+          //   ScaffoldMessenger.of(context).clearSnackBars();
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: Text("Không có kết nối mạng, vui lòng tải lại trang!", ),
+          //       action: SnackBarAction(label: "Tải lại", onPressed: _reConnect),
+
+          //     ));
+          // }
+          // else{
+            switch(ListButton[index]["event"])
+            {
+              case "changeAvt":
+                changeAvt(); 
+              case "changeName":
+                changeName(); 
+              case "changeEmail":
+                changeEmail(); 
+              case "changePass":
+                changePass(); 
+              case "logOut":
+                logOut(); 
+            }
+          // }
         },
+
         child: ListTile(           
           title: Text(ListButton[index]["title"]),
           leading: Icon(ListButton[index]["icon"], color:   Color.fromARGB(244, 230, 88, 142),),
           trailing: Icon(Icons.arrow_forward_ios_rounded),
         ),
+      
       ),
     );
   }

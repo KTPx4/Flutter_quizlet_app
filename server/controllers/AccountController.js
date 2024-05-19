@@ -248,6 +248,7 @@ module.exports.Login = async(req, res) =>{
             phone: Account.phone,
             email: Account.email,
             avt: Account.nameAvt,
+            passWord: Account.passWord
         }
         
         createFolder(root, Account._id, Account.nameAvt) ? null : console.log(`Can't create folder for Account: '${Account._id}' - '${Account.user}'`);
@@ -307,6 +308,7 @@ module.exports.ChangePassword = async (req, res) =>{
             phone: newAccount.phone,
             email: newAccount.email,
             avt: newAccount.nameAvt,
+            passWord: newAccount.passWord
         }
         await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30d"}, (err, tokenLogin)=>{
             if(err) throw err
@@ -371,6 +373,7 @@ module.exports.ValidCode = async (req, res) =>{
             phone: Account.phone,
             email: Account.email,
             avt: Account.nameAvt,
+            passWord: Account.passWord
         }
 
         await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30m"}, (err, token)=>{
@@ -416,6 +419,7 @@ module.exports.Edit = async(req, res) =>{
             phone: newAccount.phone,
             email: newAccount.email,
             avt: newAccount.nameAvt,
+            passWord: newAccount.passWord
         }
 
         await jwt.sign(data, SECRET_LOGIN, {expiresIn: "30d"}, (err, tokenLogin)=>{
@@ -571,7 +575,7 @@ const sendMail = async (email, code) =>
     `;
 
 
-    sendEmail(email, subject, html)
+    await sendEmail(email, subject, html)
     
 }
     

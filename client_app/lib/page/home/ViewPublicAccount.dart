@@ -141,8 +141,8 @@ class _ViewPublicAccountState extends State<ViewPublicAccount> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: topics.length,
-                itemBuilder: (context, index) {
-                  var topic = topics[index];
+                itemBuilder: (context, index) {                  
+                  var topic = topics[index];           
 
                   return Container(
                     margin: EdgeInsets.all(8),

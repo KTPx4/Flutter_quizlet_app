@@ -2,10 +2,13 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/folderSerivce.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:client_app/page/folder/FolderPage.dart';
+import 'package:client_app/page/topic/topicStudy.dart';
 import 'package:flutter/material.dart';
 
 class Carousel extends StatefulWidget {
@@ -24,6 +27,7 @@ class _CarouselState extends State<Carousel> {
   // Edit add topic to folder at here
   void _addTopicToFolder({topic}) async {
     var idTopic = topic["id"];
+
     String? folderId = '';
     await showDialog(
       context: context,
@@ -41,6 +45,7 @@ class _CarouselState extends State<Carousel> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please select a folder'),
+
         ),
       );
       return;
@@ -54,33 +59,62 @@ class _CarouselState extends State<Carousel> {
     );
   }
 
-  Widget _buildCard({index}) {
+  Widget _buildCard({index})
+  {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () async {
-          var id = widget.listCard[index]["id"];
-          if (widget.listCard[index]["type"] == "topic") {
-          } else {
-            Navigator.pushNamed(context, "/account/view", arguments: id);
+        onTap: () async{   
+          try{
+            var id = widget.listCard[index]["id"];  
+            if(widget.listCard[index]["type"] == "topic")
+            {
+              Topic topic = await TopicService().getTopicById(id);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TopicStudy(topic: topic),
+                ),
+              );
+            }
+            else
+            {
+              Navigator.pushNamed(context, "/account/view", arguments: id);
+            }
           }
+          catch(err)
+          {
+            var notConnect = err.toString().contains("Connection failed");
+            var mess = "Có chút lỗi nho nhỏ. Vui lòng thử lại sau nha ^^!";
+            if(notConnect == true)
+            {
+              mess = "Không có kết nối mạng. Vui lòng thử lại sau!";
+            }
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mess)));
+          }   
+         
         },
         child: Container(
-            padding: EdgeInsets.all(10),
-            height: 400,
-            width: 300,
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.card,
-            ),
-            child: (widget.listCard[index]["type"] == "topic")
-                ? _topicWidget(index)
-                : _authorWidget(index)),
+          padding: EdgeInsets.all(10),
+          height: 400,
+          width: 300 ,
+          margin: const EdgeInsets.symmetric(horizontal:5),
+          decoration:  BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: AppColors.card,
+          ),
+          child: 
+          (widget.listCard[index]["type"] == "topic") ?
+          _topicWidget(index)
+          : 
+          _authorWidget(index)
+            
+        ),
       ),
     );
   }
-
+  
   Widget _topicWidget(index) {
     return Stack(
       textDirection: TextDirection.rtl,
@@ -123,10 +157,11 @@ class _CarouselState extends State<Carousel> {
                       height: 36.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        border: Border.all(width: 2, color:Colors.lightBlue),
                         image: DecorationImage(
                           fit: BoxFit.scaleDown,
-                          image:
-                              NetworkImage(widget.listCard[index]["imgAuthor"]),
+                          image: NetworkImage("${widget.listCard[index]["imgAuthor"]}?v=${DateTime.now().toString()}"),
+
                         ),
                       ),
                     )),
@@ -146,84 +181,95 @@ class _CarouselState extends State<Carousel> {
             )),
           ],
         ),
-        IconButton(
-            onPressed: () => _addTopicToFolder(topic: widget.listCard[index]),
-            icon: Icon(
-              Icons.folder_special,
-              color: AppColors.titleLarge,
-            )),
+        IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special_outlined, color: AppColors.titleLarge,)),
+
       ],
     );
   }
 
-  Widget _authorWidget(index) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Container(
-                  width: 56.0,
-                  height: 56.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.scaleDown,
-                      image: NetworkImage(widget.listCard[index]["imgAuthor"]),
+    Widget _authorWidget(index)
+  {
+
+    return  Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                      child:Container(
+                          width: 56.0,
+                          height: 56.0,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color:Colors.pink),
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.scaleDown,
+                              image: NetworkImage("${widget.listCard[index]["imgAuthor"]}?v=${DateTime.now().toString()}"),
+                            ),
+                          ),
+                        )
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child:  Text(
+                      widget.listCard[index]["author"] , 
+                      maxLines: 1,
+                      style: TextStyle(
+                      fontFamily: "SanProBold",
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 20,                
+                      color: AppColors.titleLarge                   
+                    ),),)
+                ],
+                ),
+           
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                 
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    margin: EdgeInsets.only(top: 10, right: 6),
+                    height: 30,
+                    decoration:  BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(255, 224, 223, 223),
+                    ),
+                    child: Text("${index+1}",
+                        style:  TextStyle(
+                        fontFamily: "SanProBold",
+                        fontSize: 12, 
+                        color: Color.fromARGB(255, 3, 155, 243)
+                      )
                     ),
                   ),
-                )),
-            Expanded(
-              flex: 2,
-              child: Text(
-                widget.listCard[index]["author"],
-                maxLines: 1,
-                style: TextStyle(
-                    fontFamily: "SanProBold",
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: 20,
-                    color: AppColors.titleLarge),
+                   Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    margin: EdgeInsets.only(top: 10),
+                    height: 30,
+                                     
+                    decoration:  BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Colors.blue,
+                    ),
+                    child: Text("${widget.listCard[index]["count"]} chủ đề",
+                        style:  TextStyle(
+                        fontFamily: "SanProBold",
+                        fontSize: 12, 
+                        color: AppColors.textCard
+                      )
+                    ),
+                  ),
+                  
+                ],
               ),
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              margin: EdgeInsets.only(top: 10, right: 6),
-              height: 30,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color.fromARGB(255, 248, 248, 248),
-              ),
-              child: Text("${index + 1}",
-                  style: TextStyle(
-                      fontFamily: "SanProBold",
-                      fontSize: 12,
-                      color: Color.fromARGB(255, 3, 155, 243))),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              margin: EdgeInsets.only(top: 10),
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
-                color: Colors.blue,
-              ),
-              child: Text("${widget.listCard[index]["count"]} chủ đề",
-                  style: TextStyle(
-                      fontFamily: "SanProBold",
-                      fontSize: 12,
-                      color: AppColors.textCard)),
-            ),
-          ],
-        ),
-      ],
-    );
+             
+    
+            ],          
+          ) 
+          ;
   }
+  
 
   double get viewportF {
     var width = MediaQuery.of(context).size.width;
