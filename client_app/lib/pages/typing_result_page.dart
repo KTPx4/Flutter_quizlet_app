@@ -62,15 +62,15 @@ class TypingResultPage extends StatelessWidget {
               ),
             ),
             
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => TypingPage(words: words, topic: topic,)),
-                );
-              },
-              child: Text('Làm lại'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pushReplacement(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => TypingPage(words: words, topic: topic,)),
+            //     );
+            //   },
+            //   child: Text('Làm lại'),
+            // ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client_app/models/Server.dart';
 import 'package:client_app/models/account.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -25,19 +26,11 @@ class AccountAPI {
     return _instance;
   }
   static String getServer() {
-    var url = ANDROID_URL;
-    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      url = WEB_URL;
-    }
-    return url;
+    return ServerAPI.GetServer();
   }
 
   static String getLink() {
-    var url = ANDROID_URL + "/api";
-    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      url = WEB_URL + "/api";
-    }
-    return url;
+    return ServerAPI.GetLink();
   }
 
   static Future<Map<String, dynamic>> isAuth({required String token}) async {
