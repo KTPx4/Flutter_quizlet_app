@@ -1,7 +1,8 @@
+import 'package:client_app/pages/quiz_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_app/models/word.dart';
-import 'package:client_app/models/topic.dart'; // Import Topic model
-import 'quiz_result_page.dart'; // Đảm bảo rằng bạn đã import trang kết quả QuizResultPage
+import 'package:client_app/models/topic.dart';
+import 'quiz_result_page.dart';
 
 class QuizQuestionPage extends StatefulWidget {
   final List<Word> words;
@@ -21,6 +22,7 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
   int currentQuestionIndex = 0;
   List<String> choices = [];
   List<String> userAnswers = []; // Danh sách lưu các câu trả lời của người dùng
+  bool showImmediateFeedback = false;
 
   @override
   void initState() {
@@ -52,12 +54,13 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
 
   void showAnswerDialog(String userAnswer) {
-    bool isCorrect = userAnswer ==
-        (widget.showTermAsQuestion
-            ? widget.words[currentQuestionIndex].mean2.title
-            : widget.words[currentQuestionIndex].mean1.title);
-    userAnswers.add(userAnswer); // Lưu câu trả lời của người dùng
+  bool isCorrect = userAnswer ==
+      (widget.showTermAsQuestion
+          ? widget.words[currentQuestionIndex].mean2.title
+          : widget.words[currentQuestionIndex].mean1.title);
+  userAnswers.add(userAnswer);
 
+  if (showImmediateFeedback) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -66,37 +69,45 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
           actions: <Widget>[
             TextButton(
               child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (currentQuestionIndex + 1 < widget.words.length) {
-                  // Chỉ tăng chỉ số nếu còn câu hỏi
-                  setState(() {
-                    currentQuestionIndex++;
-                    generateChoices();
-                  });
-                } else {
-                  // Kết thúc quiz và chuyển đến trang kết quả
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QuizResultPage(
-                        score: calculateScore(),
-                        words: widget.words,
-                        userAnswers: userAnswers,
-                        topic: widget.topic,
-                        showTermAsQuestion:
-                            widget.showTermAsQuestion, // Truyền giá trị này
-                      ),
-                    ),
-                  );
-                }
-              },
+              onPressed: () => handleQuestionNavigation(),
             ),
           ],
         );
       },
     );
+  } else {
+    handleQuestionNavigation();
   }
+}
+
+void handleQuestionNavigation() {
+  if (showImmediateFeedback) {
+    Navigator.of(context).pop(); // Chỉ gọi pop khi có dialog được hiển thị
+  }
+
+  if (currentQuestionIndex + 1 < widget.words.length) {
+    setState(() {
+      currentQuestionIndex++;
+      generateChoices();
+    });
+  } else {
+    // Kết thúc quiz và chuyển đến trang kết quả
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizResultPage(
+          score: calculateScore(),
+          words: widget.words,
+          userAnswers: userAnswers,
+          topic: widget.topic,
+          showTermAsQuestion: widget.showTermAsQuestion,
+        ),
+      ),
+    );
+  }
+}
+
+
 
   int calculateScore() {
     int score = 0;
@@ -123,8 +134,30 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz Question'),
+  title: Text('Quiz Question'),
+  actions: <Widget>[
+    IconButton(
+  icon: Icon(Icons.settings),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizSettingsPage(initialFeedbackSetting: showImmediateFeedback),
       ),
+    ).then((value) {
+      // Điều này cho phép cập nhật giá trị showImmediateFeedback sau khi quay lại từ SettingsPage
+      if (value != null) {
+        setState(() {
+          showImmediateFeedback = value as bool;
+        });
+      }
+    });
+  },
+),
+
+  ],
+),
+
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

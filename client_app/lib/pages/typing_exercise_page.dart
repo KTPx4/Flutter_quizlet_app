@@ -1,4 +1,5 @@
 import 'package:client_app/pages/typing_result_page.dart';
+import 'package:client_app/pages/typing_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_app/models/word.dart';
 import 'package:diacritic/diacritic.dart';
@@ -17,6 +18,7 @@ class _TypingExercisePageState extends State<TypingExercisePage> {
   int currentIndex = 0;
   final TextEditingController controller = TextEditingController();
   List<String> userAnswers = [];
+  bool showFeedback = false;
 
 String normalizeText(String input) {
   return removeDiacritics(input).toLowerCase();
@@ -27,39 +29,55 @@ String normalizeText(String input) {
   String correctAnswer = widget.isTerm ? currentWord.mean1.title : currentWord.mean2.title;
   userAnswers.add(value);  // Store the user answer for later use
 
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(normalizeText(value.trim()) == normalizeText(correctAnswer) ? "Chính xác!" : "Sai rồi!"),
-      content: Text(normalizeText(value.trim()) == normalizeText(correctAnswer) ?
-        "Bạn đã chọn đáp án đúng." : "Đáp án chính xác là: $correctAnswer"),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-            if (currentIndex < widget.words.length - 1) {
-              // Not the last question, so move to the next one
-              setState(() {
-                currentIndex++;
-                controller.clear();
-              });
-            } else {
-              // Last question, so calculate results and navigate to results page
-              int totalCorrect = calculateCorrectAnswers();
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TypingResultPage(
-                totalCorrect: totalCorrect,
-                totalQuestions: widget.words.length,
-                words: widget.words,
-                userAnswers: userAnswers,
-              )));
-            }
-          },
-          child: Text("OK"),
-        ),
-      ],
-    ),
-  );
+  if (showFeedback) {
+    // Hiển thị AlertDialog nếu showFeedback là true
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(normalizeText(value.trim()) == normalizeText(correctAnswer) ? "Chính xác!" : "Sai rồi!"),
+        content: Text(normalizeText(value.trim()) == normalizeText(correctAnswer) ?
+          "Bạn đã chọn đáp án đúng." : "Đáp án chính xác là: $correctAnswer"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              moveToNextQuestion();
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  } else {
+    // Không hiển thị dialog, chỉ chuyển câu tiếp theo
+    moveToNextQuestion();
+  }
 }
+
+void moveToNextQuestion() {
+  if (currentIndex < widget.words.length - 1) {
+    setState(() {
+      currentIndex++;
+      controller.clear();
+    });
+  } else {
+    navigateToResultsPage();
+  }
+}
+
+void navigateToResultsPage() {
+  int totalCorrect = calculateCorrectAnswers();
+  Navigator.pushReplacement(context, MaterialPageRoute(
+    builder: (context) => TypingResultPage(
+      totalCorrect: totalCorrect,
+      totalQuestions: widget.words.length,
+      words: widget.words,
+      userAnswers: userAnswers,
+    ),
+  ));
+}
+
+
 
 int calculateCorrectAnswers() {
   int totalCorrect = 0;
@@ -79,8 +97,30 @@ int calculateCorrectAnswers() {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Typing Exercise"),
+  title: Text("Typing Exercise"),
+  actions: <Widget>[
+    IconButton(
+  icon: Icon(Icons.settings),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TypingSettingsPage(initialFeedbackSetting: showFeedback),
       ),
+    ).then((updatedFeedback) {
+      if (updatedFeedback != null) {
+        setState(() {
+          showFeedback = updatedFeedback;
+        });
+      }
+    });
+  },
+),
+
+
+  ],
+),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

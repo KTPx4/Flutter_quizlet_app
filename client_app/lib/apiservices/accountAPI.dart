@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 const WEB_URL = 'http://localhost:3000'; // kết nối từ web
-const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
+// const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
+const ANDROID_URL = 'http://192.168.0.108:3000'; // kết nối từ máy ảo android
 // const ANDROID_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ máy ảo android
 // const WEB_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ web
 
@@ -48,19 +49,28 @@ class AccountAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
+
+        var pref = await SharedPreferences.getInstance();
+        var account =  jsonEncode( resBody["data"]["account"] ) ?? "";
+        pref?.setString("Account", account);
+        
         return {
           'success': true,
           'message': "Đã đăng nhập",
           'account': resBody["data"]["account"]
         };
       }
-
-      return {'success': false, 'message': resBody["message"], 'token': ''};
+      return {'success': false, 'message': resBody["message"], 'token': '',   'notConnect': false};
+    
     } catch (e) {
+
+      var notConnect = e.toString().contains("Connection failed");
+
       return {
         'success': false,
         'message': "Chưa đăng nhập hoặc lỗi. Vui lòng thử lại sau!",
-        'token': ''
+        'token': '',
+        'notConnect': notConnect
       };
     }
   }
@@ -81,6 +91,7 @@ class AccountAPI {
         var token = jsonEncode(restoken) ?? "";
         var pref = await SharedPreferences.getInstance();
         if (token != null) pref?.setString(KEY_LOGIN, token);
+
         return {
           'success': true,
           'message': "Đăng nhập thành công",
@@ -101,6 +112,7 @@ class AccountAPI {
     try {
       var server = getLink();
       var link = "$server/account/getcode";
+
       var body = {
         'email': email,
       };
@@ -541,6 +553,85 @@ class AccountAPI {
       return {
         'success': false,
         'message': "Failed to fetch top author. Please try again later!",
+      };
+    }
+  }
+  
+  static Future<Map<String, dynamic>> getTopicPublicv2() async {
+  try {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+  
+      var server = getLink();
+      var link = "$server/topic/publicv3";
+
+      var res = await http.get(
+        Uri.parse(link),   
+        headers: {"Authorization": "Bearer $token"}
+      );
+
+      var resBody = jsonDecode(res.body);
+ 
+      if (res.statusCode == 200) {
+      
+        var listTopics = resBody["data"];
+
+        List<Map<String,dynamic>> listResult = [];        
+
+
+        for(var i in listTopics)
+        {
+
+          var accountID = i["authorID"];
+        
+          var Account = await http.get(
+            Uri.parse("${getLink()}/account/$accountID")
+          );
+
+          var data = jsonDecode(Account.body)["data"];
+
+          var user =  data["user"];
+          var img =  data["nameAvt"];
+
+          var ListTopics = i["topics"];
+
+
+          var t = {
+            "author": "$user", 
+            "id": "${i["_id"]}", 
+            "imgAuthor": "${getServer()}/images/account/$accountID/$img", 
+            "type": "topic", 
+            "title": "${i["topicName"]}", 
+            "count": i["countWords"],
+            "createAt": i["createAt"],
+            "countStuy": i["studyCount"],
+            "publicStudy": i["publicStudy"]
+          };
+        
+          listResult.add(t);
+
+        }
+     
+        return {
+          'success': true,
+          'message': "Lấy thành công danh sách cộng đồng",
+          'data': listResult
+        };
+
+      } else {
+        return {
+          'success': false,
+          'message': "Vui lòng tải lại trang",
+          'notConnect': false
+        };
+      }
+    } catch (e) {
+      print(e);
+      var notConnect = e.toString().contains("Connection failed");
+      return {
+        'success': false,
+        'message': "Failed to fetch top author. Please try again later!",
+        'notConnect': notConnect
       };
     }
   }

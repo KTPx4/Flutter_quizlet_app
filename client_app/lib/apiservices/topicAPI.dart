@@ -257,7 +257,8 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'topic': resBody["data"]["topics"]};
+
+        return {'success': true, 'topic': resBody["data"]};
       }
 
       return {'success': false, 'message': resBody["message"]};
