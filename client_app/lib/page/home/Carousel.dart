@@ -88,8 +88,12 @@ class _CarouselState extends State<Carousel> {
                       content: Center(child: CircularProgressIndicator(color: Colors.pink,)));
                   },);
                 }
-              Topic topic = await TopicService().getTopicById(id);  
+
+              var topic = await TopicService().getTopicById(id);  
+       
+
               Navigator.pop(context);        
+              
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -109,12 +113,15 @@ class _CarouselState extends State<Carousel> {
           }
           catch(err)
           {
+            Navigator.pop(context);        
+
             var notConnect = err.toString().contains("Connection failed");
             var mess = "Có chút lỗi nho nhỏ. Vui lòng thử lại sau nha ^^!";
             if(notConnect == true)
             {
               mess = "Không có kết nối mạng. Vui lòng thử lại sau!";
             }
+            print(err);
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mess)));
           }   

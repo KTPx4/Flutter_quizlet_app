@@ -21,12 +21,14 @@ class QuizResultPage extends StatelessWidget {
 
   void _initStudy(context, id, correct, sum) async
   {
-    
+   
     if(correct == sum)
-    {           
+    {  
+       
       var res = await TopicAPI.studyTopic(id: id);
       if(res["success"] == true)
       {
+       
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res["message"])));
       }
@@ -34,7 +36,9 @@ class QuizResultPage extends StatelessWidget {
   }
   void _studyWord(context, listWords) async 
   {
+
     if(listWords == null || listWords.length < 1) return;
+
     var res = await TopicAPI.studyWord(list: listWords, topicID: topic.id!);
   }
 
@@ -92,10 +96,11 @@ class QuizResultPage extends StatelessWidget {
     for (int i = 0; i < words.length; i++) {
       if ((showTermAsQuestion ? words[i].mean2.title : words[i].mean1.title) == userAnswers[i]) {
         correctCount++;
+        
         correctWordIds.add(words[i].id!);
       }
     }  
-
+   
     return {"count": correctCount, "list": correctWordIds};
   }
 }
