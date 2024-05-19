@@ -90,7 +90,7 @@ class TopicAPI {
         return {
           'success': true,
           'topics': resBody["data"],
-          "count": resBody["count"]
+          "count": resBody["count"]         
         };
       }
 

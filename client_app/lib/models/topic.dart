@@ -8,6 +8,7 @@ class Topic {
   final bool isPublic;
   final String? createAt;
   final int? countWords;
+  final int publicStudy = 0;
   final List<Word> words;
 
   Topic({
@@ -19,6 +20,7 @@ class Topic {
     this.createAt,
     this.countWords,
     required this.words,
+    publicStudy = 0
   });
 
   factory Topic.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,8 @@ class Topic {
     if (json['countWords'] == null) {
       throw Exception('The field countWords is null in the returned Topic');
     }
+    var countPub = json['publicStudy'];
+    if(countPub == null) countPub = 0;
 
     return Topic(
       id: json['_id'],
@@ -56,6 +60,7 @@ class Topic {
       createAt: json['createAt'],
       countWords: json['countWords'],
       words: words,
+      publicStudy: countPub
     );
   }
 }

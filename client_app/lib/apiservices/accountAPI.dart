@@ -5,10 +5,11 @@ import 'package:client_app/models/account.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const WEB_URL = 'http://localhost:3000'; // kết nối từ web
-// const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
-const ANDROID_URL = 'http://192.168.0.108:3000'; // kết nối từ máy ảo android
+var WEB_URL = 'http://localhost:3000'; // kết nối từ web
+const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
+// var ANDROID_URL = 'http://192.168.0.108:3000'; // kết nối từ máy ảo android
 // const ANDROID_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ máy ảo android
 // const WEB_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ web
 

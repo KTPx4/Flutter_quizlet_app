@@ -34,7 +34,11 @@ class _CarouselState extends State<Carousel> {
       builder: (BuildContext context) {
         return Dialog(
           child:
-              FolderTab(callFunction: callFunctionFolder, selectFolder: true),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                height: 700,
+                child: FolderTab(callFunction: callFunctionFolder, selectFolder: true)
+              ),
         );
       },
     ).then((value) {
@@ -42,9 +46,10 @@ class _CarouselState extends State<Carousel> {
     });
 
     if (folderId == null || folderId!.isEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please select a folder'),
+          content: Text('Vui lòng chọn thư mục'),
 
         ),
       );
@@ -69,7 +74,7 @@ class _CarouselState extends State<Carousel> {
             var id = widget.listCard[index]["id"];  
             if(widget.listCard[index]["type"] == "topic")
             {
-              Topic topic = await TopicService().getTopicById(id);
+              Topic topic = await TopicService().getTopicById(id);           
               Navigator.push(
                 context,
                 MaterialPageRoute(
