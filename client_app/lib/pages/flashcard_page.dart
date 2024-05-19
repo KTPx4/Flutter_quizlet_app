@@ -1,3 +1,4 @@
+import 'package:client_app/apiservices/topicAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -6,8 +7,8 @@ import 'package:client_app/pages/flashcard_settings.dart';
 
 class FlashcardPage extends StatefulWidget {
   final List<Word> words;
-
-  const FlashcardPage({Key? key, required this.words}) : super(key: key);
+  String idTopic;
+  FlashcardPage({Key? key, required this.words, required this.idTopic}) : super(key: key);
 
   @override
   State<FlashcardPage> createState() => _FlashcardPageState();
@@ -132,11 +133,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
       children: <Widget>[
         IconButton(
           icon: Icon(Icons.arrow_back, size: 36, color: Colors.deepPurple),
-          onPressed: _currIdx > 0 ? () {
+          onPressed: _currIdx > 0 ? () async{            
             setState(() {
               _currIdx--;
               _speak(widget.words[_currIdx].mean1.title);
-            });
+            });            
           } : null,
         ),
         IconButton(

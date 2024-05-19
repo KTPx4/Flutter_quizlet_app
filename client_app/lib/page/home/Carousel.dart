@@ -24,6 +24,7 @@ class _CarouselState extends State<Carousel> {
   final CarouselController _controller = CarouselController();
   final FolderService folderService = FolderService();
   final CallFunction callFunctionFolder = CallFunction();
+  bool click = false;
   // Edit add topic to folder at here
   void _addTopicToFolder({topic}) async {
     var idTopic = topic["id"];
@@ -71,21 +72,40 @@ class _CarouselState extends State<Carousel> {
       child: InkWell(
         onTap: () async{   
           try{
+           
             var id = widget.listCard[index]["id"];  
             if(widget.listCard[index]["type"] == "topic")
             {
-              Topic topic = await TopicService().getTopicById(id);           
+               if(click == true) return;
+                setState(() {
+                  click = true;
+                });
+                if(click)
+                {
+                  showDialog(barrierDismissible: false , context: context, builder: (context) {
+                    return  AlertDialog(                   
+                      backgroundColor: Colors.transparent, 
+                      content: Center(child: CircularProgressIndicator(color: Colors.pink,)));
+                  },);
+                }
+              Topic topic = await TopicService().getTopicById(id);  
+              Navigator.pop(context);        
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TopicStudy(topic: topic),
                 ),
               );
+              setState(() {
+                click = false;
+              });  
             }
             else
             {
               Navigator.pushNamed(context, "/account/view", arguments: id);
             }
+            
+    
           }
           catch(err)
           {

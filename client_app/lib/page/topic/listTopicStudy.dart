@@ -110,7 +110,7 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
                               widget.topicId, word.id!, !word.isMark!);
                           setState(() {});
                         },
-                        color: Colors.yellow,
+                        color:  word.isMark! ? Colors.yellow : Colors.grey,
                       ),
                       trailing: Icon(
                         ((isSpeaking)

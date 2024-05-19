@@ -39,7 +39,7 @@ class _TopicStudyState extends State<TopicStudy>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FlashcardPage(words: widget.topic.words),
+                builder: (context) => FlashcardPage(words: widget.topic.words, idTopic: widget.topic.id ?? "",),
               ),
             );
           },
@@ -57,6 +57,12 @@ class _TopicStudyState extends State<TopicStudy>
           title: Text('Quiz'),
           leading: Icon(Icons.question_answer),
           onTap: () {
+            if(widget.topic.words.length < 4)
+            {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Số lượng từ quá ít để làm quiz")));
+              return;
+            }
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -77,7 +83,7 @@ class _TopicStudyState extends State<TopicStudy>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TypingPage(words: widget.topic.words),
+                builder: (context) => TypingPage(words: widget.topic.words, topic: widget.topic,),
               ),
             );
           },

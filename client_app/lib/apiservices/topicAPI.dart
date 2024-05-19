@@ -441,4 +441,34 @@ class TopicAPI {
       };
     }
   }
+
+
+  static Future<Map<String, dynamic>> studyTopic({required String id}) async {
+    try {
+      var server = getLink();
+      var link = "$server/topic/${id}/study";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.get(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'message': "Đã học xong đề này"};
+      }
+
+      return {'success': false, 'message': "Có chút lỗi xảy ra"};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Lỗi khi gửi dữ liệu. Thử lại sau!"      
+      };
+    }
+  }
+
+
 }
