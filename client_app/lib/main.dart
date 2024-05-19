@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       
       debugShowCheckedModeBanner: false,
-      title: 'Quizlet',       
+      title: 'QuizGo',       
       initialRoute: '/',
        onGenerateRoute: (settings) {
 
@@ -69,28 +69,28 @@ class _MyAppState extends State<MyApp> {
         switch(name)
         {
           case "/": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: Home(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: Home(), context: context));
           case "/account/profile": 
-            return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),));
+            return MaterialPageRoute(builder: (bd)=> AuthPage(page: ProfilePage(),  context: context));
           case "/account/register":
-            return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(),));
+            return MaterialPageRoute(builder: (bd)=> canRegister(page: RegisterPage(), context: context));
           case "/account/forgot":
-            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(),));          
+            return MaterialPageRoute(builder: (bd)=> canForgot(page: ForgotPage(), context: context));         
           
           case "/account/login":      
-            return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args));
+            return MaterialPageRoute(builder: (bd)=> canLogin(page:  LoginPage(pathPage: "/"), args: args, context: context));
             
           case "/account/view":      
             return MaterialPageRoute(builder: (bd)=> ViewPublicAccount(accountID: args.toString()));
 
           
-          case "/topic/quiz":
-            var decode = args as Map;
-            var words = decode["words"];
-            var numberOfQuestions = decode["numberOfQuestions"];
-            var showAnswersImmediately= decode["showAnswersImmediately"];
-            var answerType= decode["answerType"];
-            return MaterialPageRoute(builder: (bd)=> QuizPage(words: words,numberOfQuestions: numberOfQuestions, showAnswersImmediately: showAnswersImmediately, answerType: answerType,  ));
+          // case "/topic/quiz":
+          //   var decode = args as Map;
+          //   var words = decode["words"];
+          //   var numberOfQuestions = decode["numberOfQuestions"];
+          //   var showAnswersImmediately= decode["showAnswersImmediately"];
+          //   var answerType= decode["answerType"];
+          //   return MaterialPageRoute(builder: (bd)=> QuizPage(words: words,numberOfQuestions: numberOfQuestions, showAnswersImmediately: showAnswersImmediately, answerType: answerType,  ));
 
           default:
             return MaterialPageRoute(builder: (bd)=> const NotFoundPage());
@@ -106,10 +106,10 @@ class _MyAppState extends State<MyApp> {
 
 
 
-FutureBuilder canForgot({page, path = "/", args = ""})
+FutureBuilder canForgot({page, path = "/", args = "", context})
 {
   return FutureBuilder(
-    future: CheckLogin(), 
+    future: CheckLogin(context), 
     builder: (context, snapshot) {
       if(snapshot.connectionState == ConnectionState.waiting)
       {
@@ -132,10 +132,10 @@ FutureBuilder canForgot({page, path = "/", args = ""})
   );
 }
 
-FutureBuilder canLogin({page, path = "/", args = ""})
+FutureBuilder canLogin({page, path = "/", args = "" , context})
 {
   return FutureBuilder(
-    future: CheckLogin(), 
+    future: CheckLogin(context), 
     builder: (context, snapshot) {
       if(snapshot.connectionState == ConnectionState.waiting)
       {
@@ -158,10 +158,10 @@ FutureBuilder canLogin({page, path = "/", args = ""})
   );
 }
 
-FutureBuilder canRegister({page, path = "/"})
+FutureBuilder canRegister({page, path = "/", context})
 {
   return FutureBuilder(
-    future: CheckLogin(), 
+    future: CheckLogin(context), 
     builder: (context, snapshot) {
       if(snapshot.connectionState == ConnectionState.waiting)
       {
@@ -184,11 +184,11 @@ FutureBuilder canRegister({page, path = "/"})
   );
 }
 
-FutureBuilder AuthPage({page, path = "/"})
+FutureBuilder AuthPage({page, path = "/",  context})
 {
 
   return FutureBuilder(
-    future: CheckLogin(), 
+    future: CheckLogin(context), 
     builder: (context, snapshot) {
       if(snapshot.connectionState == ConnectionState.waiting)
       {
@@ -226,19 +226,29 @@ FutureBuilder AuthPage({page, path = "/"})
   );
 }
 
-Future<bool> CheckLogin() async 
+Future<bool> CheckLogin(context) async 
 {
   try
   {
   // await Future.delayed(Duration(seconds: 1));
-    var pref = await SharedPreferences.getInstance();
-    String? token = pref.getString(KEY_LOGIN);
-    if(token == null) return false;
-    // your logic here 
-    // Check token with API
-    var res = await AccountAPI.isAuth(token: token);   
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
 
-    return res['success'];
+      if (token == null) return false;
+
+      var res = await AccountAPI.isAuth(token: token);
+
+      if (res['success'] == true) {
+        var account = jsonEncode(res['account']) ?? "";
+        pref.setString("Account", account);
+        return true;
+      } else if (res['success'] == false && res["notConnect"] == false) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/account/login', (route) => false);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(res['message'])));
+      }
     
   }
   catch(err)
@@ -246,7 +256,7 @@ Future<bool> CheckLogin() async
     print("error when handle Check Login - Main: \n$err" );
   }
  
-  return false;
+  return true;
 }
 
 

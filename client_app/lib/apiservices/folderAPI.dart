@@ -155,7 +155,7 @@ class FolderAPI {
     }
   }
 
-  static Future<void> addTopicsToFolder(
+  static Future<String> addTopicsToFolder(
       String folderId, List<String> topicIds) async {
     var link = "${getLink()}/folder/$folderId/topic/";
     var pref = await SharedPreferences.getInstance();
@@ -176,8 +176,11 @@ class FolderAPI {
 
     var resBody = jsonDecode(res.body);
 
-    if (res.statusCode != 200) {
-      throw Exception(resBody["message"]);
+    if (res.statusCode == 200) {
+      return "Topics added to folder successfully!";
+    } else {
+      throw Exception(
+          "Failed to add topics to folder , topic already exists in folder. Please try again later!");
     }
   }
 

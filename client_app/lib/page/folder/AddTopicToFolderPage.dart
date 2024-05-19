@@ -19,7 +19,7 @@ class _AddTopicToFolderState extends State<AddTopicToFolder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Thêm Topics"),
+        title: Text("Thêm chủ đề vào thư mục"),
         actions: [
           IconButton(
               onPressed: () {

@@ -18,7 +18,7 @@ class TopicService {
           .toList()
           .cast<Topic>();
     } else {
-      throw Exception(response['message']);
+      return [];
     }
   }
 
@@ -32,11 +32,12 @@ class TopicService {
           .cast<Topic>();
       return topic;
     } else {
-      throw Exception(response['message']);
+      return [];
     }
   }
 
-  Future<Map<String,dynamic>> getAccountTopicsPublic({required accountID}) async {
+  Future<Map<String, dynamic>> getAccountTopicsPublic(
+      {required accountID}) async {
     var response = await TopicAPI.getPublicTopicsByUser(accountID: accountID);
     if (response['success']) {
       if (response['topics'] == null) return {"topics": [], "count": 0};
@@ -46,7 +47,7 @@ class TopicService {
           .cast<Topic>();
       return {"topics": topic, "count": response['count']};
     } else {
-      throw Exception(response['message']);
+      return {"topics": [], "count": 0};
     }
   }
 
@@ -55,7 +56,7 @@ class TopicService {
     if (response['success']) {
       return response['_id'];
     } else {
-      throw Exception(response['message']);
+      return response['message'];
     }
   }
 
@@ -64,15 +65,21 @@ class TopicService {
     if (response['success']) {
       return Topic.fromJson(response['message']);
     } else {
-      throw Exception(response['message']);
+      return Topic(
+        topicName: '',
+        desc: '',
+        isPublic: false,
+        words: [],
+      );
     }
   }
 
-  Future<void> deleteTopic(String id) async {
+  Future<String> deleteTopic(String id) async {
     var response = await TopicAPI.deleteTopic(id: id);
     if (!response['success']) {
-      throw Exception(response['message']);
+      return response['message'];
     }
+    return 'Chủ đề đã được xóa thành công!';
   }
 
   Future<Topic> getTopicById(String id) async {
@@ -80,18 +87,23 @@ class TopicService {
     if (response['success']) {
       return Topic.fromJson(response['topic']);
     } else {
-      throw Exception(response['message']);
+      return Topic(
+        topicName: '',
+        desc: '',
+        isPublic: false,
+        words: [],
+      );
     }
   }
 
-  Future<void> editDeleteWords(Topic topic, List<Word> newWords,
+  Future<String> editDeleteWords(Topic topic, List<Word> newWords,
       List<Word> existingWords, List<String> deleteIds) async {
     // function implementation
     String topicId = topic.id!;
     // Add a new topic and get the topic ID
     var response = await TopicAPI.editTopic(id: topicId, topic: topic);
     if (!response['success']) {
-      throw Exception(response['message']);
+      return response['message'];
     }
     // Edit the existing words
 
@@ -99,39 +111,40 @@ class TopicService {
       var deleteResponse =
           await TopicAPI.deleteWordsInTopic(id: topicId, wordId: id);
       if (!deleteResponse['success']) {
-        throw Exception(deleteResponse['message']);
+        return deleteResponse['message'];
       }
     }
-
 
     // // Step 3: s to the topic
     // var response = await TopicAPI.addWordsToTopic(id: topicId, words: words);
 
+
     var editResponse =
         await TopicAPI.editWordsInTopic(id: topicId, words: existingWords);
     if (!editResponse['success']) {
-      throw Exception(editResponse['message']);
+      return editResponse['message'];
     }
 
     // Delete the words with the provided delete IDs
 
     // Add new words
     if (newWords.isEmpty) {
-      return;
+      return 'Chủ đề đã được cập nhật thành công!';
     }
     var addResponse =
         await TopicAPI.addWordsToTopic(id: topicId, words: newWords);
     if (!addResponse['success']) {
-      throw Exception(addResponse['message']);
+      return addResponse['message'];
     }
+    return 'Chủ đề đã được cập nhật thành công!';
   }
 
-  Future<void> addWordsToTopic(Topic topic, List<Word> words) async {
+  Future<String> addWordsToTopic(Topic topic, List<Word> words) async {
     // Add a new topic and get the topic ID
     var response = await TopicAPI.addTopic(topic: topic);
 
     if (!response['success']) {
-      throw Exception(response['message']);
+      return response['message'];
     }
     String topicId = response['_id'];
 
@@ -139,8 +152,9 @@ class TopicService {
     var addWordsResponse =
         await TopicAPI.addWordsToTopic(id: topicId, words: words);
     if (!addWordsResponse['success']) {
-      throw Exception(addWordsResponse['message']);
+      return addWordsResponse['message'];
     }
+    return 'Chủ đề đã được thêm thành công!';
   }
 
   Future<List<Topic>> getTopicsByFolderId(String folderId) async {

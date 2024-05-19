@@ -1,13 +1,15 @@
-
 import 'dart:ui';
 
-import 'package:client_app/apiservices/TopicService.dart';
-import 'package:client_app/models/topic.dart';
-import 'package:client_app/modules/ColorsApp.dart';
-import 'package:client_app/page/topic/topicStudy.dart';
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:client_app/apiservices/TopicService.dart';
+import 'package:client_app/apiservices/folderSerivce.dart';
+import 'package:client_app/models/topic.dart';
+import 'package:client_app/modules/ColorsApp.dart';
+import 'package:client_app/modules/callFunction.dart';
+import 'package:client_app/page/folder/FolderPage.dart';
+import 'package:client_app/page/topic/topicStudy.dart';
+import 'package:flutter/material.dart';
 
 class Carousel extends StatefulWidget {
   List<Map<String, dynamic>> listCard;
@@ -20,15 +22,42 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   final CarouselController _controller = CarouselController();
-
+  final FolderService folderService = FolderService();
+  final CallFunction callFunctionFolder = CallFunction();
   // Edit add topic to folder at here
-  void _addTopicToFolder({topic})
-  {
+  void _addTopicToFolder({topic}) async {
     var idTopic = topic["id"];
 
+    String? folderId = '';
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child:
+              FolderTab(callFunction: callFunctionFolder, selectFolder: true),
+        );
+      },
+    ).then((value) {
+      folderId = value;
+    });
+
+    if (folderId == null || folderId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a folder'),
+
+        ),
+      );
+      return;
+    }
+
+    String response = await folderService.addTopicToFolder(folderId!, idTopic);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(response),
+      ),
+    );
   }
-
-
 
   Widget _buildCard({index})
   {
@@ -86,19 +115,18 @@ class _CarouselState extends State<Carousel> {
     );
   }
   
-  Widget _topicWidget(index)
-  {
+  Widget _topicWidget(index) {
     return Stack(
       textDirection: TextDirection.rtl,
       children: [
         Column(
-          children: [        
+          children: [
             SizedBox(
               height: 30,
               child: Text(
                 widget.listCard[index]["title"],
                 maxLines: 2,
-                style:  TextStyle(
+                style: TextStyle(
                     fontFamily: "SanProBold",
                     overflow: TextOverflow.ellipsis,
                     fontSize: 14,
@@ -115,9 +143,10 @@ class _CarouselState extends State<Carousel> {
               ),
               child: Text("${widget.listCard[index]["count"]} thuật ngữ",
                   style: TextStyle(
-                      fontFamily: "SanProBold", fontSize: 12, color: AppColors.textCard )),
+                      fontFamily: "SanProBold",
+                      fontSize: 12,
+                      color: AppColors.textCard)),
             ),
-         
             Container(
                 child: Row(
               children: [
@@ -132,6 +161,7 @@ class _CarouselState extends State<Carousel> {
                         image: DecorationImage(
                           fit: BoxFit.scaleDown,
                           image: NetworkImage("${widget.listCard[index]["imgAuthor"]}?v=${DateTime.now().toString()}"),
+
                         ),
                       ),
                     )),
@@ -149,9 +179,6 @@ class _CarouselState extends State<Carousel> {
                 )
               ],
             )),
-        
-            
-            
           ],
         ),
         IconButton(onPressed: () => _addTopicToFolder(topic:widget.listCard[index]), icon: Icon(Icons.folder_special_outlined, color: AppColors.titleLarge,)),
@@ -159,8 +186,8 @@ class _CarouselState extends State<Carousel> {
       ],
     );
   }
-  
-  Widget _authorWidget(index)
+
+    Widget _authorWidget(index)
   {
 
     return  Column(
@@ -243,125 +270,96 @@ class _CarouselState extends State<Carousel> {
           ;
   }
   
-  double get viewportF
-  {
+
+  double get viewportF {
     var width = MediaQuery.of(context).size.width;
-    if(width < 405)
-    {
+    if (width < 405) {
       return 0.9;
-    }
-    else if(width < 530)
-    {
+    } else if (width < 530) {
       return 0.5;
-    }
-    else if( width < 660)
-    {
+    } else if (width < 660) {
       return 0.5;
-    }
-    else if(width < 791)
-    {
+    } else if (width < 791) {
       return 0.4;
-    }
-    else if(width < 1106)
-    {
+    } else if (width < 1106) {
       return 0.3;
-    }
-    else if(width < 1575)
-    {
+    } else if (width < 1575) {
       return 0.2;
     }
     return 0.2;
   }
-  double get aspectR
-  {
+
+  double get aspectR {
     var width = MediaQuery.of(context).size.width;
-    if(width < 405)
-    {
+    if (width < 405) {
       return 1.7;
-    }
-    else if(width < 530)
-    {
+    } else if (width < 530) {
       return 3;
-    }
-    else if(width < 660)
-    {
+    } else if (width < 660) {
       return 4;
-    }
-    else if(width < 791)
-    {
+    } else if (width < 791) {
       return 5;
-    }
-    else if(width < 1054)
-    {
+    } else if (width < 1054) {
       return 6;
-    }
-    else if(width < 1106)
-    {
+    } else if (width < 1106) {
       return 8;
-    }
-    else if(width < 1575)
-    {
+    } else if (width < 1575) {
       return 8;
     }
     return 12;
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    
-    return
-    Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            height: 150,
-            child: ScrollConfiguration(
-              behavior: MyCustomScrollBehavior(),
-              child: ListView(         
-                scrollDirection: Axis.horizontal,
-                children: [
-                  ...widget.listCard.map((e) => _buildCard(index: widget.listCard.indexOf(e)))
-                ],
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          height: 150,
+          child: ScrollConfiguration(
+            behavior: MyCustomScrollBehavior(),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                ...widget.listCard
+                    .map((e) => _buildCard(index: widget.listCard.indexOf(e)))
+              ],
             ),
-          )
-          //  CarouselSlider.builder(            
-          //   carouselController: _controller,
-          //   itemCount: widget.listCard.length,  
-          //   itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => _buildCard(index: itemIndex),
-          //   options: CarouselOptions( 
-          //     viewportFraction: 0.5,
-          //     aspectRatio: aspectR,
-          //     autoPlay: false,
-          //     enlargeCenterPage: false,
-          //     enableInfiniteScroll: false,
-          //     initialPage: 0,
-          //       onPageChanged: (index, reason) {
-          //       setState(() {
-          //         // Update UI or state if needed
-          //       });
-          //     }
-          //   ),
-          // ),
-        ],
-      ); 
-
+          ),
+        )
+        //  CarouselSlider.builder(
+        //   carouselController: _controller,
+        //   itemCount: widget.listCard.length,
+        //   itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => _buildCard(index: itemIndex),
+        //   options: CarouselOptions(
+        //     viewportFraction: 0.5,
+        //     aspectRatio: aspectR,
+        //     autoPlay: false,
+        //     enlargeCenterPage: false,
+        //     enableInfiniteScroll: false,
+        //     initialPage: 0,
+        //       onPageChanged: (index, reason) {
+        //       setState(() {
+        //         // Update UI or state if needed
+        //       });
+        //     }
+        //   ),
+        // ),
+      ],
+    );
   }
-
-
-
-
 }
 
 class MyCustomScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

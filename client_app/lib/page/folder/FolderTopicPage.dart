@@ -71,14 +71,6 @@ class _FolderTopicPageState extends State<FolderTopicPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          "${widget.folder.topics.length} Topics",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: "Arial",
-                            color: Colors.grey,
-                          ),
-                        ),
                         SizedBox(width: 10),
                         CircleAvatar(
                           radius: 20,
@@ -86,7 +78,7 @@ class _FolderTopicPageState extends State<FolderTopicPage> {
                             accountService.getAccountImageUrl(widget.account),
                             errorBuilder: (BuildContext context,
                                 Object exception, StackTrace? stackTrace) {
-                              return const Text('Your error widget...');
+                              return const Text('lỗi khi tải ảnh');
                             },
                           ).image,
                         ),
@@ -101,7 +93,7 @@ class _FolderTopicPageState extends State<FolderTopicPage> {
                       ],
                     ),
                     Text(
-                      " Folder Name : ${widget.folder.folderName}",
+                      " tên thư mục : ${widget.folder.folderName}",
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: "Roboto",

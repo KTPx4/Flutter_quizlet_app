@@ -1,5 +1,7 @@
 import 'package:client_app/pages/flashcard_page.dart';
-import 'package:client_app/pages/quiz_settings.dart';
+import 'package:client_app/pages/quiz_page.dart';
+
+import 'package:client_app/pages/typing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:flip_card/flip_card.dart';
@@ -119,10 +121,10 @@ class _TopicStudyState extends State<TopicStudy> {
           title: Text('Quiz'),
           leading: Icon(Icons.question_answer),
           onTap: () {
-      Navigator.push(
+            Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuizSettingsPage(words: widget.topic.words),
+          builder: (context) => QuizPage(topic: widget.topic, words: [],),
         ),
       );
     },
@@ -132,7 +134,14 @@ class _TopicStudyState extends State<TopicStudy> {
         child: ListTile(
           title: Text('Typing'),
           leading: Icon(Icons.compare_arrows),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TypingPage(words: widget.topic.words),
+        ),
+      );
+          },
         ),
       ),
     ];
