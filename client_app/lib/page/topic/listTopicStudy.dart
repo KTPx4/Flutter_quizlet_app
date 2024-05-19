@@ -5,6 +5,7 @@ import 'package:client_app/models/account.dart';
 import 'package:client_app/models/word.dart';
 import 'package:client_app/modules/callFunction.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ListTopicStudy extends StatefulWidget {
   final String topicId;
@@ -29,14 +30,17 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
   final ScrollController _scrollController = ScrollController();
   List<AccountModel> accountList = [];
   List<String> markTopics = [];
+  final flutterTts = FlutterTts();
+  bool isSpeaking = false;
   Future<void> getAllAccount() async {
     accountList = await accountService.getAllAccounts();
   }
 
   @override
   void initState() {
-    getAllAccount();
     super.initState();
+    flutterTts.setVolume(1.0);
+    getAllAccount();
   }
 
   Future<List<Word>> WordInTopic(topicId) async {
@@ -72,33 +76,47 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
             itemBuilder: (context, index) {
               var word = words[index];
               return Card(
-                child: ListTile(
-                  title: Text(
-                    word.mean1.title,
-                    style:
-                        TextStyle(fontSize: 20), // Increase the font size here
-                  ),
-                  subtitle: Text(
-                    word.mean2.title,
-                    style:
-                        TextStyle(fontSize: 18), // Increase the font size here
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      word.isMark!
-                          ? Icons.star
-                          : Icons.star_border, // Use ternary operator here
-                    ),
-                    onPressed: () async {
-                      await topicService.updateWordMark(
-                          widget.topicId, word.id!, !word.isMark!);
-                      setState(() {});
-                    },
-                    color: Colors.yellow,
-                  ),
-                  trailing: Icon(Icons.volume_up),
-                ),
-              );
+                  child: ListTile(
+                      title: GestureDetector(
+                        child: Text(
+                          word.mean1.title,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        onTap: () async {
+                          isSpeaking = true;
+                          await flutterTts.speak(word.mean1.title);
+                          isSpeaking = false;
+                        },
+                      ),
+                      subtitle: GestureDetector(
+                        child: Text(
+                          word.mean2.title,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        onTap: () async {
+                          isSpeaking = true;
+                          await flutterTts.speak(word.mean2.title);
+                          isSpeaking = false;
+                        },
+                      ),
+                      leading: IconButton(
+                        icon: Icon(
+                          word.isMark!
+                              ? Icons.star
+                              : Icons.star_border, // Use ternary operator here
+                        ),
+                        onPressed: () async {
+                          await topicService.updateWordMark(
+                              widget.topicId, word.id!, !word.isMark!);
+                          setState(() {});
+                        },
+                        color: Colors.yellow,
+                      ),
+                      trailing: Icon(
+                        ((isSpeaking)
+                            ? Icons.volume_up
+                            : Icons.volume_up_outlined),
+                      )));
             },
           );
         }
