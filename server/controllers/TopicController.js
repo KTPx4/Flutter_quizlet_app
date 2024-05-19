@@ -81,7 +81,7 @@ module.exports.GetAllWords = async(req, res) =>{
         else if(wordid)
         {
             var stw = req.vars.StudyWord
-            console.log("mark: ", stw);
+       
             if(isMark)
             {
                 var mark = ! (stw.isMark)
@@ -91,9 +91,9 @@ module.exports.GetAllWords = async(req, res) =>{
 
             if(isStudy)
             {
-                console.log("ok: ");
+
                 var count = stw.studyCount + 1
-                console.log("count : ", count);
+
 
                 var inStudy = await StudyWordModel.findOneAndUpdate({combineID: wordid, accountID: idu}, {studyCount: count}, {new: true})
                 
@@ -587,5 +587,30 @@ module.exports.StudyTopic = async (req, res) =>{
             data: newStudy
         })
     }
+}
+
+module.exports.StudyWords = async (req, res) =>{
+    try{
+
+        var idu = req.vars.User._id
+        var listWords = req.body.words
+        for(let id of listWords)
+        {
+            var old = await StudyWordModel.findOne({accountID: idu, combineID: id})
+            let count = old.studyCount + 1
+            var study = await StudyWordModel.findOneAndUpdate({accountID: idu, combineID: id}, {studyCount: count})
+        }
+        return res.status(200).json({
+            message: "Cập nhật danh sách từ thành công"
+        })        
+    }
+    catch(err)
+    {
+        console.log("Error at TopicController - StudyWords: ", err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!"
+        })
+    }
+
 }
 

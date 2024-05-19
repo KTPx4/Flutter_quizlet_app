@@ -32,11 +32,21 @@ class QuizResultPage extends StatelessWidget {
       }
     }
   }
+  void _studyWord(context, listWords) async 
+  {
+    if(listWords == null || listWords.length < 1) return;
+    var res = await TopicAPI.studyWord(list: listWords, topicID: topic.id!);
+  }
 
   @override
   Widget build(BuildContext context) {
-    int correctCount = calculateCorrectAnswers();
+    Map<String, dynamic> rs = calculateCorrectAnswers();
+    var correctCount = rs["count"];
+    var listWords = rs["list"];
+
     _initStudy(context ,topic.id, correctCount, words.length);
+    _studyWord(context, listWords);
+
     double percentScore = (correctCount / words.length) * 100;
 
     List<Widget> answerDetails = [];
@@ -60,30 +70,33 @@ class QuizResultPage extends StatelessWidget {
             Text('Số câu đúng: $correctCount'),
             Text('Số câu sai: ${words.length - correctCount}'),
             ...answerDetails,
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => QuizPage(topic: topic, words: topic.words)),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: Text('Làm lại'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pushAndRemoveUntil(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => QuizPage(topic: topic, words: topic.words)),
+            //       (Route<dynamic> route) => false,
+            //     );
+            //   },
+            //   child: Text('Làm lại'),
+            // ),
           ],
         ),
       ),
     );
   }
 
-  int calculateCorrectAnswers() {
+  Map<String, dynamic> calculateCorrectAnswers() {
     int correctCount = 0;
+    List<String> correctWordIds = [];
     for (int i = 0; i < words.length; i++) {
       if ((showTermAsQuestion ? words[i].mean2.title : words[i].mean1.title) == userAnswers[i]) {
         correctCount++;
+        correctWordIds.add(words[i].id!);
       }
-    }    
-    return correctCount;
+    }  
+
+    return {"count": correctCount, "list": correctWordIds};
   }
 }
 

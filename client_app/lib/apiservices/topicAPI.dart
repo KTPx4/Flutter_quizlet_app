@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client_app/models/Server.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -22,20 +23,13 @@ class TopicAPI {
   factory TopicAPI() {
     return _instance;
   }
+  
   static String getServer() {
-    var url = ANDROID_URL;
-    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      url = WEB_URL;
-    }
-    return url;
+    return ServerAPI.GetServer();
   }
 
   static String getLink() {
-    var url = ANDROID_URL + "/api";
-    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      url = WEB_URL + "/api";
-    }
-    return url;
+    return ServerAPI.GetLink();
   }
 
   // Get all public topics
@@ -458,7 +452,35 @@ class TopicAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        return {'success': true, 'message': "Đã học xong đề này"};
+        return {'success': true, 'message': "Đã học xong chủ đề này"};
+      }
+
+      return {'success': false, 'message': "Có chút lỗi xảy ra"};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': "Lỗi khi gửi dữ liệu. Thử lại sau!"      
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> studyWord({required List<String> list, required String topicID}) async {
+    try {
+      var server = getLink();
+      var link = "$server/topic/${topicID}/study";
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
+
+      var res = await http.patch(
+        Uri.parse(link),
+        headers: {"Authorization": "Bearer $token"},
+        body: {"words": list}
+      );
+
+      var resBody = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return {'success': true, 'message': "Đã học xong từ này"};
       }
 
       return {'success': false, 'message': "Có chút lỗi xảy ra"};

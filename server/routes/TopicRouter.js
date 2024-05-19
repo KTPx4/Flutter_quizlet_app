@@ -22,8 +22,10 @@ _APP.post('/:id/word', Auth.CRUDTopic, Validator.AddWords, TopicController.AddWo
 // Get all word or mark word - study word
 _APP.get('/:id/word', Auth.AccessTopic, StudyMiddleware.CreateStudyWord , TopicController.GetAllWords)
 
+_APP.post('/:id/word', Auth.AccessTopic, StudyMiddleware.CreateStudyWord , TopicController.GetAllWords)
+
 // For study topic
-_APP.get('/:id/study', Auth.AccessTopic, StudyMiddleware.StudyTopic , TopicController.StudyTopic)
+_APP.patch('/:id/study', Auth.AccessTopic, StudyMiddleware.StudyWords , TopicController.StudyWords)
 
 
 _APP.delete('/:id/word/:wordid', Auth.CRUDTopic, Validator.DeleteWord, TopicController.DeleteWord)

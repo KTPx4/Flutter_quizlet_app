@@ -45,13 +45,13 @@ class _TopicStudyState extends State<TopicStudy>
           },
         ),
       ),
-      Card(
-        child: ListTile(
-          title: Text('Learn'),
-          leading: Icon(Icons.school),
-          onTap: () {},
-        ),
-      ),
+      // Card(
+      //   child: ListTile(
+      //     title: Text('Learn'),
+      //     leading: Icon(Icons.school),
+      //     onTap: () {},
+      //   ),
+      // ),
       Card(
         child: ListTile(
           title: Text('Quiz'),
@@ -180,7 +180,7 @@ class _TopicStudyState extends State<TopicStudy>
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
                           ),
-                          child: Text('Từ Trong Thư Mục'),
+                          child: Text('Từ Trong Thư Mục', style: TextStyle(color: Colors.white),),
                           onPressed: () {
                             setState(() {
                               currentTab = 0;
@@ -203,7 +203,7 @@ class _TopicStudyState extends State<TopicStudy>
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
                           ),
-                          child: Text('Từ Đánh Dấu'),
+                          child: Text('Từ Đánh Dấu', style: TextStyle(color: Colors.white),),
                           onPressed: () {
                             setState(() {
                               currentTab = 1;
