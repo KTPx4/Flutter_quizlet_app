@@ -20,10 +20,10 @@ _APP.get('/publicv3',  Auth.AuthAccount, TopicController.GetPublicv3)
 _APP.post('/:id/word', Auth.CRUDTopic, Validator.AddWords, TopicController.AddWords)
 
 // Get all word or mark word - study word
-_APP.get('/:id/word', Auth.CRUDTopic, StudyMiddleware.CreateStudyWord , TopicController.GetAllWords)
+_APP.get('/:id/word', Auth.AccessTopic, StudyMiddleware.CreateStudyWord , TopicController.GetAllWords)
 
 // For study topic
-_APP.get('/:id/study', Auth.CRUDTopic, StudyMiddleware.StudyTopic , TopicController.StudyTopic)
+_APP.get('/:id/study', Auth.AccessTopic, StudyMiddleware.StudyTopic , TopicController.StudyTopic)
 
 
 _APP.delete('/:id/word/:wordid', Auth.CRUDTopic, Validator.DeleteWord, TopicController.DeleteWord)

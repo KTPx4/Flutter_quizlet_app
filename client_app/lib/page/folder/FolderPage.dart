@@ -93,7 +93,7 @@ class _FolderTabState extends State<FolderTab> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: Colors.pink,),
           );
         } else if (snapshot.hasError) {
           return Text('lỗi: ${snapshot.error}');

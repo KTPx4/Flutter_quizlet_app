@@ -4,6 +4,7 @@ const CodeModel = require('../models/ResetAccount')
 const TopicModel = require('../models/TopicModel')
 
 const ConverData = require('../modules/ConvertData')
+const moment = require('moment');
 
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
@@ -176,7 +177,11 @@ module.exports.GetByIDTopic = async(req, res) =>{
         }   
     
         var resultTopics =await ConverData.formatListTopic(idu, ListTopic)
-        
+        resultTopics = resultTopics.sort((a, b) => {
+            const dateA = moment(a.createAt, "HH:mm:ss DD/MM/YYYY");
+            const dateB = moment(b.createAt, "HH:mm:ss DD/MM/YYYY");
+            return dateB - dateA;
+        });
     
         return res.status(200).json({
             message: "Lấy thành công danh sách topic",

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client_app/apiservices/TopicService.dart';
 import 'package:client_app/apiservices/accountAPI.dart';
+import 'package:client_app/apiservices/folderSerivce.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/models/topic.dart';
 import 'package:client_app/modules/ColorsApp.dart';
+import 'package:client_app/modules/callFunction.dart';
+import 'package:client_app/page/folder/FolderPage.dart';
 import 'package:client_app/page/topic/topicStudy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +26,8 @@ class RecentStudyPage extends StatefulWidget {
 class _RecentStudyPageState extends State<RecentStudyPage> {
   late Future<List<Map<String, dynamic>>> _dataFuture;
   bool _isRefreshing = false;
+  final FolderService folderService = FolderService();
+  final CallFunction callFunctionFolder = CallFunction();
 
   @override
   void initState() {
@@ -65,13 +70,19 @@ class _RecentStudyPageState extends State<RecentStudyPage> {
     var pref = await SharedPreferences.getInstance();
     var data = pref.getString(KEY_STUDY);
 
+   
     if (data == null || data == "") {
+      if(data == null)
+      {
+         setState(() {
+          _isRefreshing = true;
+        });
+      }
       return [];
     }
 
     List<dynamic> jsonData = jsonDecode(data);
-    List<Map<String, dynamic>> topic = jsonData.cast<Map<String, dynamic>>();
-
+    List<Map<String, dynamic>> topic = jsonData.cast<Map<String, dynamic>>();    
     return topic;
   }
 
@@ -114,17 +125,18 @@ class _RecentStudyPageState extends State<RecentStudyPage> {
           );
         } else {
           List<Map<String, dynamic>> listTopics = snapshot.data!;
-          if (listTopics.length < 1) {
+          if (listTopics.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  "Chưa có dữ liệu offline, hoặc danh sách trống. Vui lòng kết nối mạng để xem",
+                  "Chưa có dữ liệu hoặc danh sách trống.",
                   textAlign: TextAlign.center,
                 ),
               ),
             );
           }
+
           return ListView.separated(
             separatorBuilder: (context, index) => SizedBox(height: 1),
             itemBuilder: (context, index) => _buildTopic(listTopics[index]),
@@ -156,6 +168,43 @@ class _RecentStudyPageState extends State<RecentStudyPage> {
     }
   }
 
+  void _addToFolder(idTopic) async {
+    String? folderId = '';
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child:
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                height: 700,
+                child: FolderTab(callFunction: callFunctionFolder, selectFolder: true)
+              ),
+        );
+      },
+    ).then((value) {
+      folderId = value;
+    });
+
+    if (folderId == null || folderId!.isEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vui lòng chọn thư mục'),
+
+        ),
+      );
+      return;
+    }
+
+    String response = await folderService.addTopicToFolder(folderId!, idTopic);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(response),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -166,20 +215,40 @@ class _RecentStudyPageState extends State<RecentStudyPage> {
           future: _isRefreshing ? _dataFuture : _loadLOCAL(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
+              // return Center(
+              //   child: CircularProgressIndicator(
+              //     color: Colors.pink,
+              //   ),
+              // );
+              return LoadFromLocal();
+            } else if (snapshot.hasError) {
               return Center(
-                child: CircularProgressIndicator(
-                  color: Colors.pink,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    "Có chút lỗi nho nhỏ khi load dữ liệu ^^!",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               );
-            } else if (snapshot.hasError) {
-              return Text("Có chút lỗi nho nhỏ khi load dữ liệu ^^!");
             } else {
-              var listContent = snapshot.data;
-              if (listContent!.isNotEmpty && listContent[0]["type"] != "error") {
+              var listContent = snapshot.data as List<Map<String, dynamic>>?;
+              if (listContent == null || listContent.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text(
+                      "Chưa có dữ liệu hoặc danh sách trống.",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+              if (listContent.isNotEmpty && listContent[0]["type"] != "error") {
                 return ListView.separated(
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   itemBuilder: (context, index) => _buildTopic(listContent[index]),
-                  itemCount: listContent?.length ?? 0,
+                  itemCount: listContent.length,
                 );
               } else if (listContent[0]["type"] == "error" && listContent[0]["notConnect"] == true) {
                 return LoadFromLocal();
@@ -232,7 +301,7 @@ class _RecentStudyPageState extends State<RecentStudyPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => _addToFolder(topic["id"]),
                     icon: Icon(Icons.folder_special_outlined),
                   ),
                 ],
