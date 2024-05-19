@@ -163,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: TextFormField(
+                         textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.emailAddress,
                           controller: userController,                       
                           onChanged: (value) => setState(() {
@@ -173,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                           }),
                           style: TextStyle(color: Colors.grey[700]),
                           decoration: const InputDecoration( 
-                                                  
+                                                    
                             border: InputBorder.none,
                             prefixIcon: Icon(
                               Icons.person,

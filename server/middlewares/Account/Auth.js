@@ -5,6 +5,8 @@ const TopicModel = require("../../models/TopicModel")
 const CustomError = require("../../modules/CustomError")
 const FolderModel = require('../../models/FolderModel')
 
+const bcrypt = require('bcrypt')
+
 const AuthAccount = async (req, res, next) =>{
     try{
         // Get token from header or body
@@ -37,9 +39,10 @@ const AuthAccount = async (req, res, next) =>{
                     message: 'Đăng nhập thất bại hoặc phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!'
                 })
             }
-    
             let emailU = data.email?.toLowerCase()
             let userU = data.user?.toLowerCase()
+            var pass = data.passWord
+  
             let account 
             if(emailU)
             {
@@ -61,7 +64,25 @@ const AuthAccount = async (req, res, next) =>{
                     message: 'Tài khoản không tồn tại hoặc vừa bị xóa, không thể đăng nhập'
                 })
             }
+     
+            if(!pass)
+            {
+                return res.status(401).json({
+                    status: 'Password not match',
+                    message: 'Mật khẩu đã được thay đổi. Vui lòng đăng nhập lại!'
+                })
+            }
+            var old = account.passWord
     
+            
+            if(old != pass )
+            {
+                return res.status(403).json({
+                    status: 'Password not match',
+                    message: 'Mật khẩu đã được thay đổi. Vui lòng đăng nhập lại!'
+                })
+            }
+        
             req.vars.User = account
     
             return next()

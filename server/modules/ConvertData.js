@@ -41,23 +41,36 @@ const formatListTopic = async (idu, ListTopic) => {
         var listCombine = await CombineModel.find({topicID: topic._id})
         var listWords =  await formatListWord(idu, listCombine)
 
-        var studyTopic = await StudyTopicModel.findOne({accountID: idu, topicID: topic._id})
-        if(!studyTopic)
+        var yourStudyTopic = await StudyTopicModel.findOne({accountID: idu, topicID: topic._id})
+        var publicStudyTopic = await StudyTopicModel.find({topicID: topic._id})
+        var count = 0
+        // console.log(publicStudyTopic);
+        if(publicStudyTopic)
         {
-            studyTopic = await StudyTopicModel.create({accountID: idu, topicID: topic._id})
+            publicStudyTopic.map((e)=>{
+                if(e.studyCount>0)
+                    count ++   
+                
+            })
+        }
+        if(!yourStudyTopic)
+        {
+            yourStudyTopic = await StudyTopicModel.create({accountID: idu, topicID: topic._id})
         }
 
         // console.log(topic);
         return {
             ...convertTopic(topic),
             "countWords": listCombine.length,
-            "studyCount": studyTopic.studyCount,
+            "studyCount": yourStudyTopic.studyCount,
+            "publicStudy": count ,
             "words": listWords
         }
     }))
 
     return resultTopics
 }
+
 
 const formatListFolder = async (idu, ListFolder) => {
     var resultTopics = await Promise.all(ListFolder.map(async (folder)=>{
@@ -118,7 +131,9 @@ const formatTime = (time) =>{
 
 module.exports.formatListWord = formatListWord
 module.exports.formatListTopic = formatListTopic
+
 module.exports.formatListFolder = formatListFolder
 module.exports.convertTopic = convertTopic
 module.exports.convertFolder = convertFolder
 module.exports.formatTime = formatTime
+        

@@ -58,7 +58,9 @@ class _ForgotPageState extends State<ForgotPage> {
 
   void requestCode() async {
     if(isWaiting) return;
-
+      setState(() {
+        ErrorMessage = "";
+      });
     // first - input email
     user = userController.text;
       
@@ -107,6 +109,9 @@ class _ForgotPageState extends State<ForgotPage> {
   {
   
     if(isWaiting) return;
+    setState(() {
+        ErrorMessage = "";
+      });
     var code = codeController.text.replaceAll(' ', '');
     if(code.length != 4)
     {
@@ -150,7 +155,9 @@ class _ForgotPageState extends State<ForgotPage> {
   void changePass() async
   {
     if(isWaiting) return;
-
+    setState(() {
+        ErrorMessage = "";
+      });
     password = passController.text;
     confirmpass = confirmController.text;
 

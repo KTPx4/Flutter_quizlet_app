@@ -1,8 +1,10 @@
+const moment = require('moment');
 const CustomError = require("../modules/CustomError")
 const TopicModel = require("../models/TopicModel")
 const CombineModel = require("../models/CombineWordModel")
 const StudyWordModel = require("../models/StudyCombine")
 const StudyTopicModel = require("../models/StudyTopic")
+
 // const StorePublic = require('../models/StorePublicTopic')
 var ObjectId = require('mongoose').Types.ObjectId;
 const ConverData = require("../modules/ConvertData")
@@ -177,6 +179,7 @@ module.exports.GetPublic = async (req, res) =>{
     }
     catch(err)
     {
+        console.log("Error at TopicController - Get Public: ", err);
         return res.status(500).json({
             message: "Server đang bận. Vui lòng thử lại sau!"
         })
@@ -225,6 +228,44 @@ module.exports.GetPublicv2 = async (req, res) => {
         return res.status(500).json({
             message: "Server đang bận. Vui lòng thử lại sau!"
         });
+    }
+};
+
+module.exports.GetPublicv3 = async (req, res) => {
+    try{
+        var idu = req.vars.User._id
+        var ListTopic = await TopicModel.find({isPublic: true})
+        if(!ListTopic || ListTopic.length < 1)
+        {
+            return res.status(200).json({
+                message:"Chưa có topic nào. Hãy tạo thêm để xem",
+                count: 0,
+                data: null
+            })
+        }   
+    
+        var resultTopics = await ConverData.formatListTopic(idu , ListTopic)
+        var listT = resultTopics.sort((a, b) => {
+            const dateA = moment(a.createAt, "HH:mm:ss DD/MM/YYYY");
+            const dateB = moment(b.createAt, "HH:mm:ss DD/MM/YYYY");
+            return dateB - dateA;
+        });
+    
+        return res.status(200).json({
+            message: "Lấy thành công danh sách topic cộng đồng",
+            count: ListTopic.length,
+            data: listT
+            // data: {
+            //     topics: resultTopics
+            // }
+        })
+    }
+    catch(err)
+    {
+        console.log("Error at get public v3 - Topic Controller: \n", err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!"
+        })
     }
 };
 
@@ -525,5 +566,26 @@ module.exports.DeleteWord = async(req, res) =>{
         })
     }
 
+}
+
+module.exports.StudyTopic = async (req, res) =>{
+    try{
+        var oldStudy =  req.vars.StudyTopic
+        var count = oldStudy.studyCount + 1
+    
+        var newStudy = await StudyTopicModel.findOneAndUpdate({_id: oldStudy._id}, {studyCount: count}, {new: true})
+        return res.status(200).json({
+            message: "Đã học thành công 1 chủ đề",
+            data: newStudy
+        })
+    }
+    catch(err)
+    {
+        console.log("Error at TopicController - StudyTopic:\n", err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!",
+            data: newStudy
+        })
+    }
 }
 

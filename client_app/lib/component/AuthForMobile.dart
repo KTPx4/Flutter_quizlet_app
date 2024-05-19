@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:developer';
 import 'package:client_app/apiservices/accountAPI.dart';
 import 'package:client_app/component/AppBarCustom.dart';
 import 'package:client_app/component/BottomNav.dart';
@@ -13,9 +13,11 @@ import 'package:client_app/page/account/ProfilePage.dart';
 import 'package:client_app/page/home/Home.dart';
 import 'package:client_app/page/library/LibraryPage.dart';
 import 'package:client_app/pages/quiz_page.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 const KEY_LOGIN = "quizlet-login";
 
 class AuthForMoblie extends StatefulWidget {
@@ -26,115 +28,119 @@ class AuthForMoblie extends StatefulWidget {
 }
 
 class _AuthForMoblieState extends State<AuthForMoblie> {
-  var _controller = PageController();
+  late PageController _controller;
   final CallFunction callFuntion = CallFunction();
   int currentIndex = 0;
   final GlobalKey<AppBarCustomState> appBarKey = GlobalKey<AppBarCustomState>();
 
   @override
   void initState() {
-    // TODO: implement initState
-    initStartup();
+    _controller = PageController(initialPage: currentIndex);
     super.initState();
+    initFirt();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _controller.dispose();
     super.dispose();
   }
 
-  void initStartup() async
-  {
-    var i = await CheckLogin();
-    if(!i)
-    {
-      Navigator.pushNamedAndRemoveUntil(context, '/account/login', (route) => false);
+  Future<void> initStartup() async {
+    var i = await CheckLogin(context);
+    if (!i) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/account/login', (route) => false);
+    }
+  }
+
+  void initFirt() async {
+    var pref = await SharedPreferences.getInstance();
+    String? token = pref.getString(KEY_LOGIN);
+
+    if (token == null || token == "") {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/account/login', (route) => false);
     }
 
-  }
-  Widget _buildPage(index)
-  {
+    var i = await CheckLogin(context);
+    
+    if (!i) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/account/login', (route) => false);
+    }   
 
-    switch(index)
-    {
+  }
+
+  Widget _buildPage(
+    int index,
+  ) {
+    switch (index) {
       case 1:
-        return RecentStudyPage();
+        return RecentStudyPage(appBarKey: appBarKey);
       case 2:
-        return  LibraryPage(appBarKey: appBarKey);
+        return LibraryPage(appBarKey: appBarKey);
       case 3:
+        // return Home(appBarKey: appBarKey);
         return ProfilePage(appBarKey: appBarKey);
-      default: 
+      default:
         return Home(appBarKey: appBarKey);
-        // return QuizPage(words: [Word(desc: "", img: "", mean1: Meaning(title: "title", lang: "english"), mean2: Meaning(title: "title", lang: "vietnamese"))], numberOfQuestions: 1, showAnswersImmediately: true, answerType: "");
+        // return ProfilePage(appBarKey: appBarKey);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-          appBar: new AppBarCustom(key: appBarKey),
-          bottomNavigationBar: BottomNav(indexBottom: currentIndex, pageController: _controller, callFunction: callFuntion),
-          body: PageView.builder(            
-            onPageChanged: (value) {
-             
-              setState(() {
-                currentIndex = value;
-                callFuntion.updateIndex(value);
-              });
-            },
-              controller: _controller,
-              itemCount:  4,
-              itemBuilder: (context, index) => 
-                Container(
-                  // height: double.infinity,
-                  decoration:  BoxDecoration(
-                    // gradient:  
-                    // LinearGradient(
-                    //   transform:  GradientRotation(14),
-                    //   colors: [
-                    //     Color.fromARGB(202, 96, 125, 139),
-                    //     Color.fromARGB(192, 96, 125, 139),
-                    //     Color.fromARGB(179, 96, 125, 139),
-                    //   ]
-                    // )
-                    color: AppColors.background
-                  ),
-                  child: _buildPage(index),
-                )
+      appBar: AppBarCustom(key: appBarKey),
+      bottomNavigationBar: BottomNav(
+          indexBottom: currentIndex,
+          pageController: _controller,
+          callFunction: callFuntion),
+      body: PageView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: (value) {
+   
+          setState(() {
+            // currentIndex = value ;
+            // callFuntion.updateIndex(value);
+          });
+        },
+        controller: _controller,
+        itemCount: 4,
+        itemBuilder: (context, index) => Container(
+            decoration: BoxDecoration(
+              color: AppColors.background,
             ),
-        );
+            child: _buildPage(index)
+            ),
+      ));
   }
-}
+    
+  Future<bool> CheckLogin(context) async {
+    try {
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString(KEY_LOGIN);
 
-Future<bool> CheckLogin() async 
-{
-  try
-  {
+      if (token == null) return false;
 
-  // await Future.delayed(Duration(seconds: 1));
-    var pref = await SharedPreferences.getInstance();
-    String? token = pref.getString(KEY_LOGIN);
-    if(token == null) return false;
-    // your logic here 
-    // Check token with API
-    var res = await AccountAPI.isAuth(token: token);   
+      var res = await AccountAPI.isAuth(token: token);
 
-    if(res['success'] == true) 
-    {
-      var account =  jsonEncode( res['account']) ?? "";
-      pref?.setString("Account", account);
-      return true;
+      if (res['success'] == true) {
+        var account = jsonEncode(res['account']) ?? "";
+        pref.setString("Account", account);
+        return true;
+      } else if (res['success'] == false && res["notConnect"] == false) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/account/login', (route) => false);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(res['message'])));
+      }
+    } catch (err) {
+      print("error when handle Check Login - Main: \n$err");
     }
+
+    return true;
   }
-  catch(err)
-  {
-    print("error when handle Check Login - Main: \n$err" );
-  }
- 
-  return false;
 }
-
-

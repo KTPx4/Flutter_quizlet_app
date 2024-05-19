@@ -12,6 +12,7 @@ _APP.post('/',  Auth.AuthAccount, Validator.Add, TopicController.Add)
 // for public topic
 _APP.get('/public', Auth.AuthAccount, TopicController.GetPublic)
 _APP.get('/publicv2',  Auth.AuthAccount, TopicController.GetPublicv2)
+_APP.get('/publicv3',  Auth.AuthAccount, TopicController.GetPublicv3)
 // _APP.post('/public/:id', Auth.AccessTopic, TopicController.StorePublic)
 // _APP.delete('/public/:id', Auth.AccessTopic, TopicController.RemoveStore)
 
@@ -20,6 +21,9 @@ _APP.post('/:id/word', Auth.CRUDTopic, Validator.AddWords, TopicController.AddWo
 
 // Get all word or mark word - study word
 _APP.get('/:id/word', Auth.CRUDTopic, StudyMiddleware.CreateStudyWord , TopicController.GetAllWords)
+
+// For study topic
+_APP.get('/:id/study', Auth.CRUDTopic, StudyMiddleware.StudyTopic , TopicController.StudyTopic)
 
 
 _APP.delete('/:id/word/:wordid', Auth.CRUDTopic, Validator.DeleteWord, TopicController.DeleteWord)
