@@ -7,9 +7,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-var WEB_URL = 'http://localhost:3000'; // kết nối từ web
+const WEB_URL = 'http://localhost:3000'; // kết nối từ web
 const ANDROID_URL = 'http://10.0.2.2:3000'; // kết nối từ máy ảo android
-// var ANDROID_URL = 'http://192.168.0.108:3000'; // kết nối từ máy ảo android
+// const ANDROID_URL = 'http://192.168.0.108:3000'; // kết nối từ máy ảo android
+
 // const ANDROID_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ máy ảo android
 // const WEB_URL = 'https://flutter-quizlet-app.onrender.com'; // kết nối từ web
 
@@ -50,21 +51,23 @@ class AccountAPI {
       var resBody = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-
         var pref = await SharedPreferences.getInstance();
-        var account =  jsonEncode( resBody["data"]["account"] ) ?? "";
+        var account = jsonEncode(resBody["data"]["account"]) ?? "";
         pref?.setString("Account", account);
-        
+
         return {
           'success': true,
           'message': "Đã đăng nhập",
           'account': resBody["data"]["account"]
         };
       }
-      return {'success': false, 'message': resBody["message"], 'token': '',   'notConnect': false};
-    
+      return {
+        'success': false,
+        'message': resBody["message"],
+        'token': '',
+        'notConnect': false
+      };
     } catch (e) {
-
       var notConnect = e.toString().contains("Connection failed");
 
       return {
@@ -439,7 +442,7 @@ class AccountAPI {
   }
 
   static Future<Map<String, dynamic>> getTopAuthor() async {
-  try {
+    try {
       var server = getLink();
       var link = "$server/account/topauthor";
 
@@ -449,24 +452,23 @@ class AccountAPI {
 
       if (res.statusCode == 200) {
         var listAccount = resBody["data"];
-        List<Map<String,dynamic>> listResult = [];
-        for(var i in listAccount)
-        {
+        List<Map<String, dynamic>> listResult = [];
+        for (var i in listAccount) {
           listResult.add({
             "count": i["count"],
             "id": i["authorID"],
             "author": i["account"]["user"],
-            "imgAuthor": "${getServer()}/images/account/${i["authorID"]}/${i["account"]["nameAvt"]}",
+            "imgAuthor":
+                "${getServer()}/images/account/${i["authorID"]}/${i["account"]["nameAvt"]}",
             "type": "author"
           });
         }
-     
+
         return {
           'success': true,
           'message': "Lấy thành công top tác giả",
           'data': listResult
         };
-
       } else {
         return {
           'success': false,
@@ -482,67 +484,57 @@ class AccountAPI {
   }
 
   static Future<Map<String, dynamic>> getTopicPublic() async {
-  try {
+    try {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
-  
+
       var server = getLink();
       var link = "$server/topic/publicv2";
 
-      var res = await http.get(
-        Uri.parse(link),   
-        headers: {"Authorization": "Bearer $token"}
-      );
+      var res = await http
+          .get(Uri.parse(link), headers: {"Authorization": "Bearer $token"});
 
       var resBody = jsonDecode(res.body);
- 
+
       if (res.statusCode == 200) {
-      
         var listAccount = resBody["data"];
 
-        List<List<Map<String,dynamic>>> listResult = [];        
+        List<List<Map<String, dynamic>>> listResult = [];
 
+        for (var i in listAccount) {
+          var accountID = i["authorID"];
 
-        for(var i in listAccount)
-        {
+          var Account =
+              await http.get(Uri.parse("${getLink()}/account/$accountID"));
 
-        var accountID = i["authorID"];
-       
-        var Account = await http.get(
-          Uri.parse("${getLink()}/account/$accountID")
-        );
+          var data = jsonDecode(Account.body)["data"];
 
-        var data = jsonDecode(Account.body)["data"];
-
-        var user =  data["user"];
-        var img =  data["nameAvt"];
+          var user = data["user"];
+          var img = data["nameAvt"];
 
           var ListTopics = i["topics"];
-          List<Map<String,dynamic>> temList = [];
+          List<Map<String, dynamic>> temList = [];
 
-          for(var j in ListTopics)
-          {
+          for (var j in ListTopics) {
             var t = {
-              "author": "$user", 
-              "id": "${j["_id"]}", 
-              "imgAuthor": "${getServer()}/images/account/$accountID/$img", 
-              "type": "topic", 
-              "title": "${j["topicName"]}", 
+              "author": "$user",
+              "id": "${j["_id"]}",
+              "imgAuthor": "${getServer()}/images/account/$accountID/$img",
+              "type": "topic",
+              "title": "${j["topicName"]}",
               "count": j["countWords"]
             };
-            temList.add(t);  
+            temList.add(t);
           }
 
           listResult.add(temList);
-
         }
-     
+
         return {
           'success': true,
           'message': "Lấy thành công top tác giả",
           'data': listResult
         };
-
       } else {
         return {
           'success': false,
@@ -557,68 +549,58 @@ class AccountAPI {
       };
     }
   }
-  
+
   static Future<Map<String, dynamic>> getTopicPublicv2() async {
-  try {
+    try {
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString(KEY_LOGIN);
-  
+
       var server = getLink();
       var link = "$server/topic/publicv3";
 
-      var res = await http.get(
-        Uri.parse(link),   
-        headers: {"Authorization": "Bearer $token"}
-      );
+      var res = await http
+          .get(Uri.parse(link), headers: {"Authorization": "Bearer $token"});
 
       var resBody = jsonDecode(res.body);
- 
+
       if (res.statusCode == 200) {
-      
         var listTopics = resBody["data"];
 
-        List<Map<String,dynamic>> listResult = [];        
+        List<Map<String, dynamic>> listResult = [];
 
-
-        for(var i in listTopics)
-        {
-
+        for (var i in listTopics) {
           var accountID = i["authorID"];
-        
-          var Account = await http.get(
-            Uri.parse("${getLink()}/account/$accountID")
-          );
+
+          var Account =
+              await http.get(Uri.parse("${getLink()}/account/$accountID"));
 
           var data = jsonDecode(Account.body)["data"];
 
-          var user =  data["user"];
-          var img =  data["nameAvt"];
+          var user = data["user"];
+          var img = data["nameAvt"];
 
           var ListTopics = i["topics"];
 
-
           var t = {
-            "author": "$user", 
-            "id": "${i["_id"]}", 
-            "imgAuthor": "${getServer()}/images/account/$accountID/$img", 
-            "type": "topic", 
-            "title": "${i["topicName"]}", 
+            "author": "$user",
+            "id": "${i["_id"]}",
+            "imgAuthor": "${getServer()}/images/account/$accountID/$img",
+            "type": "topic",
+            "title": "${i["topicName"]}",
             "count": i["countWords"],
             "createAt": i["createAt"],
             "countStuy": i["studyCount"],
             "publicStudy": i["publicStudy"]
           };
-        
-          listResult.add(t);
 
+          listResult.add(t);
         }
-     
+
         return {
           'success': true,
           'message': "Lấy thành công danh sách cộng đồng",
           'data': listResult
         };
-
       } else {
         return {
           'success': false,
@@ -636,6 +618,4 @@ class AccountAPI {
       };
     }
   }
-
-
 }

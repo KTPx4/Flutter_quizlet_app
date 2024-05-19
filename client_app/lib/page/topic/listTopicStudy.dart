@@ -75,48 +75,71 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
             itemCount: words.length,
             itemBuilder: (context, index) {
               var word = words[index];
+              String studyStatus;
+              Color chipColor;
+              if (word.studyCount == 0) {
+                studyStatus = 'chưa học';
+                chipColor = Colors.red;
+              } else if (word.studyCount! > 0 && word.studyCount! <= 3) {
+                studyStatus = 'đang học';
+                chipColor = Colors.yellow;
+              } else {
+                studyStatus = 'thành thạo';
+                chipColor = Colors.green;
+              }
               return Card(
-                  child: ListTile(
-                      title: GestureDetector(
-                        child: Text(
-                          word.mean1.title,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        onTap: () async {
-                          isSpeaking = true;
-                          await flutterTts.speak(word.mean1.title);
-                          isSpeaking = false;
-                        },
+                child: ListTile(
+                  title: GestureDetector(
+                    child: Text(
+                      word.mean1.title,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    onTap: () async {
+                      isSpeaking = true;
+                      await flutterTts.speak(word.mean1.title);
+                      isSpeaking = false;
+                    },
+                  ),
+                  subtitle: GestureDetector(
+                    child: Text(
+                      word.mean2.title,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    onTap: () async {
+                      isSpeaking = true;
+                      await flutterTts.speak(word.mean2.title);
+                      isSpeaking = false;
+                    },
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      word.isMark! ? Icons.star : Icons.star_border,
+                    ),
+                    onPressed: () async {
+                      await topicService.updateWordMark(
+                          widget.topicId, word.id!, !word.isMark!);
+                      setState(() {});
+                    },
+                    color:word.isMark! ? Colors.yellow : Colors.grey,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isSpeaking ? Icons.volume_up : Icons.volume_up_outlined,
                       ),
-                      subtitle: GestureDetector(
-                        child: Text(
-                          word.mean2.title,
-                          style: TextStyle(fontSize: 18),
+                      SizedBox(width: 8),
+                      Chip(
+                        backgroundColor: chipColor,
+                        label: Text(
+                          studyStatus,
+                          style: TextStyle(color: Colors.black),
                         ),
-                        onTap: () async {
-                          isSpeaking = true;
-                          await flutterTts.speak(word.mean2.title);
-                          isSpeaking = false;
-                        },
-                      ),
-                      leading: IconButton(
-                        icon: Icon(
-                          word.isMark!
-                              ? Icons.star
-                              : Icons.star_border, // Use ternary operator here
-                        ),
-                        onPressed: () async {
-                          await topicService.updateWordMark(
-                              widget.topicId, word.id!, !word.isMark!);
-                          setState(() {});
-                        },
-                        color:  word.isMark! ? Colors.yellow : Colors.grey,
-                      ),
-                      trailing: Icon(
-                        ((isSpeaking)
-                            ? Icons.volume_up
-                            : Icons.volume_up_outlined),
-                      )));
+                      )
+                    ],
+                  ),
+                ),
+              );
             },
           );
         }
