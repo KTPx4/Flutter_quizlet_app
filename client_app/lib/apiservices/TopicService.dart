@@ -86,9 +86,14 @@ class TopicService {
 
   Future<Topic> getTopicById(String id) async {
     var response = await TopicAPI.getTopicById(id: id);
-    if (response['success']) {
-      return Topic.fromJson(response['topic']);
-    } else {
+
+    if (response['topic'] != null) {
+      var topic = Topic.fromJson(response['topic']);
+                 
+
+      return topic;
+    } 
+    else {
       return Topic(
         topicName: '',
         desc: '',

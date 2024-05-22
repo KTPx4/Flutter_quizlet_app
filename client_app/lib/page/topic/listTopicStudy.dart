@@ -78,13 +78,13 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
               String studyStatus;
               Color chipColor;
               if (word.studyCount == 0) {
-                studyStatus = 'chưa học';
+                studyStatus = 'Chưa học';
                 chipColor = Colors.red;
-              } else if (word.studyCount! > 0 && word.studyCount! <= 3) {
-                studyStatus = 'đang học';
+              } else if (word.studyCount! > 0 && word.studyCount! <= 5) {
+                studyStatus = 'Đã học';
                 chipColor = Colors.yellow;
               } else {
-                studyStatus = 'thành thạo';
+                studyStatus = 'Thành thạo';
                 chipColor = Colors.green;
               }
               return Card(
@@ -104,6 +104,7 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
                     child: Text(
                       word.mean2.title,
                       style: TextStyle(fontSize: 18),
+                      
                     ),
                     onTap: () async {
                       isSpeaking = true;
@@ -120,7 +121,7 @@ class _ListTopicStudyState extends State<ListTopicStudy> {
                           widget.topicId, word.id!, !word.isMark!);
                       setState(() {});
                     },
-                    color: Colors.yellow,
+                    color:word.isMark! ? Colors.yellow : Colors.grey,
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

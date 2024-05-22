@@ -32,7 +32,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   List<String> deletedWords = [];
   final titleController = TextEditingController();
   Language verbLanguage = Languages.english;
-  Language definitionLanguage = Languages.english;
+  Language definitionLanguage = Languages.vietnamese;
   bool isPublic = false;
   bool allValid = false;
 

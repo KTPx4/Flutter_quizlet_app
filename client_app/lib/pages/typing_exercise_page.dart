@@ -1,3 +1,5 @@
+import 'package:client_app/apiservices/topicAPI.dart';
+import 'package:client_app/models/topic.dart';
 import 'package:client_app/pages/typing_result_page.dart';
 import 'package:client_app/pages/typing_setting_page.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,9 @@ import 'package:diacritic/diacritic.dart';
 class TypingExercisePage extends StatefulWidget {
   final List<Word> words;
   final bool isTerm;
-
-  TypingExercisePage({required this.words, required this.isTerm});
+  final Topic topic;
+  
+  TypingExercisePage({required this.words, required this.isTerm, required this.topic});
 
   @override
   _TypingExercisePageState createState() => _TypingExercisePageState();
@@ -65,28 +68,41 @@ void moveToNextQuestion() {
   }
 }
 
-void navigateToResultsPage() {
-  int totalCorrect = calculateCorrectAnswers();
+void navigateToResultsPage() async{
+  Map<String, dynamic> rs = calculateCorrectAnswers();
+  int totalCorrect = rs["count"];
+  var listWords = rs["list"];
+  if(listWords == null || listWords.length < 1){
+
+  }
+  else{
+    var res = await TopicAPI.studyWord(list: listWords, topicID: widget.topic.id!);
+  }
+
   Navigator.pushReplacement(context, MaterialPageRoute(
     builder: (context) => TypingResultPage(
       totalCorrect: totalCorrect,
       totalQuestions: widget.words.length,
       words: widget.words,
       userAnswers: userAnswers,
+      topic: widget.topic,
     ),
   ));
 }
 
 
 
-int calculateCorrectAnswers() {
+Map<String, dynamic> calculateCorrectAnswers() {
+  List<String> correctWordIds = [];
   int totalCorrect = 0;
   for (int i = 0; i < widget.words.length; i++) {
     if (normalizeText(userAnswers[i]) == normalizeText(widget.isTerm ? widget.words[i].mean1.title : widget.words[i].mean2.title)) {
       totalCorrect++;
+      correctWordIds.add(widget.words[i].id!);
     }
   }
-  return totalCorrect;
+  // return totalCorrect;
+  return {"count": totalCorrect, "list": correctWordIds};
 }
 
 

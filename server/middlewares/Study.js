@@ -53,3 +53,49 @@ module.exports.StudyTopic = async(req, res, next) =>{
     return next();
 
 }
+
+module.exports.StudyWords = async (req, res, next) =>{
+    try{
+        let listWords = req.body.words
+        // console.log(listWords)
+        if(!listWords || listWords.length < 1)
+        {
+            return res.status(400).json({
+                message: "Danh sách id words không có hoặc rỗng"
+            })
+        }
+    
+        var idu = req.vars.User._id
+        for(let idw of listWords)
+        {
+            var combine = await CombineModel.findOne({_id: idw})
+            if(!combine)
+            {
+                return res.status(400).json({
+                    message: "Từ vựng không tồn tại"
+                })
+            }
+            else
+            {
+                var study = await StudyCombineModel.findOne({combineID: idw, accountID: idu})
+                if(!study)
+                {                    
+                    study = await StudyCombineModel.create({
+                        combineID: idw,
+                        accountID: idu
+                    })
+                }   
+            }
+        }
+        return next()
+    
+    }
+    catch(err)
+    {
+        console.log("Error at Study validator - StudyWords: ", err);
+        return res.status(500).json({
+            message: "Server đang bận. Vui lòng thử lại sau!"
+        })
+    }
+
+}

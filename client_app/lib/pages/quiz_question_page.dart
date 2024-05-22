@@ -1,3 +1,4 @@
+import 'package:client_app/apiservices/topicAPI.dart';
 import 'package:client_app/pages/quiz_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_app/models/word.dart';
@@ -80,7 +81,7 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
   }
 }
 
-void handleQuestionNavigation() {
+void handleQuestionNavigation() async{
   if (showImmediateFeedback) {
     Navigator.of(context).pop(); // Chỉ gọi pop khi có dialog được hiển thị
   }
@@ -92,6 +93,7 @@ void handleQuestionNavigation() {
     });
   } else {
     // Kết thúc quiz và chuyển đến trang kết quả
+    
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

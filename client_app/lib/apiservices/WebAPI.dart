@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:client_app/models/Server.dart';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:dio/dio.dart' ;
@@ -35,14 +36,12 @@ class WebAPI {
     return _instance;
   }
   
-  static String getServer()
-  {
-    // var url = ANDROID_URL;
-    // if(kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
-    // {
-    //   url = WEB_URL;
-    // }
-    return WEB_URL;
+  static String getServer() {
+    return ServerAPI.GetServer();
+  }
+
+  static String getLink() {
+    return ServerAPI.GetLink();
   }
 
   static Future<Map<String, dynamic>> changeAvtWeb({required List<int> file, required String fileName}) async 
