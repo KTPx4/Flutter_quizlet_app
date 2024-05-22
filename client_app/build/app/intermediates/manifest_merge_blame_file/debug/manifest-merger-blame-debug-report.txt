@@ -1,0 +1,221 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.client_app"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="33" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:2:5-66
+15-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:2:22-64
+16    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+16-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:3:5-80
+16-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:3:22-78
+17    <uses-permission
+17-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:4:5-79
+18        android:name="android.permission.READ_EXTERNAL_STORAGE"
+18-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:4:22-77
+19        android:maxSdkVersion="32" />
+19-->[:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-35
+20    <!--
+21 Required to query activities that can process text, see:
+22         https://developer.android.com/training/package-visibility?hl=en and
+23         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+24
+25         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin.
+26    -->
+27    <queries>
+27-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:41:5-46:15
+28        <intent>
+28-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:42:9-45:18
+29            <action android:name="android.intent.action.PROCESS_TEXT" />
+29-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:43:13-72
+29-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:43:21-70
+30
+31            <data android:mimeType="text/plain" />
+31-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:44:13-50
+31-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:44:19-48
+32        </intent>
+33        <intent>
+33-->[:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:14:9-18:18
+34            <action android:name="android.intent.action.GET_CONTENT" />
+34-->[:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-72
+34-->[:file_picker] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:15:21-69
+35
+36            <data android:mimeType="*/*" />
+36-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:44:13-50
+36-->D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\android\app\src\main\AndroidManifest.xml:44:19-48
+37        </intent>
+38    </queries>
+39
+40    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+40-->[:connectivity_plus] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\connectivity_plus\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-79
+40-->[:connectivity_plus] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\connectivity_plus\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-76
+41
+42    <permission
+42-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:22:5-24:47
+43        android:name="com.example.client_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+43-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:23:9-81
+44        android:protectionLevel="signature" />
+44-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:24:9-44
+45
+46    <uses-permission android:name="com.example.client_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+46-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:26:5-97
+46-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:26:22-94
+47
+48    <application
+49        android:name="android.app.Application"
+50        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+50-->[androidx.core:core:1.10.1] C:\Users\konod\.gradle\caches\transforms-3\0235b77ff31bafac24f24ba4755d72b8\transformed\core-1.10.1\AndroidManifest.xml:28:18-86
+51        android:debuggable="true"
+52        android:icon="@mipmap/launcher_icon"
+53        android:label="QuizGo" >
+54        <activity
+55            android:name="com.example.client_app.MainActivity"
+56            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+57            android:exported="true"
+58            android:hardwareAccelerated="true"
+59            android:launchMode="singleTop"
+60            android:theme="@style/LaunchTheme"
+61            android:windowSoftInputMode="adjustResize" >
+62
+63            <!--
+64                 Specifies an Android theme to apply to this Activity as soon as
+65                 the Android process has started. This theme is visible to the user
+66                 while the Flutter UI initializes. After that, this theme continues
+67                 to determine the Window background behind the Flutter UI.
+68            -->
+69            <meta-data
+70                android:name="io.flutter.embedding.android.NormalTheme"
+71                android:resource="@style/NormalTheme" />
+72
+73            <intent-filter>
+74                <action android:name="android.intent.action.MAIN" />
+75
+76                <category android:name="android.intent.category.LAUNCHER" />
+77            </intent-filter>
+78        </activity>
+79        <!--
+80             Don't delete the meta-data below.
+81             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+82        -->
+83        <meta-data
+84            android:name="flutterEmbedding"
+85            android:value="2" />
+86
+87        <provider
+87-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-19:20
+88            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+88-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-82
+89            android:authorities="com.example.client_app.flutter.image_provider"
+89-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-74
+90            android:exported="false"
+90-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:14:13-37
+91            android:grantUriPermissions="true" >
+91-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-47
+92            <meta-data
+92-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:16:13-18:75
+93                android:name="android.support.FILE_PROVIDER_PATHS"
+93-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:17:17-67
+94                android:resource="@xml/flutter_image_picker_file_paths" />
+94-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:18:17-72
+95        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+96        <service
+96-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:21:9-33:19
+97            android:name="com.google.android.gms.metadata.ModuleDependencies"
+97-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:22:13-78
+98            android:enabled="false"
+98-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:23:13-36
+99            android:exported="false" >
+99-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:24:13-37
+100            <intent-filter>
+100-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:26:13-28:29
+101                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+101-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:27:17-94
+101-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:27:25-91
+102            </intent-filter>
+103
+104            <meta-data
+104-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:30:13-32:36
+105                android:name="photopicker_activity:0:required"
+105-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:31:17-63
+106                android:value="" />
+106-->[:image_picker_android] D:\3 hk2\phone application development final project\Flutter_quizlet_app\client_app\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:32:17-33
+107        </service>
+108
+109        <uses-library
+109-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:25:9-27:40
+110            android:name="androidx.window.extensions"
+110-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:26:13-54
+111            android:required="false" />
+111-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:27:13-37
+112        <uses-library
+112-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:28:9-30:40
+113            android:name="androidx.window.sidecar"
+113-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:29:13-51
+114            android:required="false" />
+114-->[androidx.window:window:1.0.0-beta04] C:\Users\konod\.gradle\caches\transforms-3\29fe38a5fd6c3bf46cd8e59c2b63489e\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:30:13-37
+115
+116        <provider
+116-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:24:9-32:20
+117            android:name="androidx.startup.InitializationProvider"
+117-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:25:13-67
+118            android:authorities="com.example.client_app.androidx-startup"
+118-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:26:13-68
+119            android:exported="false" >
+119-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:27:13-37
+120            <meta-data
+120-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
+121                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+121-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
+122                android:value="androidx.startup" />
+122-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
+123        </provider>
+124
+125        <receiver
+125-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
+126            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+126-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
+127            android:directBootAware="false"
+127-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
+128            android:enabled="true"
+128-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
+129            android:exported="true"
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
+130            android:permission="android.permission.DUMP" >
+130-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
+131            <intent-filter>
+131-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
+132                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+132-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
+132-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
+133            </intent-filter>
+134            <intent-filter>
+134-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
+135                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+135-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
+135-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
+136            </intent-filter>
+137            <intent-filter>
+137-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
+138                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+138-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
+138-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
+139            </intent-filter>
+140            <intent-filter>
+140-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
+141                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+141-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
+141-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\konod\.gradle\caches\transforms-3\d8b20124984237c0e54cf00d7c7f47a6\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
+142            </intent-filter>
+143        </receiver>
+144    </application>
+145
+146</manifest>
