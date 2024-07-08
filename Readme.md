@@ -14,10 +14,10 @@ The source code folder, there are two directories: 'client_app' and 'server'. Th
 ----
 
 <h2>Running the Project as Dev:</h2>
-1) Running Server at server folder (Or using server online running by render.com "https://flutter-quizlet-app.onrender.com")
-2) Config server address at client_app/lib/models/Server.dart - variable 'ANDROID_URL'use for mobile and desktop platform (As default it use address of server online)
-3) Run "Flutter pub get" to active all library
-4) Run flutter project in mobile platform or desktop platform.
+1) Running Server at server folder (Or using server online running by render.com "https://flutter-quizlet-app.onrender.com") </br>
+2) Config server address at client_app/lib/models/Server.dart - variable 'ANDROID_URL'use for mobile and desktop platform (As default it use address of server online)</br>
+3) Run "Flutter pub get" to active all library </br>
+4) Run flutter project in mobile platform or desktop platform. </br>
 
 
 <h2>Login Interface:</h2>
@@ -102,11 +102,11 @@ Each word have 3 status, if study by quiz and typing, the record 1 time, and mor
 - List topic group by user, each row as a person
 </br>
 
-<img src="https://github.com/KTPx4/Flutter_quizlet_app/blob/main/running/home.png" width="250" height="400">
+<img src="https://github.com/KTPx4/Flutter_quizlet_app/blob/main/running/home.png" width="350" height="450">
 </br>
 
 <h3>Community Page</h3>
 - In this page, list public topic will display and sort by last update
 </br>
 
-<img src="https://github.com/KTPx4/Flutter_quizlet_app/blob/main/running/community_page.png" width="250" height="400">
+<img src="https://github.com/KTPx4/Flutter_quizlet_app/blob/main/running/community_page.png" width="350" height="450">
